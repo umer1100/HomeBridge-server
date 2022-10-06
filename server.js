@@ -2,14 +2,14 @@
  * Main Express Application: set up express app
  */
 
- 'use strict';
+'use strict';
 
 // require build-in node modules
 const http = require('http');
 
 // require third-party node modules
 const express = require('express');
-const RateLimit = require("express-rate-limit"); // https://www.npmjs.com/package/express-rate-limit
+const RateLimit = require('express-rate-limit'); // https://www.npmjs.com/package/express-rate-limit
 const RedisStore = require('rate-limit-redis'); // https://www.npmjs.com/package/rate-limit-redis
 const sslRedirect = require('heroku-ssl-redirect');
 const compression = require('compression');
@@ -22,12 +22,7 @@ const cors = require('cors'); // handle cors
 const i18n = require('i18n'); // set up language
 
 // env variables
-const {
-  NODE_ENV,
-  REDIS_URL,
-  RATE_LIMIT_WINDOW_MS,
-  RATE_LIMIT_MAX_PER_WINDOW
-} = process.env;
+const { NODE_ENV, REDIS_URL, RATE_LIMIT_WINDOW_MS, RATE_LIMIT_MAX_PER_WINDOW } = process.env;
 
 // helpers
 const { LOCALES } = require('./helpers/constants');
@@ -57,8 +52,7 @@ function server() {
   app.use(sslRedirect.default()); // !! dont know why we need a default here
 
   // need to enable this in production because Heroku uses a reverse proxy
-  if (NODE_ENV === 'production')
-    app.set('trust proxy', 1); // get ip address using req.ip
+  if (NODE_ENV === 'production') app.set('trust proxy', 1); // get ip address using req.ip
 
   // set a rate limit for incoming requests
   const limiter = RateLimit({
@@ -73,8 +67,7 @@ function server() {
   app.use(limiter);
 
   // log requests using morgan, don't log in test env
-  if (NODE_ENV !== 'test')
-    app.use(morgan('dev')); // combined, common, dev, short, tiny
+  if (NODE_ENV !== 'test') app.use(morgan('dev')); // combined, common, dev, short, tiny
 
   // add middleware and they must be in order
   app.use(compression()); // GZIP all assets
@@ -101,8 +94,7 @@ function server() {
 
   // save raw body
   function rawBodySaver(req, res, buf, encoding) {
-    if (buf && buf.length)
-      req.rawBody = buf.toString(encoding || 'utf8');
+    if (buf && buf.length) req.rawBody = buf.toString(encoding || 'utf8');
   }
 
   // body parser

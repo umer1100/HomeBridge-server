@@ -25,7 +25,7 @@ const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/consta
 // methods
 module.exports = {
   V1Create
-}
+};
 
 /**
  * Create an admin
@@ -63,28 +63,35 @@ async function V1Create(req) {
     name: joi.string().trim().min(1).required(),
     active: joi.boolean().required(),
     email: joi.string().trim().lowercase().min(3).email().required(),
-    phone: joi.string().trim().required(),
-    timezone: joi.string().min(1).required(),
-    locale: joi.string().min(1).required(),
-    password1: joi.string().min(PASSWORD_LENGTH_MIN).regex(PASSWORD_REGEX).required().error(new Error(req.__('ADMIN[Invalid Password Format]'))),
-    password2: joi.string().min(PASSWORD_LENGTH_MIN).regex(PASSWORD_REGEX).required().error(new Error(req.__('ADMIN[Invalid Password Format]'))),
+    phone: joi.string().trim(),
+    timezone: joi.string().min(1),
+    locale: joi.string().min(1),
+    password1: joi
+      .string()
+      .min(PASSWORD_LENGTH_MIN)
+      .regex(PASSWORD_REGEX)
+      .required()
+      .error(new Error(req.__('ADMIN[Invalid Password Format]'))),
+    password2: joi
+      .string()
+      .min(PASSWORD_LENGTH_MIN)
+      .regex(PASSWORD_REGEX)
+      .required()
+      .error(new Error(req.__('ADMIN[Invalid Password Format]'))),
     acceptedTerms: joi.boolean().required()
   });
 
   // validate
   const { error, value } = schema.validate(req.args);
-  if (error)
-    return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
+  if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
   // check passwords
-  if (req.args.password1 !== req.args.password2)
-    return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
+  if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
   req.args.password = req.args.password1; // set password
 
   // check terms of service
-  if (!req.args.acceptedTerms)
-    return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
+  if (!req.args.acceptedTerms) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
 
   try {
     // check if admin email already exists
@@ -95,13 +102,10 @@ async function V1Create(req) {
     });
 
     // check of duplicate admin user
-    if (duplicateAdmin)
-      return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_ADMIN_ALREADY_EXISTS));
+    if (duplicateAdmin) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_ADMIN_ALREADY_EXISTS));
 
     // check timezone
-    if (!isValidTimezone(req.args.timezone))
-      return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_TIMEZONE));
-
+    if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_TIMEZONE));
     // create admin
     const newAdmin = await models.admin.create({
       timezone: req.args.timezone,
@@ -115,14 +119,16 @@ async function V1Create(req) {
     });
 
     // grab admin without sensitive data
-    const returnAdmin = await models.admin.findByPk(newAdmin.id, {
-      attributes: {
-        exclude: models.admin.getSensitiveData() // remove sensitive data
-      }
-    }).catch(err => {
-      newAdmin.destroy(); // destroy if error
-      return Promise.reject(err);
-    }); // END grab partner without sensitive data
+    const returnAdmin = await models.admin
+      .findByPk(newAdmin.id, {
+        attributes: {
+          exclude: models.admin.getSensitiveData() // remove sensitive data
+        }
+      })
+      .catch(err => {
+        newAdmin.destroy(); // destroy if error
+        return Promise.reject(err);
+      }); // END grab partner without sensitive data
 
     // SOCKET EMIT EVENT
     const data = { admin: returnAdmin };

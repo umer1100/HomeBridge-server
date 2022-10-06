@@ -27,7 +27,8 @@ module.exports = {
 
   // V1ConfirmPassword
   'ADMIN[Invalid Password Reset Token]': 'Invalid password reset token or reset token has expired.',
-  'ADMIN[Invalid Password Format]': 'Password must contain at least 1 lowercase letter, at least 1 uppercase letter, at least 1 number, at least one symbol (!@#$%^&*), and must be at least eight characters in length.',
+  'ADMIN[Invalid Password Format]':
+    'Password must contain at least 1 lowercase letter, at least 1 uppercase letter, at least 1 number, at least one symbol (!@#$%^&*), and must be at least twelve characters in length.',
   'ADMIN[Passwords Not Equal]': 'The passwords entered do not match.',
 
   // V1UpdateEmail

@@ -7,8 +7,8 @@
   "author": "Hackbyrd",
   "license": "MIT",
   "engines": {
-    "node": "16.13.2",
-    "yarn": "1.22.17",
+    "node": "16.13.1",
+    "yarn": "1.22.19",
     "npm": "6.14.8"
   },
   "scripts": {
@@ -84,7 +84,8 @@
     "socket.io": "4.4.1",
     "socket.io-emitter": "3.2.0",
     "socket.io-redis": "6.1.1",
-    "throng": "5.0.0"
+    "throng": "5.0.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "chai": "4.3.4",
