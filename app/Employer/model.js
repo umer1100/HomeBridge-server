@@ -1,11 +1,11 @@
 /**
- * ADMIN MODEL
+ * EMPLOYER MODEL
  *
  * Find Table Schema Here: "/database/schema.sql"
  * 
  * 
- * -- ADMINS TABLE --
-CREATE TABLE IF NOT EXISTS Admins (
+ * -- Employers TABLE --
+CREATE TABLE IF NOT EXISTS Employers (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   timezone STRING NOT NULL DEFAULT 'UTC',
   locale STRING NOT NULL DEFAULT 'en',
@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS Admins (
   password TEXT NOT NULL, -- hashed password
   passwordResetToken TEXT DEFAULT NULL UNIQUE,
   passwordResetExpire TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  acceptedTerms BOOLEAN NOT NULL DEFAULT TRUE, -- whether this admin accepted our terms / services
   loginCount INT NOT NULL DEFAULT 0,
   lastLogin TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
 
@@ -32,9 +31,8 @@ CREATE TABLE IF NOT EXISTS Admins (
 'use strict';
 
 // require custom node modules
-
-// helpers
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const constants = require('../../helpers/constants');
 const { randomString } = require('../../helpers/logic');
 
@@ -42,8 +40,8 @@ const { randomString } = require('../../helpers/logic');
 const sensitiveData = ['salt', 'password', 'passwordResetToken'];
 
 module.exports = (sequelize, DataTypes) => {
-  const Admin = sequelize.define(
-    'admin',
+  const Employer = sequelize.define(
+    'employer',
     {
       // All foreign keys are added in associations
 
@@ -70,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
 
-      // The unique email of the user
+      // The unique email of the employer
       email: {
         type: DataTypes.STRING,
         unique: true,
@@ -80,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
 
-      // The unique phone of the user
+      // The unique phone of the employer
       phone: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -118,13 +116,6 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
 
-      // Whether user has accepted terms or not
-      acceptedTerms: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-      },
-
       // The number of times the user has logged in
       loginCount: {
         type: DataTypes.INTEGER,
@@ -152,33 +143,25 @@ module.exports = (sequelize, DataTypes) => {
       // For select (findOne, findAll etc) automatically ignore all rows when deletedAt is not null, if you really want to let the query see the soft-deleted records, you can pass the paranoid: false option to the query method
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
-      tableName: 'Admins', // define table name, must be PascalCase!
+      tableName: 'Employers', // define table name, must be PascalCase!
       hooks: {
-        beforeValidate(admin, options) {
-          // remove all white space
-          if (typeof admin.phone === 'string') admin.phone = admin.phone.replace(/ /g, '');
-        },
-
-        beforeCreate(admin, options) {
+        beforeCreate(employer, options) {
           // generate the salt
-          admin.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
-          admin.password = bcrypt.hashSync(admin.password, admin.salt);
+          employer.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
+          employer.password = bcrypt.hashSync(employer.password, employer.salt);
         }
       },
       indexes: []
     }
   );
 
-  // association
-  Admin.associate = models => {};
-
   // sensitive data method
-  Admin.getSensitiveData = () => {
+  Employer.getSensitiveData = () => {
     return sensitiveData;
   };
 
   // check if valid password
-  Admin.validatePassword = async (password, secret) => {
+  Employer.validatePassword = async (password, secret) => {
     return new Promise((resolve, reject) => {
       // compare both, result is either true or false
       bcrypt.compare(password, secret, async (err, result) => {
@@ -187,5 +170,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Admin;
+  return Employer;
 };

@@ -60,9 +60,7 @@ describe('Admin.V1ConfirmPassword', async () => {
 
       try {
         // call reset password
-        const res = await request(app)
-          .post(`${routeVersion}${routePrefix}/resetpassword`)
-          .send(params);
+        const res = await request(app).post(`${routeVersion}${routePrefix}/resetpassword`).send(params);
 
         expect(res.statusCode).to.equal(200);
 
@@ -75,9 +73,7 @@ describe('Admin.V1ConfirmPassword', async () => {
         };
 
         // confirm password
-        const res2 = await request(app)
-          .post(routeUrl)
-          .send(params2);
+        const res2 = await request(app).post(routeUrl).send(params2);
 
         expect(res2.statusCode).to.equal(200);
         expect(res2.body).to.have.property('success', true);
@@ -102,9 +98,7 @@ describe('Admin.V1ConfirmPassword', async () => {
 
       try {
         // call reset password
-        const res = await request(app)
-          .post(`${routeVersion}${routePrefix}/resetpassword`)
-          .send(params);
+        const res = await request(app).post(`${routeVersion}${routePrefix}/resetpassword`).send(params);
 
         expect(res.statusCode).to.equal(200);
 
@@ -116,9 +110,7 @@ describe('Admin.V1ConfirmPassword', async () => {
         };
 
         // confirm password
-        const res2 = await request(app)
-          .post(routeUrl)
-          .send(params2);
+        const res2 = await request(app).post(routeUrl).send(params2);
 
         expect(res2.statusCode).to.equal(400);
         expect(res2.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN));
@@ -136,9 +128,7 @@ describe('Admin.V1ConfirmPassword', async () => {
 
       try {
         // call reset password
-        const res = await request(app)
-          .post(`${routeVersion}${routePrefix}/resetpassword`)
-          .send(params);
+        const res = await request(app).post(`${routeVersion}${routePrefix}/resetpassword`).send(params);
 
         expect(res.statusCode).to.equal(200);
 
@@ -151,18 +141,19 @@ describe('Admin.V1ConfirmPassword', async () => {
         };
 
         // update expiration of password reset token
-        await models.admin.update({
-          passwordResetExpire: moment.tz('UTC').subtract('5', 'days')
-        }, {
-          where: {
-            email: params.email
+        await models.admin.update(
+          {
+            passwordResetExpire: moment.tz('UTC').subtract('5', 'days')
+          },
+          {
+            where: {
+              email: params.email
+            }
           }
-        });
+        );
 
         // confirm password
-        const res2 = await request(app)
-          .post(routeUrl)
-          .send(params2);
+        const res2 = await request(app).post(routeUrl).send(params2);
 
         expect(res2.statusCode).to.equal(400);
         expect(res2.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN));
@@ -180,9 +171,7 @@ describe('Admin.V1ConfirmPassword', async () => {
 
       try {
         // call reset password
-        const res = await request(app)
-          .post(`${routeVersion}${routePrefix}/resetpassword`)
-          .send(params);
+        const res = await request(app).post(`${routeVersion}${routePrefix}/resetpassword`).send(params);
 
         expect(res.statusCode).to.equal(200);
 
@@ -195,9 +184,7 @@ describe('Admin.V1ConfirmPassword', async () => {
         };
 
         // confirm password
-        const res2 = await request(app)
-          .post(routeUrl)
-          .send(params2);
+        const res2 = await request(app).post(routeUrl).send(params2);
 
         expect(res2.statusCode).to.equal(400);
         expect(res2.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
@@ -215,9 +202,7 @@ describe('Admin.V1ConfirmPassword', async () => {
 
       try {
         // call reset password
-        const res = await request(app)
-          .post(`${routeVersion}${routePrefix}/resetpassword`)
-          .send(params);
+        const res = await request(app).post(`${routeVersion}${routePrefix}/resetpassword`).send(params);
 
         expect(res.statusCode).to.equal(200);
 
@@ -230,9 +215,7 @@ describe('Admin.V1ConfirmPassword', async () => {
         };
 
         // confirm password
-        const res2 = await request(app)
-          .post(routeUrl)
-          .send(params2);
+        const res2 = await request(app).post(routeUrl).send(params2);
 
         expect(res2.statusCode).to.equal(400);
         expect(res2.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, i18n.__('ADMIN[Invalid Password Format]')));

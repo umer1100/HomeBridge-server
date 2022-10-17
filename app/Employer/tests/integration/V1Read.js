@@ -1,5 +1,5 @@
 /**
- * TEST ADMIN V1Read METHOD
+ * TEST EMPLOYER V1Read METHOD
  */
 
 'use strict';
@@ -24,15 +24,16 @@ const request = require('supertest');
 const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
-const { adminLogin, reset, populate } = require('../../../../helpers/tests');
+const { adminLogin, employerLogin, reset, populate } = require('../../../../helpers/tests');
 
-describe('Admin.V1Read', async () => {
+describe('Employer.V1Read', async () => {
   // grab fixtures here
   const adminFix = require('../../../../test/fixtures/fix1/admin');
+  const employerFix = require('../../../../test/fixtures/fix1/employer');
 
   // url of the api method we are testing
   const routeVersion = '/v1';
-  const routePrefix = '/admins';
+  const routePrefix = '/employers';
   const routeMethod = '/read';
   const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
@@ -68,26 +69,9 @@ describe('Admin.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[admin] should read self successfully', async () => {
+    it('[admin] should read an employer successfully', async () => {
       const admin1 = adminFix[0];
-      try {
-        // login admin
-        const { token } = await adminLogin(app, routeVersion, request, admin1);
-
-        // read admin request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`);
-        expect(res.statusCode).to.equal(200);
-        expect(res.body).to.have.property('success', true);
-        expect(res.body).to.have.property('admin');
-        expect(res.body.admin).to.have.property('id', admin1.id);
-      } catch (error) {
-        throw error;
-      }
-    }); // END [admin] should read self successfully
-
-    it('[admin] should read another admin successfully', async () => {
-      const admin1 = adminFix[0];
-      const admin2 = adminFix[1];
+      const employer1 = employerFix[0];
 
       try {
         // login admin
@@ -95,7 +79,7 @@ describe('Admin.V1Read', async () => {
 
         // params
         const params = {
-          id: admin2.id
+          id: employer1.id
         };
 
         // read admin request
@@ -103,14 +87,14 @@ describe('Admin.V1Read', async () => {
 
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
-        expect(res.body).to.have.property('admin');
-        expect(res.body.admin).to.have.property('id', admin2.id);
+        expect(res.body).to.have.property('employer');
+        expect(res.body.employer).to.have.property('id', employer1.id);
       } catch (error) {
         throw error;
       }
     }); // END [admin] should read another admin successfully
 
-    it('[admin] should fail to read admin if admin does not exist', async () => {
+    it('[admin] should fail to read employer if employer does not exist', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -121,14 +105,63 @@ describe('Admin.V1Read', async () => {
           id: 100000
         };
 
-        // read admin request
+        // read employer request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
-
-        expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+        expect(res.statusCode).to.equal(404);
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should fail to read admin if admin does not exist
+    }); // END [admin] should fail to read employer if employer does not exist
   }); // END Role: Admin
-}); // END Admin.V1Read
+
+  // Employer
+  describe('Role: Employer', async () => {
+    const jwt = 'jwt-employer';
+
+    // populate database with fixtures
+    beforeEach(async () => {
+      await populate('fix1');
+    });
+
+    it('[employer] should read self successfully', async () => {
+      const employer1 = employerFix[0];
+      try {
+        // login employer
+        const { token } = await employerLogin(app, routeVersion, request, employer1);
+
+        // read employer request
+        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body).to.have.property('success', true);
+        expect(res.body).to.have.property('employer');
+        expect(res.body.employer).to.have.property('id', employer1.id);
+      } catch (error) {
+        throw error;
+      }
+    }); // END [employer] should read self successfully
+
+    it('[employer] should not read another employer', async () => {
+      const employer1 = employerFix[0];
+      const employer2 = employerFix[1];
+
+      try {
+        // login employer
+        const { token } = await employerLogin(app, routeVersion, request, employer1);
+
+        // params
+        const params = {
+          id: employer2.id
+        };
+
+        // read employer request
+        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+
+        expect(res.statusCode).to.equal(401);
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_UNAUTHORIZED_ACCESS));
+      } catch (error) {
+        throw error;
+      }
+    }); // END [employer] should not read another employer
+  }); // END Role: Employer
+}); // END Employer.V1Read
