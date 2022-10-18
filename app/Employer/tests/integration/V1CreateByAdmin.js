@@ -26,6 +26,7 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
+const employer = require('../../../../test/fixtures/fix1/employer');
 
 describe('Employer.V1CreateByAdmin', async () => {
   // grab fixtures here
@@ -92,7 +93,7 @@ describe('Employer.V1CreateByAdmin', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(201);
-        expect(res.body.employer.id).to.equal(1);
+        expect(res.body.employer.id).to.equal(employer.length + 1);
         expect(res.body.employer.timezone).to.equal(params.timezone);
         expect(res.body.employer.locale).to.equal(params.locale);
         expect(res.body.employer.active).to.be.true;
@@ -221,7 +222,7 @@ describe('Employer.V1CreateByAdmin', async () => {
         const params = {
           name: 'John Doe',
           active: true,
-          email: 'new-employer@example.com',
+          email: 'employer-1@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
           locale: 'en',

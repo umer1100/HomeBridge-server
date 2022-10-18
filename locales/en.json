@@ -27,5 +27,6 @@
 	"EMPLOYER[Unauthorized Access]": "EMPLOYER[Unauthorized Access]",
 	"EMPLOYER[Invalid Login Credentials]": "EMPLOYER[Invalid Login Credentials]",
 	"EMPLOYER[Admin Account Inactive]": "EMPLOYER[Admin Account Inactive]",
-	"EMPLOYER[Admin Account Deleted]": "EMPLOYER[Admin Account Deleted]"
+	"EMPLOYER[Admin Account Deleted]": "EMPLOYER[Admin Account Deleted]",
+	"EMPLOYER[Admin Already Exists]": "EMPLOYER[Admin Already Exists]"
 }
