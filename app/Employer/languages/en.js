@@ -18,7 +18,6 @@ module.exports = {
 
   // V1Read
   'EMPLOYER[Employer Account Does Not Exist]': 'Employer account does not exist.',
-  'EMPLOYER[Unauthorized Access]': 'You do not have access to this employer information.',
 
   // V1Create
   'EMPLOYER[Terms of Service Not Accepted]': 'You must agree to our Terms of Service.',

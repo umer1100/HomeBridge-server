@@ -51,7 +51,7 @@ async function V1ReadByEmployer(req) {
   req.args = value; // updated arguments with type conversion
 
   // ensure argument id is the same as the employer id (only self read is allowed)
-  if (req.args.id != req.employer.id) return Promise.resolve(errorResponse(req, ERROR_CODES.EMPLOYER_BAD_REQUEST_UNAUTHORIZED_ACCESS));
+  if (req.args.id != req.employer.id) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // find employer
   const findEmployer = await models.employer

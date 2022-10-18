@@ -158,7 +158,7 @@ describe('Employer.V1Read', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(401);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_UNAUTHORIZED_ACCESS));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
       } catch (error) {
         throw error;
       }
