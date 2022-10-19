@@ -61,13 +61,14 @@ describe('Admin.V1ResetPassword', async () => {
 
       try {
         // send reset request
-        const res = await request(app)
-          .post(routeUrl)
-          .send(params);
+        const res = await request(app).post(routeUrl).send(params);
 
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
-        expect(res.body).to.have.property('message', 'An email has been sent to ' + params.email + '. Please check your email to confirm your new password change.');
+        expect(res.body).to.have.property(
+          'message',
+          'An email has been sent to ' + params.email + '. Please check your email to confirm your new password change.'
+        );
 
         // check if resetPassword, passwordResetToken, passwordResetExpire are there
         const foundAdmin = await models.admin.findByPk(admin1.id);
@@ -85,14 +86,12 @@ describe('Admin.V1ResetPassword', async () => {
       const admin1 = adminFix[0];
 
       const params = {
-        email: 'noemail@email.com',
+        email: 'noemail@email.com'
       };
 
       try {
         // send reset request
-        const res = await request(app)
-          .post(routeUrl)
-          .send(params);
+        const res = await request(app).post(routeUrl).send(params);
 
         expect(res.statusCode).to.equal(400);
         expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));

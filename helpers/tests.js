@@ -17,7 +17,7 @@ const seq = require('../database/sequence');
 module.exports = {
   login,
   adminLogin,
-  userLogin,
+  employerLogin,
   reset,
   populate
 };
@@ -28,7 +28,7 @@ module.exports = {
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @model - (STRING - REQUIRED): 'users', 'admins', 'partners', 'drivers', etc...
+ * @model - (STRING - REQUIRED): 'employers', 'admins', 'partners', 'employees', etc...
  * @user - (OBJECT - REQUIRED): The user to login
  *
  * return the JSON web token
@@ -40,7 +40,8 @@ async function login(app, version, request, model, user) {
     .send({
       email: user.email,
       password: user.password
-    }).catch(err => Promise.reject(err));
+    })
+    .catch(err => Promise.reject(err));
 
   return Promise.resolve({
     token: response.body.token,
@@ -64,18 +65,18 @@ async function adminLogin(app, version, request, admin) {
 }
 
 /**
- * Log a user in
+ * Log an employer in
  *
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @user - (OBJECT - REQUIRED): The iser fixture to login
+ * @employer - (OBJECT - REQUIRED): The employer fixture to login
  *
  * return the JSON web token
  */
-async function userLogin(app, version, request, user) {
+async function employerLogin(app, version, request, employer) {
   // login request
-  return login(app, version, request, 'users', user);
+  return login(app, version, request, 'employers', employer);
 }
 
 /**
@@ -110,7 +111,7 @@ async function populate(fixtureFolderName) {
 
       // get data to insert
       fs.readdirSync(fixturesFolderPath)
-        .filter(file => file.indexOf('.js') >= 0 ) // only js files
+        .filter(file => file.indexOf('.js') >= 0) // only js files
         .forEach(file => {
           const data = require(path.join(fixturesFolderPath, file));
           fixtures.push(data);
@@ -142,12 +143,11 @@ async function populate(fixtureFolderName) {
       const fixture = fixtures[i];
 
       // bulk create
-      await models[files[idx]]
-        .bulkCreate(fixture, {
-          validate: true,
-          // hooks: true,
-          individualHooks: true
-        });
+      await models[files[idx]].bulkCreate(fixture, {
+        validate: true,
+        // hooks: true,
+        individualHooks: true
+      });
 
       const tableName = models[files[idx]].getTableName(); // grab tablename of model
       const queryText = `SELECT setval('"${tableName}_id_seq"', (SELECT MAX(id) FROM "${tableName}"));`;
@@ -159,8 +159,7 @@ async function populate(fixtureFolderName) {
     return Promise.resolve(true);
   } catch (error) {
     // turn back on foreign key restrictions
-    await models.db.query('SET CONSTRAINTS ALL IMMEDIATE')
-      .catch(err => Promise.reject(err));
+    await models.db.query('SET CONSTRAINTS ALL IMMEDIATE').catch(err => Promise.reject(err));
 
     return Promise.reject(error);
   }

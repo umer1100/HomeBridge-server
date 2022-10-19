@@ -1,5 +1,5 @@
 /**
- * TEST ADMIN V1Create METHOD
+ * TEST EMPLOYER V1CreateByEAdmin METHOD
  */
 
 'use strict';
@@ -26,14 +26,15 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
+const employer = require('../../../../test/fixtures/fix1/employer');
 
-describe('Admin.V1Create', async () => {
+describe('Employer.V1CreateByAdmin', async () => {
   // grab fixtures here
   const adminFix = require('../../../../test/fixtures/fix1/admin');
 
   // url of the api method we are testing
   const routeVersion = '/v1';
-  const routePrefix = '/admins';
+  const routePrefix = '/employers';
   const routeMethod = '/create';
   const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
@@ -49,7 +50,7 @@ describe('Admin.V1Create', async () => {
       await populate('fix1');
     });
 
-    it('[logged-out] should fail to create admin', async () => {
+    it('[logged-out] should fail to create employers', async () => {
       try {
         const res = await request(app).get(routeUrl);
         expect(res.statusCode).to.equal(401);
@@ -57,10 +58,10 @@ describe('Admin.V1Create', async () => {
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should fail to create admin
+    }); // END [logged-out] should fail to create employer
   }); // END Role: Logged Out
 
-  // Admin
+  // Employer
   describe('Role: Admin', async () => {
     const jwt = 'jwt-admin';
 
@@ -69,7 +70,7 @@ describe('Admin.V1Create', async () => {
       await populate('fix1');
     });
 
-    it('[admin] should create an admin successfully', async () => {
+    it('[admin] should create an employer successfully', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -88,45 +89,43 @@ describe('Admin.V1Create', async () => {
           acceptedTerms: true
         };
 
-        // create admin request
+        // create employer request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(201);
-        expect(res.body.admin.id).to.equal(adminFix.length + 1);
-        expect(res.body.admin.timezone).to.equal(params.timezone);
-        expect(res.body.admin.locale).to.equal(params.locale);
-        expect(res.body.admin.active).to.be.true;
-        expect(res.body.admin.name).to.equal(params.name);
-        expect(res.body.admin.email).to.equal(params.email);
-        expect(res.body.admin.phone).to.equal(params.phone);
-        expect(res.body.admin.passwordResetExpire).to.be.a('string');
-        expect(res.body.admin.acceptedTerms).to.be.true;
-        expect(res.body.admin.loginCount).to.equal(0);
-        expect(res.body.admin.lastLogin).to.be.null;
-        expect(res.body.admin.createdAt).to.be.a('string');
-        expect(res.body.admin.updatedAt).to.be.a('string');
+        expect(res.body.employer.id).to.equal(employer.length + 1);
+        expect(res.body.employer.timezone).to.equal(params.timezone);
+        expect(res.body.employer.locale).to.equal(params.locale);
+        expect(res.body.employer.active).to.be.true;
+        expect(res.body.employer.name).to.equal(params.name);
+        expect(res.body.employer.email).to.equal(params.email);
+        expect(res.body.employer.phone).to.equal(params.phone);
+        expect(res.body.employer.passwordResetExpire).to.be.a('string');
+        expect(res.body.employer.loginCount).to.equal(0);
+        expect(res.body.employer.lastLogin).to.be.null;
+        expect(res.body.employer.createdAt).to.be.a('string');
+        expect(res.body.employer.updatedAt).to.be.a('string');
 
-        // check if admin was created
-        const checkAdmin = await models.admin.findByPk(res.body.admin.id);
-        expect(checkAdmin.name).to.equal(params.name);
-        expect(checkAdmin.timezone).to.equal(params.timezone);
-        expect(checkAdmin.locale).to.equal(params.locale);
-        expect(checkAdmin.active).to.be.true;
-        expect(checkAdmin.name).to.equal(params.name);
-        expect(checkAdmin.email).to.equal(params.email);
-        expect(checkAdmin.phone).to.equal(params.phone);
-        expect(checkAdmin.passwordResetExpire).to.not.be.null;
-        expect(checkAdmin.acceptedTerms).to.be.true;
-        expect(checkAdmin.loginCount).to.equal(0);
-        expect(checkAdmin.lastLogin).to.be.null;
-        expect(checkAdmin.createdAt).to.not.be.null;
-        expect(checkAdmin.updatedAt).to.not.be.null;
+        // check if employer was created
+        const checkEmployer = await models.employer.findByPk(res.body.employer.id);
+        expect(checkEmployer.name).to.equal(params.name);
+        expect(checkEmployer.timezone).to.equal(params.timezone);
+        expect(checkEmployer.locale).to.equal(params.locale);
+        expect(checkEmployer.active).to.be.true;
+        expect(checkEmployer.name).to.equal(params.name);
+        expect(checkEmployer.email).to.equal(params.email);
+        expect(checkEmployer.phone).to.equal(params.phone);
+        expect(checkEmployer.passwordResetExpire).to.not.be.null;
+        expect(checkEmployer.loginCount).to.equal(0);
+        expect(checkEmployer.lastLogin).to.be.null;
+        expect(checkEmployer.createdAt).to.not.be.null;
+        expect(checkEmployer.updatedAt).to.not.be.null;
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should create an admin successfully
+    }); // END [admin] should create an employer successfully
 
-    it('[admin] should not create new admin if passwords format is invalid', async () => {
+    it('[admin] should not create new employer if passwords format is invalid', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -149,13 +148,13 @@ describe('Admin.V1Create', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, i18n.__('ADMIN[Invalid Password Format]')));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, i18n.__('EMPLOYER[Invalid Password Format]')));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new admin if passwords format is invalid
+    }); // END [admin] should not create new employer if passwords format is invalid
 
-    it('[admin] should not create new admin if passwords are not the same', async () => {
+    it('[admin] should not create new employer if passwords are not the same', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -165,7 +164,7 @@ describe('Admin.V1Create', async () => {
         const params = {
           name: 'John Doe',
           active: true,
-          email: 'new-admin@example.com',
+          email: 'new-employer@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
           locale: 'en',
@@ -178,13 +177,13 @@ describe('Admin.V1Create', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new admin if passwords are not the same
+    }); // END [admin] should not create new employer if passwords are not the same
 
-    it('[admin] should not create new admin if acceptedTerms is false', async () => {
+    it('[admin] should not create new employer if acceptedTerms is false', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -194,7 +193,7 @@ describe('Admin.V1Create', async () => {
         const params = {
           name: 'John Doe',
           active: true,
-          email: 'new-admin@example.com',
+          email: 'new-employer@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
           locale: 'en',
@@ -207,7 +206,7 @@ describe('Admin.V1Create', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
       } catch (error) {
         throw error;
       }
@@ -223,7 +222,7 @@ describe('Admin.V1Create', async () => {
         const params = {
           name: 'John Doe',
           active: true,
-          email: admin1.email,
+          email: 'employer-1@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
           locale: 'en',
@@ -236,13 +235,13 @@ describe('Admin.V1Create', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_ADMIN_ALREADY_EXISTS));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_EMPLOYER_ALREADY_EXISTS));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new admin if email already exists
+    }); // END [admin] should not create new employer if email already exists
 
-    it('[admin] should not create new admin if timezone is invalid', async () => {
+    it('[admin] should not create new employer if timezone is invalid', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -252,7 +251,7 @@ describe('Admin.V1Create', async () => {
         const params = {
           name: 'John Doe',
           active: true,
-          email: 'new-admin@example.com',
+          email: 'new-employer@example.com',
           phone: '+12406206950',
           timezone: 'invalid-timezone',
           locale: 'en',
@@ -265,10 +264,10 @@ describe('Admin.V1Create', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_TIMEZONE));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_INVALID_TIMEZONE));
       } catch (error) {
         throw error;
       }
     }); // END [admin] should not create new admin if timezone is invalid
-  }); // END Role: Admin
-}); // END Admin.V1Create
+  }); // END Role: Employer
+}); // END Employer.V1Create
