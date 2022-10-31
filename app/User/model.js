@@ -1,23 +1,48 @@
 /**
- * ADMIN MODEL
+ * USER MODEL
  *
  * Find Table Schema Here: "/database/schema.sql"
  *
- *
- * -- ADMINS TABLE --
- * CREATE TABLE IF NOT EXISTS Admins (
+ * -- Users TABLE --
+ * CREATE TYPE SEXTYPE AS ENUM ('MALE', 'FEMALE', 'OTHER');
+ * CREATE TYPE KYCIDTYPE AS ENUM ('SSN', 'PASSPORT');
+ * CREATE TABLE IF NOT EXISTS Users (
  *   id BIGSERIAL PRIMARY KEY NOT NULL,
+ *
+ *   employerId BIGINT DEFAULT NULL REFERENCES Employers(id),
+ *
  *   timezone STRING NOT NULL DEFAULT 'UTC',
  *   locale STRING NOT NULL DEFAULT 'en',
  *   active BOOLEAN NOT NULL DEFAULT TRUE,
- *   name STRING NOT NULL,
+ *   sex SEXTYPE DEFAULT NULL,
+ *
+ *   -- Following values are necessary for KYC
+ *   firstName STRING NOT NULL,
+ *   middleName STRING DEFAULT NULL,
+ *   lastName STRING NOT NULL,
  *   email STRING NOT NULL UNIQUE,
  *   phone STRING DEFAULT NULL,
+ *   kycIdType KYCIDTYPE DEFAULT NULL,
+ *   kycIdNumber INT DEFAULT NULL,
+ *   addressLine1 TEXT DEFAULT NULL,
+ *   addressLine2 TEXT DEFAULT NULL,
+ *   city TEXT DEFAULT NULL,
+ *   state TEXT DEFAULT NULL,
+ *   country TEXT DEFAULT NULL,
+ *   zipcode TEXT DEFAULT NULL,
+ *   dateOfBirth TIMESTAMP WITHOUT TIME ZONE DEFAULT NUll,
+ *   -- End KYC
+ *
+ *
  *   salt TEXT NOT NULL, -- random salt value
  *   password TEXT NOT NULL, -- hashed password
  *   passwordResetToken TEXT DEFAULT NULL UNIQUE,
  *   passwordResetExpire TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
- *   acceptedTerms BOOLEAN NOT NULL DEFAULT TRUE, -- whether this admin accepted our terms / services
+ *   emailConfirmed BOOLEAN NOT NULL DEFAULT FALSE,
+ *   emailConfirmationToken TEXT DEFAULT NULL UNIQUE,
+ *   emailResetToken TEXT DEFAULT NULL UNIQUE,
+ *   resetEmail TEXT DEFAULT NULL, -- must check email if this email already exists both when this is created and when this is about to change email
+ *   acceptedTerms BOOLEAN NOT NULL DEFAULT TRUE, -- whether this user accepted our terms / services
  *   loginCount INT NOT NULL DEFAULT 0,
  *   lastLogin TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
  *
@@ -26,15 +51,13 @@
  *   createdAt TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
  *   updatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
  * );
- *
  */
 
 'use strict';
 
 // require custom node modules
-
-// helpers
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const constants = require('../../helpers/constants');
 const { randomString } = require('../../helpers/logic');
 
@@ -42,8 +65,8 @@ const { randomString } = require('../../helpers/logic');
 const sensitiveData = ['salt', 'password', 'passwordResetToken'];
 
 module.exports = (sequelize, DataTypes) => {
-  const Admin = sequelize.define(
-    'admin',
+  const User = sequelize.define(
+    'user',
     {
       // All foreign keys are added in associations
 
@@ -65,7 +88,23 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: true
       },
 
-      name: {
+      sex: {
+        type: DataTypes.ENUM(['MALE', 'FEMALE', 'OTHER']),
+        allowNull: true
+      },
+
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+
+      middleName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false
       },
@@ -85,6 +124,53 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: null
+      },
+
+      // The KYC id type, can be either social security number or passport
+      kycIdType: {
+        type: DataTypes.ENUM(['SSN', 'PASSPORT']),
+        allowNull: true
+      },
+
+      // The KYC id number
+      kycIdNumber: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+
+      addressLine1: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      addressLine2: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      city: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      state: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      country: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      zipcode: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+
+      dateOfBirth: {
+        type: DataTypes.DATE,
+        allowNull: true
       },
 
       // salt should be randomly generate
@@ -116,6 +202,33 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isDate: true
         }
+      },
+
+      emailConfirmed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+
+      emailConfirmedToken: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null,
+        unique: true
+      },
+
+      emailResetToken: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null,
+        unique: true
+      },
+
+      // Secondary email used to reset primary email if necessary
+      resetEmail: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null
       },
 
       // Whether user has accepted terms or not
@@ -152,17 +265,17 @@ module.exports = (sequelize, DataTypes) => {
       // For select (findOne, findAll etc) automatically ignore all rows when deletedAt is not null, if you really want to let the query see the soft-deleted records, you can pass the paranoid: false option to the query method
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
-      tableName: 'Admins', // define table name, must be PascalCase!
+      tableName: 'Users', // define table name, must be PascalCase!
       hooks: {
-        beforeValidate(admin, options) {
+        beforeValidate(user, options) {
           // remove all white space
-          if (typeof admin.phone === 'string') admin.phone = admin.phone.replace(/ /g, '');
+          if (typeof user.phone === 'string') user.phone = user.phone.replace(/ /g, '');
         },
 
-        beforeCreate(admin, options) {
+        beforeCreate(user, options) {
           // generate the salt
-          admin.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
-          admin.password = bcrypt.hashSync(admin.password, admin.salt);
+          user.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
+          user.password = bcrypt.hashSync(user.password, user.salt);
         }
       },
       indexes: []
@@ -170,15 +283,17 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   // association
-  Admin.associate = models => {};
+  User.associate = models => {
+    User.belongsTo(models.employer, { foreignKey: 'employerId' });
+  };
 
   // sensitive data method
-  Admin.getSensitiveData = () => {
+  User.getSensitiveData = () => {
     return sensitiveData;
   };
 
   // check if valid password
-  Admin.validatePassword = async (password, secret) => {
+  User.validatePassword = async (password, secret) => {
     return new Promise((resolve, reject) => {
       // compare both, result is either true or false
       bcrypt.compare(password, secret, async (err, result) => {
@@ -187,5 +302,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Admin;
+  return User;
 };
