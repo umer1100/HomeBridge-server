@@ -141,7 +141,6 @@ async function populate(fixtureFolderName) {
     // populate database for each fixture
     for (let i = 0; i < fixtures.length; i++) {
       const fixture = fixtures[i];
-
       // bulk create
       await models[files[idx]].bulkCreate(fixture, {
         validate: true,
@@ -160,7 +159,6 @@ async function populate(fixtureFolderName) {
   } catch (error) {
     // turn back on foreign key restrictions
     await models.db.query('SET CONSTRAINTS ALL IMMEDIATE').catch(err => Promise.reject(err));
-
     return Promise.reject(error);
   }
 }

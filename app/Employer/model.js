@@ -155,6 +155,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  // association
+  Employer.associate = models => {
+    Employer.hasMany(models.user);
+  };
+
   // sensitive data method
   Employer.getSensitiveData = () => {
     return sensitiveData;

@@ -28,13 +28,13 @@ const LOCAL_ERROR_CODES = {
   EMPLOYER_BAD_REQUEST_ACCOUNT_INACTIVE: {
     error: 'EMPLOYER.BAD_REQUEST_ACCOUNT_INACTIVE',
     status: 400,
-    messages: ['EMPLOYER[Admin Account Inactive]']
+    messages: ['EMPLOYER[Employer Account Inactive]']
   },
 
   EMPLOYER_BAD_REQUEST_ACCOUNT_DELETED: {
     error: 'EMPLOYER.BAD_REQUEST_ACCOUNT_DELETED',
     status: 400,
-    messages: ['EMPLOYER[Admin Account Deleted]']
+    messages: ['EMPLOYER[Employer Account Deleted]']
   },
 
   // V1Create
@@ -47,7 +47,7 @@ const LOCAL_ERROR_CODES = {
   EMPLOYER_BAD_REQUEST_EMPLOYER_ALREADY_EXISTS: {
     error: 'EMPLOYER.BAD_REQUEST_EMPLOYER_ALREADY_EXISTS',
     status: 400,
-    messages: ['EMPLOYER[Admin Already Exists]']
+    messages: ['EMPLOYER[Employer Already Exists]']
   },
 
   EMPLOYER_BAD_REQUEST_INVALID_TIMEZONE: {

@@ -61,7 +61,7 @@ describe('Employer.V1CreateByAdmin', async () => {
     }); // END [logged-out] should fail to create employer
   }); // END Role: Logged Out
 
-  // Employer
+  // Admin
   describe('Role: Admin', async () => {
     const jwt = 'jwt-admin';
 
@@ -269,5 +269,5 @@ describe('Employer.V1CreateByAdmin', async () => {
         throw error;
       }
     }); // END [admin] should not create new admin if timezone is invalid
-  }); // END Role: Employer
+  }); // END Role: Admin
 }); // END Employer.V1Create

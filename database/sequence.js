@@ -7,5 +7,6 @@
 
 module.exports = [
   'admin',
-  'employer'
+  'employer',
+  'user'
 ];
