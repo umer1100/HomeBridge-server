@@ -159,7 +159,6 @@ async function populate(fixtureFolderName) {
   } catch (error) {
     // turn back on foreign key restrictions
     await models.db.query('SET CONSTRAINTS ALL IMMEDIATE').catch(err => Promise.reject(err));
-    console.log(error);
     return Promise.reject(error);
   }
 }
