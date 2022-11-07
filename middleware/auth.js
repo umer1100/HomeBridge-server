@@ -38,8 +38,7 @@ function attachJWTAuth(passport) {
  * Looks into the request header and checks the 'authorization' header to see which auth to select
  *
  * 'authorization': 'jwt-admin token' => JWTAuthAdmin
- * 'authorization': 'jwt-employer token' => JWTAuthEmployer
- * 'authorization': 'jwt-employee token' => JWTAuthEmployee
+ * 'authorization': 'jwt-user token' => JWTAuthEmployee
  *
  * returns a function that will call the correct method
  *
@@ -48,8 +47,7 @@ function attachJWTAuth(passport) {
 function JWTAuth(req, res, next) {
   // choose method
   if (req.headers.authorization && req.headers.authorization.indexOf('jwt-admin') >= 0) req.JWTAuth.JWTAuthAdmin(req, res, next);
-  else if (req.headers.authorization && req.headers.authorization.indexOf('jwt-employer') >= 0) req.JWTAuth.JWTAuthEmployer(req, res, next);
-  else if (req.headers.authorization && req.headers.authorization.indexOf('jwt-employee') >= 0) req.JWTAuth.JWTAuthEmployee(req, res, next);
+  else if (req.headers.authorization && req.headers.authorization.indexOf('jwt-user') >= 0) req.JWTAuth.JWTAuthEmployee(req, res, next);
   else return next();
 }
 
@@ -74,21 +72,14 @@ function verifyJWTAuth(req, res, next) {
     req.setLocale(req.user.locale);
     res.setLocale(req.user.locale);
 
-    // attach employee and remove user
-    if (req.headers.authorization && req.headers.authorization.indexOf('jwt-employee') >= 0) {
-      req.employee = req.user;
-      req.user = null;
+    if (req.headers.authorization && req.headers.authorization.indexOf('jwt-user') >= 0) {
+      // redundancy for clarity
+      req.user = req.user;
     }
 
     // attach admin and remove user
     else if (req.headers.authorization && req.headers.authorization.indexOf('jwt-admin') >= 0) {
       req.admin = req.user;
-      req.user = null;
-    }
-
-    // attach employer and remove user
-    else if (req.headers.authorization && req.headers.authorization.indexOf('jwt-employer') >= 0) {
-      req.employer = req.user;
       req.user = null;
     }
   }
