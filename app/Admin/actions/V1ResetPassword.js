@@ -24,7 +24,7 @@ const { randomString } = require('../../../helpers/logic');
 // methods
 module.exports = {
   V1ResetPassword
-}
+};
 
 /**
  * Reset Password
@@ -48,14 +48,12 @@ module.exports = {
  */
 async function V1ResetPassword(req) {
   const schema = joi.object({
-    email: joi.string().trim().lowercase().min(3).email().required(),
+    email: joi.string().trim().lowercase().min(3).email().required()
   });
 
   // validate
   const { error, value } = schema.validate(req.args);
-  if (error)
-    return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
-
+  if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   // grab admin with this email
   try {
     const findAdmin = await models.admin.findOne({
@@ -65,23 +63,25 @@ async function V1ResetPassword(req) {
     });
 
     // if admin cannot be found
-    if (!findAdmin)
-      return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+    if (!findAdmin) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
     // preparing for reset
     const passwordResetToken = randomString();
     const passwordResetExpire = moment.tz('UTC').add(6, 'hours'); // add 6 hours from now
 
     // update admin
-    await models.admin.update({
-      passwordResetToken: passwordResetToken,
-      passwordResetExpire: passwordResetExpire
-    }, {
-      fields: ['passwordResetToken', 'passwordResetExpire'], // only these fields
-      where: {
-        email: req.args.email
+    await models.admin.update(
+      {
+        passwordResetToken: passwordResetToken,
+        passwordResetExpire: passwordResetExpire
+      },
+      {
+        fields: ['passwordResetToken', 'passwordResetExpire'], // only these fields
+        where: {
+          email: req.args.email
+        }
       }
-    });
+    );
 
     const resetLink = `${ADMIN_WEB_HOST}/confirm-password?passwordResetToken=${passwordResetToken}`; // create URL using front end url
 

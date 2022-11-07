@@ -81,6 +81,13 @@ module.exports = {
         defaultValue: null
       },
 
+      // The role of the user
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'NONEMPLOYEE'
+      },
+
       // The KYC id type, can be either social security number or passport
       kycIdType: {
         type: Sequelize.ENUM(['SSN', 'PASSPORT']),

@@ -6,6 +6,7 @@
  * -- Users TABLE --
  * CREATE TYPE SEXTYPE AS ENUM ('MALE', 'FEMALE', 'OTHER');
  * CREATE TYPE KYCIDTYPE AS ENUM ('SSN', 'PASSPORT');
+ * CREATE TYPE ROLETYPE AS ENUM ('NONEMPLOYEE', 'EMPLOYEE', 'ADMIN', 'MANAGER');
  * CREATE TABLE IF NOT EXISTS Users (
  *   id BIGSERIAL PRIMARY KEY NOT NULL,
  *
@@ -15,6 +16,7 @@
  *   locale STRING NOT NULL DEFAULT 'en',
  *   active BOOLEAN NOT NULL DEFAULT TRUE,
  *   sex SEXTYPE DEFAULT NULL,
+ *   roleType ROLETYPE NOT NULL,
  *
  *   -- Following values are necessary for KYC
  *   firstName STRING NOT NULL,
@@ -91,6 +93,11 @@ module.exports = (sequelize, DataTypes) => {
       sex: {
         type: DataTypes.ENUM(['MALE', 'FEMALE', 'OTHER']),
         allowNull: true
+      },
+
+      roleType: {
+        type: DataTypes.ENUM(['NONEMPLOYEE', 'EMPLOYEE', 'ADMIN', 'MANAGER']),
+        allowNull: false
       },
 
       firstName: {

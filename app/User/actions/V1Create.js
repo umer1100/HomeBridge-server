@@ -42,7 +42,8 @@ module.exports = {
  *   @active - (BOOLEAN - REQUIRED): Whether user is active or not
  *   @email - (STRING - REQUIRED): The email of the user,
  *   @phone - (STRING - REQUIRED): The phone of the user,
- *   @timezone - (STRING - REQUIRED): The timezone of the user,
+ *   @roleType - (STRING - REQUIRED): The role type of the user
+ *   @timezone - (STRING - REQUIRED): The timezone of the user
  *   @locale - (STRING - REQUIRED): The language of the user
  *   @password1 - (STRING - REQUIRED): The unhashed password1 of the user
  *   @password2 - (STRING - REQUIRED): The unhashed password2 of the user
@@ -65,6 +66,7 @@ async function V1Create(req) {
     active: joi.boolean().required(),
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
+    roleType: joi.string().trim(),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
     password1: joi
@@ -123,6 +125,7 @@ async function V1Create(req) {
       active: req.args.active,
       email: req.args.email,
       phone: req.args.phone,
+      roleType: req.args.roleType,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,

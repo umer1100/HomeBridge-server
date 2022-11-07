@@ -9,7 +9,5 @@
 
 module.exports = {
   ...require('./V1CreateByAdmin'),
-  ...require('./V1Login'),
-  ...require('./V1ReadByAdmin'),
-  ...require('./V1ReadByEmployer')
+  ...require('./V1ReadByAdmin')
 };

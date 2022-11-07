@@ -12,9 +12,7 @@ module.exports = [
     active: true,
     name: 'COMPANY1',
     email: 'employer-1@example.com',
-    phone: '+12408169501',
-    salt: '1-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
-    password: 'password1F%'
+    phone: '+12408169501'
   },
   {
     id: 2,
@@ -23,8 +21,6 @@ module.exports = [
     active: true,
     name: 'COMPANY2',
     email: 'employer-2@example.com',
-    phone: '+12408169502',
-    salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
-    password: 'password2F%'
+    phone: '+12408169502'
   }
 ];

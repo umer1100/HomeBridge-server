@@ -50,13 +50,7 @@ async function V1ReadByAdmin(req) {
   req.args = value; // updated arguments with type conversion
 
   // find employer
-  const findEmployer = await models.employer
-    .findByPk(req.args.id, {
-      attributes: {
-        exclude: models.employer.getSensitiveData() // remove sensitive data
-      }
-    })
-    .catch(err => Promise.reject(error));
+  const findEmployer = await models.employer.findByPk(req.args.id).catch(err => Promise.reject(error));
 
   // check if employer exists
   if (!findEmployer) return Promise.resolve(errorResponse(req, ERROR_CODES.EMPLOYER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));

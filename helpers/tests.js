@@ -122,7 +122,6 @@ async function populate(fixtureFolderName) {
     let idx = 0; // index
     const orderedFixtures = [];
     const orderedFiles = [];
-
     // order the files
     for (let i = 0; i < seq.length; i++) {
       for (let j = 0; j < files.length; j++) {

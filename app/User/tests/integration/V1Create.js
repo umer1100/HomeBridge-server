@@ -58,6 +58,7 @@ describe('User.V1Create', async () => {
           active: true,
           email: 'new-user@example.com',
           phone: '+12406206950',
+          roleType: 'NONEMPLOYEE',
           timezone: 'America/Los_Angeles',
           locale: 'en',
           password1: 'thisisapassword1F%',

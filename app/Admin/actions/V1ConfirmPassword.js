@@ -21,7 +21,7 @@ const { PASSWORD_REGEX, PASSWORD_LENGTH_MIN } = require('../../../helpers/consta
 // methods
 module.exports = {
   V1ConfirmPassword
-}
+};
 
 /**
  * Confirm password
@@ -50,14 +50,23 @@ module.exports = {
 async function V1ConfirmPassword(req) {
   const schema = joi.object({
     passwordResetToken: joi.string().required(),
-    password1: joi.string().min(PASSWORD_LENGTH_MIN).regex(PASSWORD_REGEX).required().error(new Error(req.__('ADMIN[Invalid Password Format]'))),
-    password2: joi.string().min(PASSWORD_LENGTH_MIN).regex(PASSWORD_REGEX).required().error(new Error(req.__('ADMIN[Invalid Password Format]')))
+    password1: joi
+      .string()
+      .min(PASSWORD_LENGTH_MIN)
+      .regex(PASSWORD_REGEX)
+      .required()
+      .error(new Error(req.__('ADMIN[Invalid Password Format]'))),
+    password2: joi
+      .string()
+      .min(PASSWORD_LENGTH_MIN)
+      .regex(PASSWORD_REGEX)
+      .required()
+      .error(new Error(req.__('ADMIN[Invalid Password Format]')))
   });
 
   // validate
   const { error, value } = schema.validate(req.args);
-  if (error)
-    return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
+  if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
   try {
@@ -72,26 +81,27 @@ async function V1ConfirmPassword(req) {
     });
 
     // if admin does not exists
-    if (!getAdmin)
-      return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN));
+    if (!getAdmin) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN));
 
     // check password1 and password2 equality
-    if (req.args.password1 !== req.args.password2)
-      return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
+    if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.ADMIN_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
 
     // generate new password
     const newPassword = bcrypt.hashSync(req.args.password1, getAdmin.salt);
 
     // update new password
-    await models.admin.update({
-      password: newPassword, // set to resetPassword
-      passwordResetToken: null
-    }, {
-      fields: ['password', 'passwordResetToken'], // only these fields
-      where: {
-        id: getAdmin.id
+    await models.admin.update(
+      {
+        password: newPassword, // set to resetPassword
+        passwordResetToken: null
+      },
+      {
+        fields: ['password', 'passwordResetToken'], // only these fields
+        where: {
+          id: getAdmin.id
+        }
       }
-    });
+    );
 
     // return success
     return Promise.resolve({
