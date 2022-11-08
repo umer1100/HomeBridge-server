@@ -26,7 +26,6 @@ function attachJWTAuth(passport) {
     // Add Passport Authentications to req
     req.JWTAuth = {
       JWTAuthAdmin: passport.authenticate('JWTAuthAdmin', { session: false }),
-      JWTAuthEmployer: passport.authenticate('JWTAuthEmployer', { session: false }),
       JWTAuthUser: passport.authenticate('JWTAuthUser', { session: false })
     };
 
