@@ -17,7 +17,7 @@ module.exports = {
 };
 
 /**
- * Takes in the req object and attaches the JWTAuthUser, JWTAuthAdmin, JWTAuthEmployer
+ * Takes in the req object and attaches the JWTAuthUser, JWTAuthAdmin
  *
  * ADD ANY MORE AUTHS HERE
  */
