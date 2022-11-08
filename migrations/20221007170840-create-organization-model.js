@@ -3,7 +3,7 @@ const { randomString } = require('../helpers/logic');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Employers', {
+    await queryInterface.createTable('Organizations', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false
       },
 
-      // The unique email of the employer
+      // The unique email of the organization
       email: {
         type: Sequelize.STRING,
         unique: true,
@@ -43,15 +43,22 @@ module.exports = {
         }
       },
 
-      // The unique phone of the employer
+      // The unique phone of the organization
       phone: {
         type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      // The spend limit of the organization
+      spendLimit: {
+        type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Employers');
+    await queryInterface.dropTable('Organizations');
   }
 };

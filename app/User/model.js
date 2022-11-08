@@ -10,7 +10,7 @@
  * CREATE TABLE IF NOT EXISTS Users (
  *   id BIGSERIAL PRIMARY KEY NOT NULL,
  *
- *   employerId BIGINT DEFAULT NULL REFERENCES Employers(id),
+ *   organizationId BIGINT DEFAULT NULL REFERENCES Organizations(id),
  *
  *   timezone STRING NOT NULL DEFAULT 'UTC',
  *   locale STRING NOT NULL DEFAULT 'en',
@@ -96,7 +96,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       roleType: {
-        type: DataTypes.ENUM(['NONEMPLOYEE', 'EMPLOYEE', 'ACCOUNT_OWNER', 'ACCOUNT_MANAGER']),
+        type: DataTypes.ENUM(['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']),
         allowNull: false
       },
 
@@ -291,7 +291,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // association
   User.associate = models => {
-    User.belongsTo(models.employer, { foreignKey: 'employerId' });
+    User.belongsTo(models.organization, { foreignKey: 'organizationId' });
   };
 
   // sensitive data method

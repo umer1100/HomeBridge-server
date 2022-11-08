@@ -1,5 +1,5 @@
 /**
- * TEST EMPLOYER V1Read METHOD
+ * TEST ORGANIZATION V1Read METHOD
  */
 
 'use strict';
@@ -24,16 +24,16 @@ const request = require('supertest');
 const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
-const { adminLogin, employerLogin, reset, populate } = require('../../../../helpers/tests');
+const { adminLogin, organizationLogin, reset, populate } = require('../../../../helpers/tests');
 
-describe('Employer.V1Read', async () => {
+describe('Organization.V1Read', async () => {
   // grab fixtures here
   const adminFix = require('../../../../test/fixtures/fix1/admin');
-  const employerFix = require('../../../../test/fixtures/fix1/employer');
+  const organizationFix = require('../../../../test/fixtures/fix1/organization');
 
   // url of the api method we are testing
   const routeVersion = '/v1';
-  const routePrefix = '/employers';
+  const routePrefix = '/organizations';
   const routeMethod = '/read';
   const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
@@ -69,9 +69,9 @@ describe('Employer.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[admin] should read an employer successfully', async () => {
+    it('[admin] should read an organization successfully', async () => {
       const admin1 = adminFix[0];
-      const employer1 = employerFix[0];
+      const organization1 = organizationFix[0];
 
       try {
         // login admin
@@ -79,7 +79,7 @@ describe('Employer.V1Read', async () => {
 
         // params
         const params = {
-          id: employer1.id
+          id: organization1.id
         };
 
         // read admin request
@@ -87,14 +87,14 @@ describe('Employer.V1Read', async () => {
 
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
-        expect(res.body).to.have.property('employer');
-        expect(res.body.employer).to.have.property('id', employer1.id);
+        expect(res.body).to.have.property('organization');
+        expect(res.body.organization).to.have.property('id', organization1.id);
       } catch (error) {
         throw error;
       }
     }); // END [admin] should read another admin successfully
 
-    it('[admin] should fail to read employer if employer does not exist', async () => {
+    it('[admin] should fail to read organization if organization does not exist', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -105,13 +105,13 @@ describe('Employer.V1Read', async () => {
           id: 100000
         };
 
-        // read employer request
+        // read organization request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
         expect(res.statusCode).to.equal(404);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should fail to read employer if employer does not exist
+    }); // END [admin] should fail to read organization if organization does not exist
   }); // END Role: Admin
-}); // END Employer.V1Read
+}); // END Organization.V1Read

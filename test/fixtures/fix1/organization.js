@@ -1,5 +1,5 @@
 /**
- * Employer Fixture Data
+ * Organization Fixture Data
  */
 
 'use strict';
@@ -11,7 +11,7 @@ module.exports = [
     locale: 'en',
     active: true,
     name: 'COMPANY1',
-    email: 'employer-1@example.com',
+    email: 'organization-1@example.com',
     phone: '+12408169501'
   },
   {
@@ -20,7 +20,7 @@ module.exports = [
     locale: 'en',
     active: true,
     name: 'COMPANY2',
-    email: 'employer-2@example.com',
+    email: 'organization-2@example.com',
     phone: '+12408169502'
   }
 ];

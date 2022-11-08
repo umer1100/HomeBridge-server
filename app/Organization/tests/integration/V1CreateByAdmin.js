@@ -1,5 +1,5 @@
 /**
- * TEST EMPLOYER V1CreateByEAdmin METHOD
+ * TEST ORGANIZATION V1CreateByEAdmin METHOD
  */
 
 'use strict';
@@ -26,15 +26,15 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
-const employer = require('../../../../test/fixtures/fix1/employer');
+const organization = require('../../../../test/fixtures/fix1/organization');
 
-describe('Employer.V1CreateByAdmin', async () => {
+describe('Organization.V1CreateByAdmin', async () => {
   // grab fixtures here
   const adminFix = require('../../../../test/fixtures/fix1/admin');
 
   // url of the api method we are testing
   const routeVersion = '/v1';
-  const routePrefix = '/employers';
+  const routePrefix = '/organizations';
   const routeMethod = '/create';
   const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
@@ -50,7 +50,7 @@ describe('Employer.V1CreateByAdmin', async () => {
       await populate('fix1');
     });
 
-    it('[logged-out] should fail to create employers', async () => {
+    it('[logged-out] should fail to create organizations', async () => {
       try {
         const res = await request(app).get(routeUrl);
         expect(res.statusCode).to.equal(401);
@@ -58,7 +58,7 @@ describe('Employer.V1CreateByAdmin', async () => {
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should fail to create employer
+    }); // END [logged-out] should fail to create organization
   }); // END Role: Logged Out
 
   // Admin
@@ -70,7 +70,7 @@ describe('Employer.V1CreateByAdmin', async () => {
       await populate('fix1');
     });
 
-    it('[admin] should create an employer successfully', async () => {
+    it('[admin] should create an organization successfully', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -86,35 +86,35 @@ describe('Employer.V1CreateByAdmin', async () => {
           locale: 'en'
         };
 
-        // create employer request
+        // create organization request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(201);
-        expect(res.body.employer.id).to.equal(employer.length + 1);
-        expect(res.body.employer.timezone).to.equal(params.timezone);
-        expect(res.body.employer.locale).to.equal(params.locale);
-        expect(res.body.employer.active).to.be.true;
-        expect(res.body.employer.name).to.equal(params.name);
-        expect(res.body.employer.email).to.equal(params.email);
-        expect(res.body.employer.phone).to.equal(params.phone);
-        expect(res.body.employer.createdAt).to.be.a('string');
-        expect(res.body.employer.updatedAt).to.be.a('string');
+        expect(res.body.organization.id).to.equal(organization.length + 1);
+        expect(res.body.organization.timezone).to.equal(params.timezone);
+        expect(res.body.organization.locale).to.equal(params.locale);
+        expect(res.body.organization.active).to.be.true;
+        expect(res.body.organization.name).to.equal(params.name);
+        expect(res.body.organization.email).to.equal(params.email);
+        expect(res.body.organization.phone).to.equal(params.phone);
+        expect(res.body.organization.createdAt).to.be.a('string');
+        expect(res.body.organization.updatedAt).to.be.a('string');
 
-        // check if employer was created
-        const checkEmployer = await models.employer.findByPk(res.body.employer.id);
-        expect(checkEmployer.name).to.equal(params.name);
-        expect(checkEmployer.timezone).to.equal(params.timezone);
-        expect(checkEmployer.locale).to.equal(params.locale);
-        expect(checkEmployer.active).to.be.true;
-        expect(checkEmployer.name).to.equal(params.name);
-        expect(checkEmployer.email).to.equal(params.email);
-        expect(checkEmployer.phone).to.equal(params.phone);
-        expect(checkEmployer.createdAt).to.not.be.null;
-        expect(checkEmployer.updatedAt).to.not.be.null;
+        // check if organization was created
+        const checkOrganization = await models.organization.findByPk(res.body.organization.id);
+        expect(checkOrganization.name).to.equal(params.name);
+        expect(checkOrganization.timezone).to.equal(params.timezone);
+        expect(checkOrganization.locale).to.equal(params.locale);
+        expect(checkOrganization.active).to.be.true;
+        expect(checkOrganization.name).to.equal(params.name);
+        expect(checkOrganization.email).to.equal(params.email);
+        expect(checkOrganization.phone).to.equal(params.phone);
+        expect(checkOrganization.createdAt).to.not.be.null;
+        expect(checkOrganization.updatedAt).to.not.be.null;
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should create an employer successfully
+    }); // END [admin] should create an organization successfully
 
     it('[admin] should not create new admin if email already exists', async () => {
       const admin1 = adminFix[0];
@@ -126,7 +126,7 @@ describe('Employer.V1CreateByAdmin', async () => {
         const params = {
           name: 'Company Inc.',
           active: true,
-          email: 'employer-1@example.com',
+          email: 'organization-1@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
           locale: 'en'
@@ -136,13 +136,13 @@ describe('Employer.V1CreateByAdmin', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_EMPLOYER_ALREADY_EXISTS));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new employer if email already exists
+    }); // END [admin] should not create new organization if email already exists
 
-    it('[admin] should not create new employer if timezone is invalid', async () => {
+    it('[admin] should not create new organization if timezone is invalid', async () => {
       const admin1 = adminFix[0];
 
       try {
@@ -152,7 +152,7 @@ describe('Employer.V1CreateByAdmin', async () => {
         const params = {
           name: 'Company Inc.',
           active: true,
-          email: 'new-employer@example.com',
+          email: 'new-organization@example.com',
           phone: '+12406206950',
           timezone: 'invalid-timezone',
           locale: 'en'
@@ -162,10 +162,10 @@ describe('Employer.V1CreateByAdmin', async () => {
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.EMPLOYER_BAD_REQUEST_INVALID_TIMEZONE));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_INVALID_TIMEZONE));
       } catch (error) {
         throw error;
       }
     }); // END [admin] should not create new admin if timezone is invalid
   }); // END Role: Admin
-}); // END Employer.V1Create
+}); // END Organization.V1Create

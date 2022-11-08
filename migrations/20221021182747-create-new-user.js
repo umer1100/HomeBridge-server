@@ -11,11 +11,11 @@ module.exports = {
         type: Sequelize.BIGINT
       },
 
-      employerId: {
+      organizationId: {
         type: Sequelize.BIGINT,
         references: {
           model: {
-            tableName: 'Employers'
+            tableName: 'Organizations'
           },
           key: 'id'
         },
@@ -83,9 +83,8 @@ module.exports = {
 
       // The role of the user
       role: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'NONEMPLOYEE'
+        type: Sequelize.ENUM(['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']),
+        allowNull: false
       },
 
       // The KYC id type, can be either social security number or passport

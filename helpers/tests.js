@@ -17,7 +17,7 @@ const seq = require('../database/sequence');
 module.exports = {
   login,
   adminLogin,
-  employerLogin,
+  organizationLogin,
   reset,
   populate
 };
@@ -28,7 +28,7 @@ module.exports = {
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @model - (STRING - REQUIRED): 'employers', 'admins', 'partners', 'employees', etc...
+ * @model - (STRING - REQUIRED): 'organizations', 'admins', 'partners', 'employees', etc...
  * @user - (OBJECT - REQUIRED): The user to login
  *
  * return the JSON web token
@@ -65,18 +65,18 @@ async function adminLogin(app, version, request, admin) {
 }
 
 /**
- * Log an employer in
+ * Log an organization in
  *
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @employer - (OBJECT - REQUIRED): The employer fixture to login
+ * @organization - (OBJECT - REQUIRED): The organization fixture to login
  *
  * return the JSON web token
  */
-async function employerLogin(app, version, request, employer) {
+async function organizationLogin(app, version, request, organization) {
   // login request
-  return login(app, version, request, 'employers', employer);
+  return login(app, version, request, 'organizations', organization);
 }
 
 /**

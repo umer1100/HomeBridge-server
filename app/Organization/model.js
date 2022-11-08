@@ -1,11 +1,11 @@
 /**
- * EMPLOYER MODEL
+ * ORGANIZATION MODEL
  *
  * Find Table Schema Here: "/database/schema.sql"
  * 
  * 
- * -- Employers TABLE --
-CREATE TABLE IF NOT EXISTS Employers (
+ * -- Organizations TABLE --
+CREATE TABLE IF NOT EXISTS Organizations (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   timezone STRING NOT NULL DEFAULT 'UTC',
   locale STRING NOT NULL DEFAULT 'en',
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS Employers (
 // require custom node modules
 
 module.exports = (sequelize, DataTypes) => {
-  const Employer = sequelize.define(
-    'employer',
+  const Organization = sequelize.define(
+    'organization',
     {
       // All foreign keys are added in associations
 
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
 
-      // The unique email of the employer
+      // The unique email of the organization
       email: {
         type: DataTypes.STRING,
         unique: true,
@@ -65,9 +65,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
 
-      // The unique phone of the employer
+      // The unique phone of the organization
       phone: {
         type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      spendLimit: {
+        type: DataTypes.INTEGER,
         allowNull: true,
         defaultValue: null
       }
@@ -79,16 +85,16 @@ module.exports = (sequelize, DataTypes) => {
       // For select (findOne, findAll etc) automatically ignore all rows when deletedAt is not null, if you really want to let the query see the soft-deleted records, you can pass the paranoid: false option to the query method
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
-      tableName: 'Employers', // define table name, must be PascalCase!
+      tableName: 'Organizations', // define table name, must be PascalCase!
       hooks: {},
       indexes: []
     }
   );
 
   // association
-  Employer.associate = models => {
-    Employer.hasMany(models.user);
+  Organization.associate = models => {
+    Organization.hasMany(models.user);
   };
 
-  return Employer;
+  return Organization;
 };

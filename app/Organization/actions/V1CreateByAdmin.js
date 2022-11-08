@@ -1,5 +1,5 @@
 /**
- * Employer V1Create ACTION
+ * Organization V1Create ACTION
  */
 
 'use strict';
@@ -26,33 +26,30 @@ module.exports = {
 };
 
 /**
- * Create an employer
+ * Create an organization
  *
- * GET  /v1/employers/create
- * POST /v1/employers/create
+ * GET  /v1/organizations/create
+ * POST /v1/organizations/create
  *
  * Must be logged in
  * Roles: ['admin']
  *
  * req.params = {}
  * req.args = {
- *   @name - (STRING - REQUIRED): The name of the new employer
- *   @active - (BOOLEAN - REQUIRED): Whether employer is active or not
- *   @email - (STRING - REQUIRED): The email of the employer,
- *   @phone - (STRING - REQUIRED): The phone of the employer,
- *   @timezone - (STRING - REQUIRED): The timezone of the employer,
+ *   @name - (STRING - REQUIRED): The name of the new organization
+ *   @active - (BOOLEAN - REQUIRED): Whether organization is active or not
+ *   @email - (STRING - REQUIRED): The email of the organization,
+ *   @phone - (STRING - REQUIRED): The phone of the organization,
+ *   @timezone - (STRING - REQUIRED): The timezone of the organization,
  *   @locale - (STRING - REQUIRED): The language of the user
- *   @password1 - (STRING - REQUIRED): The unhashed password1 of the employer
- *   @password2 - (STRING - REQUIRED): The unhashed password2 of the employer
- *   @acceptedTerms - (BOOLEAN - REQUIRED): Whether terms is accepted or not
  * }
  *
- * Success: Return an employer
+ * Success: Return an organization
  * Errors:
  *   400: BAD_REQUEST_INVALID_ARGUMENTS
- *   400: EMPLOYER_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED
- *   400: EMPLOYER_BAD_REQUEST_EMPLOYER_ALREADY_EXISTS
- *   400: EMPLOYER_BAD_REQUEST_INVALID_TIMEZONE
+ *   400: ORGANIZATION_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED
+ *   400: ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS
+ *   400: ORGANIZATION_BAD_REQUEST_INVALID_TIMEZONE
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
@@ -71,20 +68,20 @@ async function V1CreateByAdmin(req) {
   req.args = value; // updated arguments with type conversion
 
   try {
-    // check if employer email already exists
-    const duplicateEmployer = await models.employer.findOne({
+    // check if organization email already exists
+    const duplicateOrganization = await models.organization.findOne({
       where: {
         email: req.args.email
       }
     });
 
-    // check of duplicate employer user
-    if (duplicateEmployer) return Promise.resolve(errorResponse(req, ERROR_CODES.EMPLOYER_BAD_REQUEST_EMPLOYER_ALREADY_EXISTS));
+    // check of duplicate organization user
+    if (duplicateOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS));
 
     // check timezone
-    if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.EMPLOYER_BAD_REQUEST_INVALID_TIMEZONE));
-    // create employer
-    const newEmployer = await models.employer.create({
+    if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_INVALID_TIMEZONE));
+    // create organization
+    const newOrganization = await models.organization.create({
       timezone: req.args.timezone,
       locale: req.args.locale,
       name: req.args.name,
@@ -93,16 +90,16 @@ async function V1CreateByAdmin(req) {
       phone: req.args.phone
     });
 
-    const returnEmployer = await models.employer.findByPk(newEmployer.id).catch(err => {
-      newEmployer.destroy(); // destroy if error
+    const returnOrganization = await models.organization.findByPk(newOrganization.id).catch(err => {
+      newOrganization.destroy(); // destroy if error
       return Promise.reject(err);
-    }); // END grab employer
+    }); // END grab organization
 
     // return
     return Promise.resolve({
       status: 201,
       success: true,
-      employer: returnEmployer
+      organization: returnOrganization
     });
   } catch (error) {
     return Promise.reject(error);
