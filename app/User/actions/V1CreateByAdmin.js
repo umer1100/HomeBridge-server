@@ -1,5 +1,5 @@
 /**
- * User V1Create ACTION
+ * User V1CreateByAdmin ACTION
  */
 
 'use strict';
@@ -100,8 +100,6 @@ async function V1Create(req) {
   // check passwords
   if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
   req.args.password = req.args.password1; // set password
-  // check terms of service
-  if (!req.args.acceptedTerms) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
 
   try {
     // check if user email already exists
@@ -117,8 +115,6 @@ async function V1Create(req) {
     // check timezone
     if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
 
-    req.args.role = 'GUEST';
-
     // create user
     const newUser = await models.user.create({
       timezone: req.args.timezone,
@@ -128,7 +124,7 @@ async function V1Create(req) {
       status: req.args.status,
       email: req.args.email,
       phone: req.args.phone,
-      roleType: req.args.role,
+      roleType: req.args.roleType,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,

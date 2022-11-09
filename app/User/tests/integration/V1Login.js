@@ -100,7 +100,7 @@ describe('User.V1Login', async () => {
         // update user status to false
         await models.user.update(
           {
-            active: false
+            status: 'INACTIVE'
           },
           {
             where: {

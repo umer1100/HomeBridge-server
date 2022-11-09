@@ -47,5 +47,9 @@ module.exports = {
 
   // Genders
   GENDER: { MALE: 'MALE', FEMALE: 'FEMALE', OTHER: 'OTHER' },
-  GENDERS: ['MALE', 'FEMALE', 'OTHER']
+  GENDERS: ['MALE', 'FEMALE', 'OTHER'],
+
+  // Roles
+  ROLE: { MALE: 'MALE', FEMALE: 'FEMALE', OTHER: 'OTHER' },
+  ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']
 };

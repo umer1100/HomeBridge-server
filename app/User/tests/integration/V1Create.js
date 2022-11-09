@@ -55,10 +55,10 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          active: true,
+          status: 'ACTIVE',
           email: 'new-user@example.com',
           phone: '+12406206950',
-          roleType: 'NONEMPLOYEE',
+          roleType: 'GUEST',
           timezone: 'America/Los_Angeles',
           locale: 'en',
           password1: 'thisisapassword1F%',
@@ -72,7 +72,7 @@ describe('User.V1Create', async () => {
         expect(res.body.user.id).to.equal(user.length + 1);
         expect(res.body.user.timezone).to.equal(params.timezone);
         expect(res.body.user.locale).to.equal(params.locale);
-        expect(res.body.user.active).to.be.true;
+        expect(res.body.user.status).to.equal(params.status);
         expect(res.body.user.name).to.equal(params.name);
         expect(res.body.user.email).to.equal(params.email);
         expect(res.body.user.phone).to.equal(params.phone);
@@ -87,7 +87,7 @@ describe('User.V1Create', async () => {
         expect(checkUser.name).to.equal(params.name);
         expect(checkUser.timezone).to.equal(params.timezone);
         expect(checkUser.locale).to.equal(params.locale);
-        expect(checkUser.active).to.be.true;
+        expect(checkUser.status).to.equal(params.status);
         expect(checkUser.name).to.equal(params.name);
         expect(checkUser.email).to.equal(params.email);
         expect(checkUser.phone).to.equal(params.phone);
@@ -106,7 +106,7 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          active: true,
+          status: 'ACTIVE',
           email: 'new-user@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
@@ -131,7 +131,7 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          active: true,
+          status: 'ACTIVE',
           email: 'new-user@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
@@ -156,7 +156,7 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          active: true,
+          status: 'ACTIVE',
           email: 'new-user@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
@@ -181,7 +181,7 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'John',
           lastName: 'Doe',
-          active: true,
+          status: 'ACTIVE',
           email: 'user-1@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
@@ -206,7 +206,7 @@ describe('User.V1Create', async () => {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          active: true,
+          status: 'ACTIVE',
           email: 'new-user@example.com',
           phone: '+12406206950',
           timezone: 'invalid-timezone',

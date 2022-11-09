@@ -140,6 +140,7 @@ async function populate(fixtureFolderName) {
     // populate database for each fixture
     for (let i = 0; i < fixtures.length; i++) {
       const fixture = fixtures[i];
+
       // bulk create
       await models[files[idx]].bulkCreate(fixture, {
         validate: true,
@@ -149,7 +150,6 @@ async function populate(fixtureFolderName) {
 
       const tableName = models[files[idx]].getTableName(); // grab tablename of model
       const queryText = `SELECT setval('"${tableName}_id_seq"', (SELECT MAX(id) FROM "${tableName}"));`;
-
       await models.db.query(queryText);
       idx++;
     }

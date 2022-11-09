@@ -34,13 +34,10 @@ module.exports = {
         defaultValue: 'en'
       },
 
-      active: {
-        type: Sequelize.BOOLEAN,
+      status: {
+        type: Sequelize.ENUM(['PENDING', 'ACTIVE', 'INACTIVE']),
         allowNull: false,
-        defaultValue: true,
-        validate: {
-          isDecimal: true
-        }
+        defaultValue: 'PENDING'
       },
 
       sex: {
@@ -81,9 +78,8 @@ module.exports = {
         defaultValue: null
       },
 
-      // The role of the user
-      role: {
-        type: Sequelize.ENUM(['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']),
+      roleType: {
+        type: Sequelize.STRING,
         allowNull: false
       },
 

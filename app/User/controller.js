@@ -52,7 +52,10 @@ async function V1Example(req, res, next) {
  * Roles: []
  */
 async function V1Create(req, res, next) {
-  let method = 'V1Create'; // which action method to use
+  let method = ''; // which action method to use
+  if (req.admin) method = `V1CreateByAdmin`;
+  else if (req.user && ['EMPLOYER', 'ADMIN', 'MANAGER'].includes(req.user.role)) method = `V1CreateByUser`;
+  else method = 'V1Create';
 
   // call correct method
   try {

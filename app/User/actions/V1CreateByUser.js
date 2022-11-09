@@ -1,5 +1,5 @@
 /**
- * User V1Create ACTION
+ * User V1CreateByUser ACTION
  */
 
 'use strict';
@@ -69,6 +69,8 @@ async function V1Create(req) {
     roleType: joi.string().trim(),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
+    isManager: joi.boolean().required(),
+    isEmployee: joi.boolean().required(),
     password1: joi
       .string()
       .min(PASSWORD_LENGTH_MIN)
@@ -100,8 +102,6 @@ async function V1Create(req) {
   // check passwords
   if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
   req.args.password = req.args.password1; // set password
-  // check terms of service
-  if (!req.args.acceptedTerms) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
 
   try {
     // check if user email already exists
@@ -117,7 +117,16 @@ async function V1Create(req) {
     // check timezone
     if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
 
-    req.args.role = 'GUEST';
+    if (req.user.roleType === 'EMPLOYER') {
+      req.args.isEmployer = false;
+    } else if (req.user.isAdmin) {
+      req.args.isEmployer = false;
+      req.args.isAdmin = false;
+    } else if (req.user.isManager) {
+      req.args.isEmployer = false;
+      req.args.isAdmin = false;
+      req.args.isManager = false;
+    }
 
     // create user
     const newUser = await models.user.create({
@@ -128,7 +137,7 @@ async function V1Create(req) {
       status: req.args.status,
       email: req.args.email,
       phone: req.args.phone,
-      roleType: req.args.role,
+      roleType: req.args.roleType,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
