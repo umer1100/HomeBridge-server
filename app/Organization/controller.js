@@ -1,7 +1,7 @@
 /**
- * EMPLOYER CONTROLLER
+ * ORGANIZATION CONTROLLER
  *
- * Defines which Employer action methods are called based on the type of user role
+ * Defines which Organization action methods are called based on the type of user role
  */
 
 'use strict';
@@ -26,9 +26,9 @@ module.exports = {
 };
 
 /**
- * Login as employer
+ * Login as organization
  *
- * /v1/employers/login
+ * /v1/organizations/login
  *
  * Must be logged out
  * Roles: []
@@ -43,17 +43,17 @@ async function V1Login(req, res, next) {
 }
 
 /**
- * Read and return an employer
+ * Read and return an organization
  *
- * /v1/employers/read
+ * /v1/organizations/read
  *
  * Must be logged in
- * Roles: ['employer', 'admin']
+ * Roles: ['organization', 'admin']
  */
 async function V1Read(req, res, next) {
   let method = null; // which action method to use
   // which method to call
-  if (req.employer) method = `V1ReadByEmployer`;
+  if (req.organization) method = `V1ReadByOrganization`;
   else if (req.admin) method = `V1ReadByAdmin`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
@@ -63,9 +63,9 @@ async function V1Read(req, res, next) {
 }
 
 /**
- * Create an employer
+ * Create an organization
  *
- * /v1/employers/create
+ * /v1/organizations/create
  *
  * Must be logged in
  * Roles: ['admin']
@@ -83,18 +83,18 @@ async function V1Create(req, res, next) {
 }
 
 /**
- * Update and return updated employer
+ * Update and return updated organization
  *
- * /v1/employers/update
+ * /v1/organizations/update
  *
  * Must be logged in
- * Roles: ['employer']
+ * Roles: ['organization']
  */
 async function V1Update(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
-  if (req.employer) method = `V1Update`;
+  if (req.organization) method = `V1Update`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -103,18 +103,18 @@ async function V1Update(req, res, next) {
 }
 
 /**
- * Query and return employers
+ * Query and return organizations
  *
- * /v1/employers/query
+ * /v1/organizations/query
  *
  * Must be logged in
- * Roles: ['employer']
+ * Roles: ['organization']
  */
 async function V1Query(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
-  if (req.employer) method = `V1Query`;
+  if (req.organization) method = `V1Query`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -123,18 +123,18 @@ async function V1Query(req, res, next) {
 }
 
 /**
- * Update password of an employer
+ * Update password of an organization
  *
- * /v1/employers/updatepassword
+ * /v1/organizations/updatepassword
  *
  * Must be logged in
- * Roles: ['employer']
+ * Roles: ['organization']
  */
 async function V1UpdatePassword(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
-  if (req.employer) method = `V1UpdatePassword`;
+  if (req.organization) method = `V1UpdatePassword`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -143,9 +143,9 @@ async function V1UpdatePassword(req, res, next) {
 }
 
 /**
- * Reset password of an employer
+ * Reset password of an organization
  *
- * /v1/employers/resetpassword
+ * /v1/organizations/resetpassword
  *
  * Must be logged out
  * Roles: []
@@ -161,7 +161,7 @@ async function V1ResetPassword(req, res, next) {
 /**
  * Confirm new password after resetting
  *
- * /v1/employers/confirmpassword
+ * /v1/organizations/confirmpassword
  *
  * Can be logged in or logged out
  * Roles: []
@@ -175,18 +175,18 @@ async function V1ConfirmPassword(req, res, next) {
 }
 
 /**
- * Update email of an employer
+ * Update email of an organization
  *
- * /v1/employers/updateemail
+ * /v1/organizations/updateemail
  *
  * Must be logged in
- * Roles: ['employer']
+ * Roles: ['organization']
  */
 async function V1UpdateEmail(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
-  if (req.employer) method = `V1UpdateEmail`;
+  if (req.organization) method = `V1UpdateEmail`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -195,18 +195,18 @@ async function V1UpdateEmail(req, res, next) {
 }
 
 /**
- * Export an employer
+ * Export an organization
  *
- * /v1/employers/export
+ * /v1/organizations/export
  *
  * Must be logged in
- * Roles: ['employer']
+ * Roles: ['organization']
  */
 async function V1Export(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
-  if (req.employer) method = `V1Export`;
+  if (req.organization) method = `V1Export`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

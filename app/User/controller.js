@@ -6,6 +6,7 @@
 
 'use strict';
 
+const { ROLES } = require('../../helpers/constants');
 // helpers
 const { errorResponse, ERROR_CODES } = require('../../services/error');
 
@@ -48,16 +49,19 @@ async function V1Example(req, res, next) {
  *
  * /v1/users/create
  *
- * Must be logged out
- * Roles: []
+ * Roles: ['admin', 'user']
  */
 async function V1Create(req, res, next) {
-  let method = 'V1Create'; // which action method to use
+  let method = ''; // which action method to use
+
+  if (req.admin) method = `V1CreateByAdmin`;
+  else if (req.user && req.user.roleType !== ROLES.GUEST) method = `V1CreateByOrganizationalUser`;
+  else if (req.user && req.user.roleType === ROLES.GUEST) return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  else method = 'V1CreateByLoggedOutUser';
 
   // call correct method
   try {
     const result = await actions[method](req);
-
     return res.status(result.status).json(result);
   } catch (error) {
     return next(error);

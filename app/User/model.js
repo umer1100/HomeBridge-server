@@ -9,12 +9,13 @@
  * CREATE TABLE IF NOT EXISTS Users (
  *   id BIGSERIAL PRIMARY KEY NOT NULL,
  *
- *   employerId BIGINT DEFAULT NULL REFERENCES Employers(id),
+ *   organizationId BIGINT DEFAULT NULL REFERENCES Organizations(id),
  *
  *   timezone STRING NOT NULL DEFAULT 'UTC',
  *   locale STRING NOT NULL DEFAULT 'en',
- *   active BOOLEAN NOT NULL DEFAULT TRUE,
+ *   status STRING NOT NULL DEFAULT TRUE,
  *   sex SEXTYPE DEFAULT NULL,
+ *   roleType STRING NOT NULL,
  *
  *   -- Following values are necessary for KYC
  *   firstName STRING NOT NULL,
@@ -82,15 +83,20 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 'en'
       },
 
-      active: {
-        type: DataTypes.BOOLEAN,
+      status: {
+        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE']),
         allowNull: false,
-        defaultValue: true
+        defaultValue: 'PENDING'
       },
 
       sex: {
         type: DataTypes.ENUM(['MALE', 'FEMALE', 'OTHER']),
         allowNull: true
+      },
+
+      roleType: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
 
       firstName: {
@@ -284,7 +290,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // association
   User.associate = models => {
-    User.belongsTo(models.employer, { foreignKey: 'employerId' });
+    User.belongsTo(models.organization, { foreignKey: 'organizationId' });
   };
 
   // sensitive data method

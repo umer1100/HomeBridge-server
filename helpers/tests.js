@@ -17,7 +17,7 @@ const seq = require('../database/sequence');
 module.exports = {
   login,
   adminLogin,
-  employerLogin,
+  userLogin,
   reset,
   populate
 };
@@ -28,7 +28,7 @@ module.exports = {
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @model - (STRING - REQUIRED): 'employers', 'admins', 'partners', 'employees', etc...
+ * @model - (STRING - REQUIRED): 'organizations', 'admins', 'partners', 'employees', etc...
  * @user - (OBJECT - REQUIRED): The user to login
  *
  * return the JSON web token
@@ -65,18 +65,18 @@ async function adminLogin(app, version, request, admin) {
 }
 
 /**
- * Log an employer in
+ * Log a user in
  *
  * @app - (OBJECT - REQUIRED): The express server
  * @version - (STRING - REQUIRED): The api version
  * @request - (OBJECT - REQUIRED): The supertest request object
- * @employer - (OBJECT - REQUIRED): The employer fixture to login
+ * @user - (OBJECT - REQUIRED): The user fixture to login
  *
  * return the JSON web token
  */
-async function employerLogin(app, version, request, employer) {
+async function userLogin(app, version, request, user) {
   // login request
-  return login(app, version, request, 'employers', employer);
+  return login(app, version, request, 'users', user);
 }
 
 /**
@@ -122,7 +122,6 @@ async function populate(fixtureFolderName) {
     let idx = 0; // index
     const orderedFixtures = [];
     const orderedFiles = [];
-
     // order the files
     for (let i = 0; i < seq.length; i++) {
       for (let j = 0; j < files.length; j++) {
@@ -141,6 +140,7 @@ async function populate(fixtureFolderName) {
     // populate database for each fixture
     for (let i = 0; i < fixtures.length; i++) {
       const fixture = fixtures[i];
+
       // bulk create
       await models[files[idx]].bulkCreate(fixture, {
         validate: true,
@@ -150,7 +150,6 @@ async function populate(fixtureFolderName) {
 
       const tableName = models[files[idx]].getTableName(); // grab tablename of model
       const queryText = `SELECT setval('"${tableName}_id_seq"', (SELECT MAX(id) FROM "${tableName}"));`;
-
       await models.db.query(queryText);
       idx++;
     }

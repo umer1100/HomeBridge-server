@@ -58,7 +58,7 @@ async function V1Login(req, res) {
       if (!user) return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_LOGIN_CREDENTIALS));
 
       // return error message if user is inactive
-      if (!user.active) return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_INACTIVE));
+      if (user.status === 'INACTIVE') return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_INACTIVE));
 
       // return error message if user is deleted
       if (user.deletedAt) return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DELETED));

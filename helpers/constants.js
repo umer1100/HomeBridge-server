@@ -47,5 +47,9 @@ module.exports = {
 
   // Genders
   GENDER: { MALE: 'MALE', FEMALE: 'FEMALE', OTHER: 'OTHER' },
-  GENDERS: ['MALE', 'FEMALE', 'OTHER']
+  GENDERS: ['MALE', 'FEMALE', 'OTHER'],
+
+  // Roles - this must be in descending order of privledge.
+  ROLE: { EMPLOYER: 'EMPLOYER', ADMIN: 'ADMIN', MANAGER: 'MANAGER', EMPLOYEE: 'EMPLOYEE', GUEST: 'GUEST' },
+  ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']
 };

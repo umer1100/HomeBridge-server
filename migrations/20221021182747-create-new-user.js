@@ -11,11 +11,11 @@ module.exports = {
         type: Sequelize.BIGINT
       },
 
-      employerId: {
+      organizationId: {
         type: Sequelize.BIGINT,
         references: {
           model: {
-            tableName: 'Employers'
+            tableName: 'Organizations'
           },
           key: 'id'
         },
@@ -34,13 +34,10 @@ module.exports = {
         defaultValue: 'en'
       },
 
-      active: {
-        type: Sequelize.BOOLEAN,
+      status: {
+        type: Sequelize.ENUM(['PENDING', 'ACTIVE', 'INACTIVE']),
         allowNull: false,
-        defaultValue: true,
-        validate: {
-          isDecimal: true
-        }
+        defaultValue: 'PENDING'
       },
 
       sex: {
@@ -79,6 +76,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
         defaultValue: null
+      },
+
+      roleType: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
 
       // The KYC id type, can be either social security number or passport

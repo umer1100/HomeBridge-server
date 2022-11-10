@@ -5,8 +5,4 @@
 
 'use strict';
 
-module.exports = [
-  'admin',
-  'employer',
-  'user'
-];
+module.exports = ['admin', 'organization', 'user'];

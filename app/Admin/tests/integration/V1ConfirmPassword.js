@@ -53,7 +53,6 @@ describe('Admin.V1ConfirmPassword', async () => {
 
     it('[logged-out] should confirm password successfully', async () => {
       const admin1 = adminFix[0];
-
       const params = {
         email: admin1.email
       };

@@ -1,5 +1,5 @@
 /**
- * EMPLOYER V1Read ACTION
+ * ORGANIZATION V1Read ACTION
  */
 
 'use strict';
@@ -19,20 +19,20 @@ module.exports = {
 };
 
 /**
- * Read and return an employer
+ * Read and return an organization
  *
- * GET  /v1/employers/read
- * POST /v1/employers/read
+ * GET  /v1/organizations/read
+ * POST /v1/organizations/read
  *
  * Must be logged in
  * Roles: ['admin']
  *
  * req.params = {}
  * req.args = {
- *   @id - (NUMBER - REQUIRED): The id of an employer
+ *   @id - (NUMBER - REQUIRED): The id of an organization
  * }
  *
- * Success: Return a employer.
+ * Success: Return a organization.
  * Errors:
  *   400: BAD_REQUEST_INVALID_ARGUMENTS
  *   400: ADMIN_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST
@@ -49,21 +49,15 @@ async function V1ReadByAdmin(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
-  // find employer
-  const findEmployer = await models.employer
-    .findByPk(req.args.id, {
-      attributes: {
-        exclude: models.employer.getSensitiveData() // remove sensitive data
-      }
-    })
-    .catch(err => Promise.reject(error));
+  // find organization
+  const findOrganization = await models.organization.findByPk(req.args.id).catch(err => Promise.reject(error));
 
-  // check if employer exists
-  if (!findEmployer) return Promise.resolve(errorResponse(req, ERROR_CODES.EMPLOYER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+  // check if organization exists
+  if (!findOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
   return Promise.resolve({
     status: 200,
     success: true,
-    employer: findEmployer.dataValues
+    organization: findOrganization.dataValues
   });
 } // END V1Read

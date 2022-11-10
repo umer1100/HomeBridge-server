@@ -1,5 +1,5 @@
 /**
- * User V1Create ACTION
+ * User V1CreateByLoggedOutUser ACTION
  */
 
 'use strict';
@@ -23,7 +23,7 @@ const { join } = require('lodash');
 
 // methods
 module.exports = {
-  V1Create
+  V1CreateByLoggedOutUser
 };
 
 /**
@@ -39,10 +39,11 @@ module.exports = {
  * req.args = {
  *   @firstName - (STRING - REQUIRED): The first name of the new user
  *   @lastName - (STRING - REQUIRED): The last name of the new user
- *   @active - (BOOLEAN - REQUIRED): Whether user is active or not
+ *   @status - (STRING - REQUIRED): Status of the user
  *   @email - (STRING - REQUIRED): The email of the user,
  *   @phone - (STRING - REQUIRED): The phone of the user,
- *   @timezone - (STRING - REQUIRED): The timezone of the user,
+ *   @roleType - (STRING - REQUIRED): The role type of the user
+ *   @timezone - (STRING - REQUIRED): The timezone of the user
  *   @locale - (STRING - REQUIRED): The language of the user
  *   @password1 - (STRING - REQUIRED): The unhashed password1 of the user
  *   @password2 - (STRING - REQUIRED): The unhashed password2 of the user
@@ -58,13 +59,14 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1Create(req) {
+async function V1CreateByLoggedOutUser(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
-    active: joi.boolean().required(),
+    status: joi.string().required(),
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
+    roleType: joi.string().trim(),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
     password1: joi
@@ -114,15 +116,19 @@ async function V1Create(req) {
 
     // check timezone
     if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
+
+    req.args.role = 'GUEST';
+
     // create user
     const newUser = await models.user.create({
       timezone: req.args.timezone,
       locale: req.args.locale,
       firstName: req.args.firstName,
       lastName: req.args.lastName,
-      active: req.args.active,
+      status: req.args.status,
       email: req.args.email,
       phone: req.args.phone,
+      roleType: req.args.role,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
