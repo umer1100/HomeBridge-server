@@ -1,5 +1,5 @@
 /**
- * User V1Create ACTION
+ * User V1CreateByOrganizationalUser ACTION
  */
 
 'use strict';
@@ -17,13 +17,14 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 const models = require('../../../models');
 
 // helpers
-const { isValidTimezone } = require('../../../helpers/validate');
+const { isValidTimezone, isValidRoleAction } = require('../../../helpers/validate');
 const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/constants');
 const { join } = require('lodash');
+const { ROLES } = require('../../../helpers/constants');
 
 // methods
 module.exports = {
-  V1Create
+  V1CreateByOrganizationalUser
 };
 
 /**
@@ -59,7 +60,7 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1Create(req) {
+async function V1CreateByOrganizationalUser(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
@@ -67,6 +68,7 @@ async function V1Create(req) {
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
     roleType: joi.string().trim(),
+    organizationId: joi.number().integer().min(1).required(),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
     password1: joi
@@ -94,14 +96,13 @@ async function V1Create(req) {
   });
   // validate
   const { error, value } = schema.validate(req.args);
+
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
   // check passwords
   if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
   req.args.password = req.args.password1; // set password
-  // check terms of service
-  if (!req.args.acceptedTerms) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_TERMS_OF_SERVICE_NOT_ACCEPTED));
 
   try {
     // check if user email already exists
@@ -117,7 +118,10 @@ async function V1Create(req) {
     // check timezone
     if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
 
-    req.args.role = 'GUEST';
+    // validate roleType
+    if (!isValidRoleAction(req.user.roleType, req.args.roleType)) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+    // validate organizationId
+    // if (req.user.organizationId !== req.args.organizationId) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
     // create user
     const newUser = await models.user.create({
@@ -128,7 +132,8 @@ async function V1Create(req) {
       status: req.args.status,
       email: req.args.email,
       phone: req.args.phone,
-      roleType: req.args.role,
+      roleType: req.args.roleType,
+      organizationId: req.args.organizationId,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,

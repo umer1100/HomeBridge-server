@@ -23,7 +23,7 @@ const { join } = require('lodash');
 
 // methods
 module.exports = {
-  V1Create
+  V1CreateByAdmin
 };
 
 /**
@@ -59,7 +59,7 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1Create(req) {
+async function V1CreateByAdmin(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
@@ -67,6 +67,7 @@ async function V1Create(req) {
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
     roleType: joi.string().trim(),
+    organizationId: joi.number().integer(),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
     password1: joi
@@ -125,6 +126,7 @@ async function V1Create(req) {
       email: req.args.email,
       phone: req.args.phone,
       roleType: req.args.roleType,
+      organizationId: req.args.organizationId,
       password: req.args.password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
