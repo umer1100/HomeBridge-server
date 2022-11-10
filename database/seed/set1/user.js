@@ -10,10 +10,10 @@ module.exports = [
     timezone: 'UTC',
     locale: 'en',
     active: true,
-    roleType: 'ADMIN',
-    firstName: 'account',
-    lastName: 'owner',
-    email: 'account-owner@ownerific.com',
+    roleType: 'EMPLOYER',
+    firstName: 'President',
+    lastName: 'Boss',
+    email: 'employer@ownerific.com',
     phone: '+12408169501',
     salt: '1-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
     password: 'password1'
@@ -24,11 +24,11 @@ module.exports = [
     locale: 'en',
     active: true,
     roleType: 'EMPLOYEE',
-    firstName: 'account',
-    lastName: 'manager',
-    email: 'account-manager@ownerific.com',
+    firstName: 'Entry',
+    lastName: 'Worker',
+    email: 'employee@ownerific.com',
     phone: '+12408169501',
     salt: '1-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
-    password: 'password1'
+    password: 'password2'
   }
 ];
