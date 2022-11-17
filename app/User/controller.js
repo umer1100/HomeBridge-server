@@ -16,7 +16,8 @@ const actions = require('./actions');
 module.exports = {
   V1Create,
   V1Login,
-  V1ConfirmEmail
+  V1ConfirmEmail,
+  V1Read
 };
 
 /**
@@ -98,6 +99,31 @@ async function V1Login(req, res, next) {
  */
  async function V1ConfirmEmail(req, res, next) {
   let method = 'V1ConfirmEmail'; // which action method to use
+
+  // call correct method
+  try {
+    const result = await actions[method](req);
+
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
+ * Read Method
+ *
+ * /v1/users/read
+ *
+ * Must be logged in
+ * Roles: [admin, user]
+ */
+async function V1Read(req, res, next) {
+  let method = ''; // which action method to use
+
+  // which method to call
+  if (req.user || req.admin) method = `V1Read`;
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   try {

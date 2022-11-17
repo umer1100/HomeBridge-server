@@ -171,6 +171,8 @@ module.exports = async passport => {
             })
             .catch(err => done(err, null));
 
+          if (payload.exp < new Date().getTime()) return done(null, false, { message: 'Expired Token' });
+
           return done(null, user ? user : false);
         });
       }

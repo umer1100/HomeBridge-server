@@ -12,5 +12,6 @@ module.exports = {
   ...require('./V1CreateByOrganizationalUser'),
   ...require('./V1CreateGuest'),
   ...require('./V1Login'),
-  ...require('./V1ConfirmEmail')
+  ...require('./V1ConfirmEmail'),
+  ...require('./V1Read')
 };

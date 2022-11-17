@@ -68,12 +68,16 @@ function randomString({ len, pre, post, lowercase, uppercase, numbers, special }
  * Docs: https://www.npmjs.com/package/passport-jwt
  */
 function createJwtToken(user, client) {
-  return jwt.encode({
-    sub: user.id,
-    iss: HOSTNAME,
-    aud: client,
-    iat: new Date().getTime()
-  }, SESSION_SECRET);
+  return jwt.encode(
+    {
+      sub: user.id,
+      iss: HOSTNAME,
+      aud: client,
+      iat: new Date().getTime(),
+      exp: new Date().getTime() + 30 * 60 * 1000
+    },
+    SESSION_SECRET
+  );
 }
 
 /**
@@ -84,10 +88,7 @@ function createJwtToken(user, client) {
  * return new string with all white spaces removed
  */
 function removeAllWhiteSpace(str) {
-  return str
-    .replace(/ /g, '')
-    .replace(/\n/g, '')
-    .replace(/\t/g, '');
+  return str.replace(/ /g, '').replace(/\n/g, '').replace(/\t/g, '');
 }
 
 /**
@@ -112,7 +113,7 @@ function convertJSONStringsToJSObjects(obj, keysToConvertArray) {
         return {
           success: false,
           error: new Error(keysToConvertArray[i] + ' is not in a valid JSON string format.')
-        }
+        };
       }
     }
   }
@@ -126,7 +127,7 @@ function convertJSONStringsToJSObjects(obj, keysToConvertArray) {
 // takes in a data obj timestamp from the database and returns the unix timestamp
 function getUnixTimeFromDatabaseTimestamp(dateObjFromDatabase) {
   if (!Date.prototype.getUnixTime)
-    Date.prototype.getUnixTime = function() {
+    Date.prototype.getUnixTime = function () {
       return (this.getTime() / 1000) | 0;
     };
 
@@ -147,8 +148,7 @@ function heapsort(array, comparator) {
   function buildHeap(arr) {
     arrayLength = arr.length;
 
-    for (let i = Math.floor(arrayLength / 2); i >= 0; i -= 1)
-      heapify(arr, i);
+    for (let i = Math.floor(arrayLength / 2); i >= 0; i -= 1) heapify(arr, i);
   }
 
   function heapify(arr, i) {
@@ -156,11 +156,9 @@ function heapsort(array, comparator) {
     let right = 2 * i + 2;
     let largest = i;
 
-    if (left < arrayLength && comparator(arr[left], arr[largest]) > 0)
-      largest = left;
+    if (left < arrayLength && comparator(arr[left], arr[largest]) > 0) largest = left;
 
-    if (right < arrayLength && comparator(arr[right], arr[largest]) > 0)
-      largest = right;
+    if (right < arrayLength && comparator(arr[right], arr[largest]) > 0) largest = right;
 
     if (largest != i) {
       swap(arr, i, largest);

@@ -60,7 +60,11 @@ const ERROR_CODES = {
 
 // check if is directory and get directories
 const isDirectory = source => fs.lstatSync(source).isDirectory();
-const getDirectories = source => fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory);
+const getDirectories = source =>
+  fs
+    .readdirSync(source)
+    .map(name => path.join(source, name))
+    .filter(isDirectory);
 const directories = getDirectories(path.join(__dirname, APP_DIR));
 
 // add each error to models object
@@ -108,16 +112,12 @@ function errorResponse(i18n, errorCode, errorMessage = 0, statusCode) {
  * TODO: Test
  */
 function joiErrorsMessage(errors) {
-  if (!errors)
-    return null;
+  if (!errors) return null;
 
   // if joi's error message object
-  if (errors.details)
-    return errors.details.map(e => e.message).join(', ');
-
+  if (errors.details) return errors.details.map(e => e.message).join(', ');
   // our custom message
-  else
-    return errors.message;
+  else return errors.message;
 }
 
 /**
@@ -135,23 +135,25 @@ async function queueError(error, queue, job) {
   // send email in production
   if (NODE_ENV === 'production') {
     // send error email
-    await email.send({
-      from: email.emails.error.address,
-      name: email.emails.error.name,
-      subject: 'URGENT! 500 Worker Process Error!',
-      template: 'ErrorQueue',
-      tos: [email.emails.error.address],
-      ccs: null,
-      bccs: null,
-      args: {
-        time: moment.tz('US/Pacific').format('LLLL'),
-        error,
-        queue,
-        job
-      }
-    }).catch(err => {
-      console.error(err);
-    });
+    await email
+      .send({
+        from: email.emails.error.address,
+        name: email.emails.error.name,
+        subject: 'URGENT! 500 Worker Process Error!',
+        template: 'ErrorQueue',
+        tos: [email.emails.error.address],
+        ccs: null,
+        bccs: null,
+        args: {
+          time: moment.tz('US/Pacific').format('LLLL'),
+          error,
+          queue,
+          job
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   return Promise.resolve();

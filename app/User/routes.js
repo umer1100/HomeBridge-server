@@ -16,6 +16,7 @@ module.exports = (passport, router) => {
   router.all('/v1/users/create', controller.V1Create);
   router.all('/v1/users/login', controller.V1Login);
   router.all('/v1/users/confirm-email', controller.V1ConfirmEmail);
+  router.all('/v1/users/read', controller.V1Read);
 
   // return router
   return router;
