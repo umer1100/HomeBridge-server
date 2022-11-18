@@ -35,8 +35,7 @@ module.exports = {
         'deletedAt',
         {
           type: Sequelize.DATE,
-          allowNull: false,
-          defaultValue: Sequelize.NOW,
+          defaultValue: null,
           validate: {
             isDate: true
           }
@@ -75,8 +74,7 @@ module.exports = {
         'deletedAt',
         {
           type: Sequelize.DATE,
-          allowNull: false,
-          defaultValue: Sequelize.NOW,
+          defaultValue: null,
           validate: {
             isDate: true
           }
