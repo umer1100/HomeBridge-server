@@ -31,6 +31,12 @@ const LOCAL_ERROR_CODES = {
     messages: ['USER[User Account Inactive]']
   },
 
+  USER_BAD_REQUEST_EMAIL_CONFIRMATION_PENDING: {
+    error: 'USER.BAD_REQUEST_EMAIL_CONFIRMATION_PENDING',
+    status: 400,
+    messages: ['USER[User Email confirmation is pending]']
+  },
+
   USER_BAD_REQUEST_ACCOUNT_DELETED: {
     error: 'USER.BAD_REQUEST_ACCOUNT_DELETED',
     status: 400,
@@ -48,6 +54,12 @@ const LOCAL_ERROR_CODES = {
     error: 'USER.BAD_REQUEST_USER_ALREADY_EXISTS',
     status: 400,
     messages: ['USER[User Already Exists]']
+  },
+
+  USER_BAD_REQUEST_INVALID_EMAIL_CONFIRMATION_TOKEN: {
+    error: 'USER.BAD_REQUEST_INVALID_EMAIL_CONFIRMATION_TOKEN',
+    status: 400,
+    messages: ['USER[Invalid Email Confirmation Token]']
   },
 
   USER_BAD_REQUEST_INVALID_TIMEZONE: {

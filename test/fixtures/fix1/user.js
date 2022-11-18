@@ -4,6 +4,8 @@
 
 'use strict';
 
+const { randomString } = require("../../../helpers/logic");
+
 module.exports = [
   {
     id: 1,
@@ -78,5 +80,20 @@ module.exports = [
     salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
     password: 'password5F%',
     emailConfirmed: true
+  },
+  {
+    id: 6,
+    timezone: 'UTC',
+    locale: 'en',
+    status: 'PENDING',
+    firstName: 'Ehsan',
+    lastName: 'Atif',
+    roleType: 'GUEST',
+    email: 'ehsan-atif@example.com',
+    phone: '+13018148502',
+    salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
+    password: 'password5F%',
+    emailConfirmed: false,
+    emailConfirmedToken: randomString()
   }
 ];

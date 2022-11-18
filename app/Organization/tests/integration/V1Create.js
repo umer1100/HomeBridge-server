@@ -28,10 +28,7 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
 const organization = require('../../../../test/fixtures/fix1/organization');
 
-describe('Organization.V1CreateByAdmin', async () => {
-  // grab fixtures here
-  const adminFix = require('../../../../test/fixtures/fix1/admin');
-
+describe('Organization.V1Create', async () => {
   // url of the api method we are testing
   const routeVersion = '/v1';
   const routePrefix = '/organizations';
@@ -50,44 +47,20 @@ describe('Organization.V1CreateByAdmin', async () => {
       await populate('fix1');
     });
 
-    it('[logged-out] should fail to create organizations', async () => {
+    it('[logged-out] should create an organization successfully', async () => {
       try {
-        const res = await request(app).get(routeUrl);
-        expect(res.statusCode).to.equal(401);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
-      } catch (error) {
-        throw error;
-      }
-    }); // END [logged-out] should fail to create organization
-  }); // END Role: Logged Out
-
-  // Admin
-  describe('Role: Admin', async () => {
-    const jwt = 'jwt-admin';
-
-    // populate database with fixtures
-    beforeEach(async () => {
-      await populate('fix1');
-    });
-
-    it('[admin] should create an organization successfully', async () => {
-      const admin1 = adminFix[0];
-
-      try {
-        // login admin
-        const { token } = await adminLogin(app, routeVersion, request, admin1);
-
         const params = {
           name: 'Company Inc.',
           active: true,
           email: 'new-admin@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
-          locale: 'en'
+          locale: 'en',
+          url: 'www.random-url.com'
         };
 
         // create organization request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+        const res = await request(app).post(routeUrl).send(params);
 
         expect(res.statusCode).to.equal(201);
         expect(res.body.organization.id).to.equal(organization.length + 1);
@@ -97,6 +70,7 @@ describe('Organization.V1CreateByAdmin', async () => {
         expect(res.body.organization.name).to.equal(params.name);
         expect(res.body.organization.email).to.equal(params.email);
         expect(res.body.organization.phone).to.equal(params.phone);
+        expect(res.body.organization.url).to.equal(params.url);
         expect(res.body.organization.createdAt).to.be.a('string');
         expect(res.body.organization.updatedAt).to.be.a('string');
 
@@ -109,46 +83,64 @@ describe('Organization.V1CreateByAdmin', async () => {
         expect(checkOrganization.name).to.equal(params.name);
         expect(checkOrganization.email).to.equal(params.email);
         expect(checkOrganization.phone).to.equal(params.phone);
+        expect(checkOrganization.url).to.equal(params.url);
         expect(checkOrganization.createdAt).to.not.be.null;
         expect(checkOrganization.updatedAt).to.not.be.null;
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should create an organization successfully
+    });
 
-    it('[admin] should not create new admin if email already exists', async () => {
-      const admin1 = adminFix[0];
+    it('should not create new organization if already exists', async () => {
 
       try {
-        // login admin
-        const { token } = await adminLogin(app, routeVersion, request, admin1);
 
-        const params = {
+        const params1 = {
+          name: 'Company Inc.',
+          active: true,
+          email: 'new-admin@example.com',
+          phone: '+12406206950',
+          timezone: 'America/Los_Angeles',
+          locale: 'en',
+          url: 'www.random-url.com'
+        };
+
+        // create organization request
+        await request(app).post(routeUrl).send(params1);
+
+        const params2 = {
           name: 'Company Inc.',
           active: true,
           email: 'organization-1@example.com',
           phone: '+12406206950',
           timezone: 'America/Los_Angeles',
-          locale: 'en'
+          locale: 'en',
+          url: 'www.random-url.com'
         };
 
-        // create admin request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+        // create organization request with same url request
+        const res = await request(app).post(routeUrl).send(params2);
 
         expect(res.statusCode).to.equal(400);
         expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS));
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new organization if email already exists
+    });
 
-    it('[admin] should not create new organization if timezone is invalid', async () => {
-      const admin1 = adminFix[0];
-
+    it('should not create new organization if name is missing', async () => {
       try {
-        // login admin
-        const { token } = await adminLogin(app, routeVersion, request, admin1);
+        const res = await request(app).get(routeUrl);
 
+        expect(res.statusCode).to.equal(400);
+        expect(res.body.message).to.equal('"name" is required');
+      } catch (error) {
+        throw error;
+      }
+    });
+
+    it('should not create new organization if url is missing', async () => {
+      try {
         const params = {
           name: 'Company Inc.',
           active: true,
@@ -159,13 +151,13 @@ describe('Organization.V1CreateByAdmin', async () => {
         };
 
         // create admin request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+        const res = await request(app).post(routeUrl).send(params);
 
         expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_INVALID_TIMEZONE));
+        expect(res.body.message).to.equal('"url" is required');
       } catch (error) {
         throw error;
       }
-    }); // END [admin] should not create new admin if timezone is invalid
-  }); // END Role: Admin
+    });
+  }); // END Role: Logged Out
 }); // END Organization.V1Create

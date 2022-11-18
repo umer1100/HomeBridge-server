@@ -2,8 +2,8 @@
  * ORGANIZATION MODEL
  *
  * Find Table Schema Here: "/database/schema.sql"
- * 
- * 
+ *
+ *
  * -- Organizations TABLE --
 CREATE TABLE IF NOT EXISTS Organizations (
   id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Organizations (
   createdAt TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   updatedAt TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
 );
- * 
+ *
  */
 
 'use strict';
@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false,
+        allowNull: true,
         validate: {
           isEmail: true
         }
@@ -76,7 +76,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         defaultValue: null
-      }
+      },
+
+      // The organization url
+      url: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+
+      // To keep track that organization by paying or guest customer
+      status: {
+        type: DataTypes.ENUM(['PAYING', 'GUEST']),
+        allowNull: false,
+        defaultValue: 'GUEST'
+      },
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically

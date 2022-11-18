@@ -37,5 +37,8 @@
 	"USER[Invalid Time Zone]": "USER[Invalid Time Zone]",
 	"USER[Invalid Login Credentials]": "USER[Invalid Login Credentials]",
 	"USER[User Account Inactive]": "USER[User Account Inactive]",
-	"USER[User Account Deleted]": "USER[User Account Deleted]"
+	"USER[User Account Deleted]": "USER[User Account Deleted]",
+	"USER[USER Account Does Not Exist]": "USER[USER Account Does Not Exist]",
+	"USER[Invalid Email Confirmation Token]": "USER[Invalid Email Confirmation Token]",
+	"USER[User Email confirmation is pending]": "USER[User Email confirmation is pending]"
 }

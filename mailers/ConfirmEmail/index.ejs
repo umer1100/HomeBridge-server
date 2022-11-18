@@ -1,0 +1,12 @@
+<!--
+Variables:
+emailConfirmLink
+-->
+
+<html>
+  <body>
+    <center><span style="color:red"><%= locals.isTestEmail ? isTestEmail : '' %></span><br/></center>
+    <p>Please confirm your email by clicking on following link,</p>
+    <a href="<%= locals.emailConfirmLink %>" class="btn">Confirm your email.</a>
+  </body>
+</html>

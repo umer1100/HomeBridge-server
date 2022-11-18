@@ -71,11 +71,7 @@ async function V1Read(req, res, next) {
  * Roles: ['admin']
  */
 async function V1Create(req, res, next) {
-  let method = null; // which action method to use
-
-  // which method to call
-  if (req.admin) method = `V1CreateByAdmin`;
-  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  let method = 'V1Create'
 
   // call correct method
   const result = await actions[method](req).catch(err => next(err));

@@ -15,6 +15,7 @@ module.exports = (passport, router) => {
   // routes - can also use router.get or router.post
   router.all('/v1/users/create', controller.V1Create);
   router.all('/v1/users/login', controller.V1Login);
+  router.all('/v1/users/confirm-email', controller.V1ConfirmEmail);
 
   // return router
   return router;

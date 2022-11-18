@@ -262,7 +262,21 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isDate: true
         }
-      }
+      },
+
+      // The user's primary goal
+      primaryGoal: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      // The time span required to user to achieve his goals
+      goalTimeline: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically

@@ -21,6 +21,8 @@ const models = require('../../../../models');
 const { expect } = require('chai');
 const request = require('supertest');
 
+const organizationFix = require('../../../../test/fixtures/fix1/organization');
+
 // services
 const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
@@ -51,18 +53,16 @@ describe('User.V1Create', async () => {
     });
 
     it('[logged-out] should create user successfully', async () => {
+      const organization = organizationFix[0];
+
       try {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          status: 'ACTIVE',
           email: 'new-user@example.com',
-          phone: '+12406206950',
-          roleType: 'GUEST',
-          timezone: 'America/Los_Angeles',
-          locale: 'en',
           password1: 'thisisapassword1F%',
           password2: 'thisisapassword1F%',
+          organizationId: organization.id,
           acceptedTerms: true
         };
         // create user request
@@ -70,13 +70,9 @@ describe('User.V1Create', async () => {
 
         expect(res.statusCode).to.equal(201);
         expect(res.body.user.id).to.equal(user.length + 1);
-        expect(res.body.user.timezone).to.equal(params.timezone);
-        expect(res.body.user.locale).to.equal(params.locale);
-        expect(res.body.user.status).to.equal(params.status);
+        expect(res.body.user.status).to.equal('PENDING');
         expect(res.body.user.name).to.equal(params.name);
         expect(res.body.user.email).to.equal(params.email);
-        expect(res.body.user.phone).to.equal(params.phone);
-        expect(res.body.user.passwordResetExpire).to.be.a('string');
         expect(res.body.user.loginCount).to.equal(0);
         expect(res.body.user.lastLogin).to.be.null;
         expect(res.body.user.createdAt).to.be.a('string');
@@ -85,13 +81,9 @@ describe('User.V1Create', async () => {
         // check if user was created
         const checkUser = await models.user.findByPk(res.body.user.id);
         expect(checkUser.name).to.equal(params.name);
-        expect(checkUser.timezone).to.equal(params.timezone);
-        expect(checkUser.locale).to.equal(params.locale);
-        expect(checkUser.status).to.equal(params.status);
+        expect(checkUser.status).to.equal('PENDING');
         expect(checkUser.name).to.equal(params.name);
         expect(checkUser.email).to.equal(params.email);
-        expect(checkUser.phone).to.equal(params.phone);
-        expect(checkUser.passwordResetExpire).to.not.be.null;
         expect(checkUser.loginCount).to.equal(0);
         expect(checkUser.lastLogin).to.be.null;
         expect(checkUser.createdAt).to.not.be.null;
@@ -103,16 +95,15 @@ describe('User.V1Create', async () => {
 
     it('[logged-out] should not create new user if passwords format is invalid', async () => {
       try {
+        const organization = organizationFix[0];
+
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          status: 'ACTIVE',
           email: 'new-user@example.com',
-          phone: '+12406206950',
-          timezone: 'America/Los_Angeles',
-          locale: 'en',
           password1: 'thisisapassword',
           password2: 'thisisapassword',
+          organizationId: organization.id,
           acceptedTerms: true
         };
 
@@ -127,17 +118,15 @@ describe('User.V1Create', async () => {
     }); // END [logged-out] should not create new user if passwords format is invalid
 
     it('[logged-out] should not create new user if passwords are not the same', async () => {
+      const organization = organizationFix[0];
       try {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          status: 'ACTIVE',
           email: 'new-user@example.com',
-          phone: '+12406206950',
-          timezone: 'America/Los_Angeles',
-          locale: 'en',
           password1: 'thisisapassword1F%',
           password2: 'thisisapassword2F%',
+          organizationId: organization.id,
           acceptedTerms: true
         };
 
@@ -152,17 +141,15 @@ describe('User.V1Create', async () => {
     }); // END [logged-out] should not create new user if passwords are not the same
 
     it('[logged-out] should not create new user if acceptedTerms is false', async () => {
+      const organization = organizationFix[0];
       try {
         const params = {
           firstName: 'First',
           lastName: 'Last',
-          status: 'ACTIVE',
           email: 'new-user@example.com',
-          phone: '+12406206950',
-          timezone: 'America/Los_Angeles',
-          locale: 'en',
           password1: 'thisisapassword1F%',
-          password2: 'thisisapassword1F%',
+          password2: 'thisisapassword2F%',
+          organizationId: organization.id,
           acceptedTerms: false
         };
 
@@ -178,16 +165,14 @@ describe('User.V1Create', async () => {
 
     it('[logged-out] should not create new user if email already exists', async () => {
       try {
+        const organization = organizationFix[0];
         const params = {
           firstName: 'John',
           lastName: 'Doe',
-          status: 'ACTIVE',
           email: 'user-1@example.com',
-          phone: '+12406206950',
-          timezone: 'America/Los_Angeles',
-          locale: 'en',
           password1: 'thisisapassword1F%',
           password2: 'thisisapassword1F%',
+          organizationId: organization.id,
           acceptedTerms: true
         };
 
@@ -201,30 +186,6 @@ describe('User.V1Create', async () => {
       }
     }); // END [logged-out] should not create new user if email already exists
 
-    it('[logged-out] should not create new user if timezone is invalid', async () => {
-      try {
-        const params = {
-          firstName: 'First',
-          lastName: 'Last',
-          status: 'ACTIVE',
-          email: 'new-user@example.com',
-          phone: '+12406206950',
-          timezone: 'invalid-timezone',
-          locale: 'en',
-          password1: 'thisisapassword1F%',
-          password2: 'thisisapassword1F%',
-          acceptedTerms: true
-        };
-
-        // create user request
-        const res = await request(app).post(routeUrl).send(params);
-
-        expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
-      } catch (error) {
-        throw error;
-      }
-    }); // END [logged-out] should not create new user if timezone is invalid
   }); // END Role: Logged Out
 
   // Role: User

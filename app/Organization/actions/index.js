@@ -8,6 +8,6 @@
 'use strict';
 
 module.exports = {
-  ...require('./V1CreateByAdmin'),
+  ...require('./V1Create'),
   ...require('./V1ReadByAdmin')
 };

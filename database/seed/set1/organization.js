@@ -12,7 +12,8 @@ module.exports = [
     active: true,
     name: 'Ownerific',
     email: 'info@ownerific.com',
-    phone: '+1999999999'
+    phone: '+1999999999',
+    url: 'https://ownerific.com'
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ module.exports = [
     active: true,
     name: 'FiscalNote',
     email: 'organization-2@example.com',
-    phone: '+1999999998'
+    phone: '+1999999998',
+    url: 'https://google.com'
   }
 ];

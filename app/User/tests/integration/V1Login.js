@@ -154,5 +154,24 @@ describe('User.V1Login', async () => {
         throw error;
       }
     }); // END [logged-out] should fail to login user if account is deleted
+
+    it('[logged-out] should fail to login user if email is not confirmed', async () => {
+      const user = userFix[5];
+
+      try {
+        const params = {
+          email: user.email,
+          password: user.password
+        };
+
+        // login user
+        const res = await request(app).post(routeUrl).send(params);
+
+        expect(res.statusCode).to.equal(400);
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.USER_BAD_REQUEST_EMAIL_CONFIRMATION_PENDING));
+      } catch (error) {
+        throw error;
+      }
+    }); // END [logged-out] should fail to login user if email is not confirmed
   }); // END Role: Logged Out
 }); // END User.V1Login
