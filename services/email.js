@@ -193,10 +193,10 @@ async function send({ from, name, subject, template, tos, ccs, bccs, attachments
     tempEmailsArr = []; // reset
 
     // Recommended if you want to store a BCC copy of all the emails that are sent out. If not, comment this out
-    if (NODE_ENV === 'production') {
-      let defaultBccEmail = emails.storage.address; // the default email to send all emails
-      bccs.push(defaultBccEmail);
-    }
+    // if (NODE_ENV === 'production') {
+    //   let defaultBccEmail = emails.storage.address; // the default email to send all emails
+    //   bccs.push(defaultBccEmail);
+    // }
 
     // add bccs
     bccs.forEach(bcc => {
