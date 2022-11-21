@@ -5,7 +5,7 @@
 'use strict';
 
 // ENV variables
-const { SESSION_SECRET, HOSTNAME, USER_ORDER_CLIENT_HOST } = process.env;
+const { SESSION_SECRET, HOSTNAME, USER_ORDER_CLIENT_HOST, TOKEN_EXPIRATION_TIME } = process.env;
 
 // require third-party node modules
 const jwt = require('jwt-simple');
@@ -68,14 +68,14 @@ function randomString({ len, pre, post, lowercase, uppercase, numbers, special }
  *
  * Docs: https://www.npmjs.com/package/passport-jwt
  */
-function createJwtToken(user, client) {
+function createJwtToken(user, client, TOKEN_EXPIRATION_TIME) {
   return jwt.encode(
     {
       sub: user.id,
       iss: HOSTNAME,
       aud: client,
       iat: new Date().getTime(),
-      exp: new Date().getTime() + 30 * 60 * 1000
+      exp: new Date().getTime() + TOKEN_EXPIRATION_TIME * 60 * 1000
     },
     SESSION_SECRET
   );
@@ -89,10 +89,10 @@ function createJwtToken(user, client) {
  * Docs: https://www.npmjs.com/package/jwt-simple#decode-params
  */
 
- function isJWTExpired(token) {
+function isJWTExpired(token) {
   const payload = jwt.decode(token, SESSION_SECRET);
 
-  if (payload.exp < new Date().getTime()) {
+  if (payload.exp <= new Date().getTime()) {
     return true;
   }
   return false;
