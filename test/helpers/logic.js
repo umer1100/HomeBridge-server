@@ -69,4 +69,23 @@ describe('helpers/logic.js', () => {
       done();
     }); // END should remove all white space, tabs and newlines successfully
   }); // END removeAllWhiteSpace
+
+  // return true if JWT is expired
+  describe('isJWTExpired', function() {
+    let isExpired;
+
+    it('should return true if JWT is expired', done => {
+      let token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImlhdCI6MTY2OTAzOTE1NTQzNiwiZXhwIjoxNjY5MDE5MzU1NDM2fQ.t80NonpRmQRgBpKYQBYTLI-Gj08_OhUz1DhKsuaAC6A';
+      isExpired = logic.isJWTExpired(token);
+      expect(isExpired).to.be.true;
+      done();
+    }); // END should return true if JWT is expired
+
+    it('should return false if JWT is not expired', done => {
+      let token = logic.createJwtToken({ id: 1 }, 'http://localhost:8000');
+      isExpired = logic.isJWTExpired(token);
+      expect(isExpired).to.be.false;
+      done();
+    }); // END should return false if JWT is not expired
+  }); // END isJWTExpired
 }); // END helpers/logic.js

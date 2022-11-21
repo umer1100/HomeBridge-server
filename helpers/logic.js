@@ -16,7 +16,8 @@ module.exports = {
   removeAllWhiteSpace,
   convertJSONStringsToJSObjects,
   getUnixTimeFromDatabaseTimestamp,
-  heapsort
+  heapsort,
+  isJWTExpired
 };
 
 /**
@@ -78,6 +79,23 @@ function createJwtToken(user, client) {
     },
     SESSION_SECRET
   );
+}
+
+/**
+ * Verifies a JWT Expiration
+ *
+ * @token (USER/ADMIN token)
+ *
+ * Docs: https://www.npmjs.com/package/jwt-simple#decode-params
+ */
+
+ function isJWTExpired(token) {
+  const payload = jwt.decode(token, SESSION_SECRET);
+
+  if (payload.exp < new Date().getTime()) {
+    return true;
+  }
+  return false;
 }
 
 /**
