@@ -12,6 +12,7 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 
 // actions
 const actions = require('./actions');
+const { isEmployer } = require('./helper');
 
 module.exports = {
   V1Create,
@@ -122,7 +123,7 @@ async function V1Read(req, res, next) {
   let method = ''; // which action method to use
 
   // which method to call
-  if (req.user || req.admin) method = `V1Read`;
+  if (isEmployer(req?.user?.roleType) || req.admin) method = `V1Read`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

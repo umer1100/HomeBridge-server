@@ -11,7 +11,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const models = require('../../../models');
+const { user } = require('../../../models');
 
 // methods
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
  *
  * req.params = {}
  * req.args = {
- *   @id - (NUMBER - OPTIONAL) [DEFAULT - req.user.id]: The id of an user
+ *   @id - (NUMBER - REQUIRED): The id of an user
  * }
  *
  * Success: Return a user.
@@ -41,7 +41,7 @@ module.exports = {
  */
 async function V1Read(req) {
   const schema = joi.object({
-    id: joi.number().min(1).default(req.user.id).optional()
+    id: joi.number().min(1).required()
   });
 
   // validate
@@ -49,16 +49,23 @@ async function V1Read(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
-  if (req.user && req.user.id != req.args.id) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED, joiErrorsMessage(error)));
-
   // find user
-  const findUser = await models.user
+  const findUser = await user
     .findByPk(req.args.id, {
       attributes: {
-        exclude: models.user.getSensitiveData() // remove sensitive data
+        exclude: user.getSensitiveData() // remove sensitive data
       }
     })
     .catch(err => Promise.reject(error));
+
+  // allowed to access this resource
+  if (req.user) {
+    const { organizationId } = req.user
+    if (organizationId != findUser.organizationId) {
+      return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+    }
+  }
+
 
   // check if user exists
   if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
