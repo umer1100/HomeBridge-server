@@ -16,7 +16,9 @@ const actions = require('./actions');
 module.exports = {
   V1Create,
   V1Login,
-  V1ConfirmEmail
+  V1ConfirmEmail,
+  V1ResetPassword,
+  V1UpdatePassword
 };
 
 /**
@@ -107,4 +109,34 @@ async function V1Login(req, res, next) {
   } catch (error) {
     return next(error);
   }
+}
+
+/**
+ * Reset password of user
+ *
+ * /v1/users/reset-password
+ *
+ * Must be logged out
+ */
+ async function V1ResetPassword(req, res, next) {
+  let method = 'V1ResetPassword';
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+/**
+ * Update password of user
+ *
+ * /v1/users/update-password
+ *
+ * Must be logged out
+ */
+ async function V1UpdatePassword(req, res, next) {
+  let method = 'V1UpdatePassword';
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
 }
