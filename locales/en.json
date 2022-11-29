@@ -29,8 +29,8 @@
 	"ORGANIZATION[Admin Account Inactive]": "ORGANIZATION[Admin Account Inactive]",
 	"ORGANIZATION[Admin Account Deleted]": "ORGANIZATION[Admin Account Deleted]",
 	"ORGANIZATION[Admin Already Exists]": "ORGANIZATION[Admin Already Exists]",
-	"USER[Invalid Password Format]": "USER[Invalid Password Format]",
-	"USER[Passwords Not Equal]": "USER[Passwords Not Equal]",
+	"USER[Invalid Password Format]": "Invalid Password Format",
+	"USER[Passwords Not Equal]": "Passwords Not Equal",
 	"USER[Terms of Service Not Accepted]": "USER[Terms of Service Not Accepted]",
 	"USER[User Already Exists]": "USER[User Already Exists]",
 	"ORGANIZATION[Organization Already Exists]": "ORGANIZATION[Organization Already Exists]",
@@ -38,7 +38,8 @@
 	"USER[Invalid Login Credentials]": "USER[Invalid Login Credentials]",
 	"USER[User Account Inactive]": "USER[User Account Inactive]",
 	"USER[User Account Deleted]": "USER[User Account Deleted]",
-	"USER[USER Account Does Not Exist]": "USER[USER Account Does Not Exist]",
+	"USER[USER Account Does Not Exist]": "USER Account Does Not Exist",
 	"USER[Invalid Email Confirmation Token]": "USER[Invalid Email Confirmation Token]",
-	"USER[User Email confirmation is pending]": "USER[User Email confirmation is pending]"
+	"USER[User Email confirmation is pending]": "USER[User Email confirmation is pending]",
+	"USER[Password Reset Token Is Required]":"Password Reset Token Is Required"
 }
