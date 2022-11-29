@@ -17,8 +17,7 @@ const path = require('path');
 process.env.NODE_ENV = process.argv[3] || 'development';
 
 // load env if development
-if (process.env.NODE_ENV === 'development')
-  require('dotenv').config({ path: path.join(__dirname, '../../config/.env.development') });
+if (process.env.NODE_ENV === 'development') require('dotenv').config({ path: path.join(__dirname, '../../config/.env.development') });
 
 // third-party
 const async = require('async');
@@ -49,12 +48,12 @@ const dataset = process.argv[2] || 'set1';
 
     // get data to insert
     fs.readdirSync(fixturesFolderPath)
-    .filter(file => file.indexOf('.js') >= 0 ) // only js files
-    .forEach(file => {
-      const data = require(path.join(fixturesFolderPath, file));
-      fixtures.push(data);
-      files.push(file.replace('.js', '')); // remove '.js'
-    });
+      .filter(file => file.indexOf('.js') >= 0) // only js files
+      .forEach(file => {
+        const data = require(path.join(fixturesFolderPath, file));
+        fixtures.push(data);
+        files.push(file.replace('.js', '')); // remove '.js'
+      });
 
     let idx = 0; // index
     const orderedFixtures = [];
@@ -80,12 +79,11 @@ const dataset = process.argv[2] || 'set1';
       const fixture = fixtures[i];
 
       // bulk create
-      await models[files[idx]]
-        .bulkCreate(fixture, {
-          validate: true,
-          // hooks: true,
-          individualHooks: true
-        });
+      await models[files[idx]].bulkCreate(fixture, {
+        validate: true,
+        // hooks: true,
+        individualHooks: true
+      });
 
       const tableName = models[files[idx]].getTableName(); // grab tablename of model
       const queryText = `SELECT setval('"${tableName}_id_seq"', (SELECT MAX(id) FROM "${tableName}"));`;
@@ -94,7 +92,7 @@ const dataset = process.argv[2] || 'set1';
       idx++;
     }
 
-    console.log(`\n✅ Seed ${dataset} Data Added Succesfully!\n`)
+    console.log(`\n✅ Seed ${dataset} Data Added Succesfully!\n`);
     process.exit(0);
   } catch (error) {
     console.log(error);

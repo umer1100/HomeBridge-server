@@ -4,16 +4,20 @@
 
 'use strict';
 
+const { isJWTExpired } = require('../helpers/logic');
 // env variables
 const { NODE_ENV } = process.env;
 
 // require custom node modules
 const models = require('../models');
 
+const UNAUTHORIZED = 401;
+
 module.exports = {
   attachJWTAuth,
   JWTAuth,
-  verifyJWTAuth
+  verifyJWTAuth,
+  verifyJWTExpiration
 };
 
 /**
@@ -91,4 +95,30 @@ function verifyJWTAuth(req, res, next) {
   });
 
   return next();
+}
+
+/**
+ * Verify that a admin/user JWT is not expired
+ *
+ *
+ * Success: Return next().
+ * Errors:
+ *   401: Token is Expired request denied.
+ */
+function verifyJWTExpiration(req, res, next) {
+  const { authorization } = req.headers
+  let jwtFromRequest = null;
+
+  if (authorization?.indexOf('jwt-admin') >= 0) {
+    jwtFromRequest = authorization.replace('jwt-admin ', '')
+  }
+  else if (authorization?.indexOf('jwt-user') >= 0) {
+    jwtFromRequest = authorization.replace('jwt-user ', '')
+  }
+
+  if (jwtFromRequest && isJWTExpired(jwtFromRequest)) {
+    res.status(UNAUTHORIZED).json({ success: false, message: 'Expired Token' });
+  } else {
+    return next();
+  }
 }
