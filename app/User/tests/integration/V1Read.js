@@ -60,6 +60,75 @@ describe('User.V1Read', async () => {
     }); // END [logged-out] should fail to read user
   }); // END Role: Logged Out
 
+  // User can read himself
+  describe('Role: User all roles', async () => {
+    const jwt = 'jwt-user';
+    // populate database with fixtures
+    beforeEach(async () => {
+      await populate('fix1');
+    });
+
+    it('[Guest] should read himself', async () => {
+      const guest = userFix[4];
+
+      try {
+        const { token, response } = await userLogin(app, routeVersion, request, guest);
+        expect(response.body.user.roleType).to.equal('GUEST');
+
+        // read user request
+        const res = await request(app).get(`${routeUrl}?id=${guest.id}`).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    }); // END [Guest] should read himself
+
+    it('[Employer] should read himself', async () => {
+      const employer = userFix[0];
+
+      try {
+        const { token, response } = await userLogin(app, routeVersion, request, employer);
+        expect(response.body.user.roleType).to.equal('EMPLOYER');
+
+        // read user request
+        const res = await request(app).get(`${routeUrl}?id=${employer.id}`).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    }); // [Employer] should read himself
+
+    it('[Employee] should read himself', async () => {
+      const employee = userFix[3];
+
+      try {
+        const { token, response } = await userLogin(app, routeVersion, request, employee);
+        expect(response.body.user.roleType).to.equal('EMPLOYEE');
+
+        // read user request
+        const res = await request(app).get(`${routeUrl}?id=${employee.id}`).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    }); // [Employee] should read himself
+
+    it('[Manager] should read himself', async () => {
+      const manager = userFix[2];
+
+      try {
+        const { token, response } = await userLogin(app, routeVersion, request, manager);
+        expect(response.body.user.roleType).to.equal('MANAGER');
+
+        // read user request
+        const res = await request(app).get(`${routeUrl}?id=${manager.id}`).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    }); // END [Manager] should read himself
+  }); // END Role: all roles
+
   // Admin
   describe('Role: Admin', async () => {
     const jwt = 'jwt-admin';
@@ -155,7 +224,7 @@ describe('User.V1Read', async () => {
   // Role: other than Employer
   describe('Role: other then Employer', async () => {
     const jwt = 'jwt-user';
-    const employee = userFix[4];
+    const employee = userFix[3];
 
     // populate database with fixtures
     beforeEach(async () => {

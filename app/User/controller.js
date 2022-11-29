@@ -123,7 +123,7 @@ async function V1Read(req, res, next) {
   let method = ''; // which action method to use
 
   // which method to call
-  if (isEmployer(req?.user?.roleType) || req.admin) method = `V1Read`;
+  if (isEmployer(req?.user?.roleType) || req.admin || req?.user?.id == req?.args?.id) method = `V1Read`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

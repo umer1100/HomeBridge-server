@@ -58,6 +58,9 @@ async function V1Read(req) {
     })
     .catch(err => Promise.reject(error));
 
+  // check if user exists
+  if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+
   // allowed to access this resource
   if (req.user) {
     const { organizationId } = req.user
@@ -65,10 +68,6 @@ async function V1Read(req) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
     }
   }
-
-
-  // check if user exists
-  if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
   return Promise.resolve({
     status: 200,
