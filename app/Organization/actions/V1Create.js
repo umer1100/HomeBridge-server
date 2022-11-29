@@ -67,16 +67,18 @@ async function V1Create(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
-  const { url, name, timezone, locale, active, email, phone, status } = req.args
+  const { url, name, timezone, locale, active, email, phone, status } = req.args;
   try {
     // check if organization url already exists
     const duplicateOrganization = await organization.findOne({
       where: {
-        [Op.or]: [ {
+        [Op.or]: [
+          {
             url: {
               [Op.eq]: url
             }
-          }, {
+          },
+          {
             name: {
               [Op.eq]: name
             }
@@ -85,8 +87,8 @@ async function V1Create(req) {
       }
     });
 
-    // check of duplicate organization user
-    if (duplicateOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS));
+    // check if duplicate organization user
+    if (duplicateOrganization) return Promise.resolve({ status: 201, success: true, organization: duplicateOrganization });
 
     // create organization
     const newOrganization = await organization.create({
