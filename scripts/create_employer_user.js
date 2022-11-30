@@ -2,7 +2,7 @@
  * Script used to create a new employer user
  *
  *
- * node scripts/create_organization.js
+ * node scripts/create_employer_user.js
  */
 
 const path = require('path');
@@ -11,10 +11,10 @@ const request = require('supertest');
 
 const { adminLogin } = require('../helpers/tests');
 const app = require('../server');
-const routeVersion = '/v1';
-const routePrefix = '/users';
-const routeMethod = '/create';
-const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
+let routeVersion = '/v1';
+let routePrefix = '/admin';
+let routeMethod = '/login';
+const adminLoginUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
 const jwt = 'jwt-admin';
 
@@ -22,8 +22,16 @@ const jwt = 'jwt-admin';
 
 (async () => {
   // We'll create an employer user through an Admin
-  const adminFix = require('../test/fixtures/fix1/admin');
-  const { token } = await adminLogin(app, routeVersion, request, adminFix[0]);
+  const adminEmail = 'admin-1@example.com';
+  const adminPassword = 'password1';
+
+  const { token } = await request(app).post(adminLoginUrl).send({ email: adminEmail, password: adminPassword });
+
+  console.log(token);
+
+  routePrefix = '/users';
+  routeMethod = '/create';
+  const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
   const params = {
     firstName: 'First',
