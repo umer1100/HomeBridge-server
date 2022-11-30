@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) => {
       url: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false,
+        allowNull: false
       },
 
       // To keep track that organization by paying or guest customer
@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM(['PAYING', 'GUEST']),
         allowNull: false,
         defaultValue: 'GUEST'
-      },
+      }
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically

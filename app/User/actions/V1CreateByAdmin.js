@@ -5,20 +5,23 @@
 'use strict';
 
 // ENV variables
-const { REDIS_URL } = process.env;
+const { REDIS_URL, WEB_HOSTNAME } = process.env;
 
 // third-party
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const emailService = require('../../../services/email');
 
 // models
 const models = require('../../../models');
 
 // helpers
 const { isValidTimezone } = require('../../../helpers/validate');
+const { randomString } = require('../../../helpers/logic');
 const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/constants');
+
 const { join } = require('lodash');
 
 // methods
@@ -136,6 +139,37 @@ async function V1CreateByAdmin(req) {
       country: req.args.country,
       zipcode: req.args.zipcode,
       dateOfBirth: req.args.dateOfBirth
+    });
+
+    // preparing for email confirmation
+    const emailConfirmationToken = randomString();
+
+    // update admin
+    await models.user.update(
+      {
+        emailConfirmedToken: emailConfirmationToken
+      },
+      {
+        fields: ['emailConfirmedToken'], // only these fields
+        where: {
+          email: req.args.email
+        }
+      }
+    );
+
+    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
+
+    const result = await emailService.send({
+      from: emailService.emails.doNotReply.address,
+      name: emailService.emails.doNotReply.name,
+      subject: 'Email Confirmation',
+      template: 'ConfirmEmail',
+      tos: [req.args.email],
+      ccs: null,
+      bccs: null,
+      args: {
+        emailConfirmLink
+      }
     });
 
     // grab user without sensitive data
