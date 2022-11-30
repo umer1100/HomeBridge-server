@@ -1,5 +1,5 @@
 /**
- * USER V1Read ACTION
+ * USER V1ReadByAdmin ACTION
  */
 
 'use strict';
@@ -11,11 +11,11 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const { user } = require('../../../models');
+const { user, organization } = require('../../../models');
 
 // methods
 module.exports = {
-  V1Read
+  V1ReadByAdmin
 };
 
 /**
@@ -25,7 +25,7 @@ module.exports = {
  * POST /v1/users/read
  *
  * Must be logged in
- * Roles: ['user']
+ * Roles: ['admin']
  *
  * req.params = {}
  * req.args = {
@@ -39,7 +39,7 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1Read(req) {
+async function V1ReadByAdmin(req) {
   const schema = joi.object({
     id: joi.number().min(1).required()
   });
@@ -54,20 +54,13 @@ async function V1Read(req) {
     .findByPk(req.args.id, {
       attributes: {
         exclude: user.getSensitiveData() // remove sensitive data
-      }
+      },
+      include: { model: organization }
     })
     .catch(err => Promise.reject(error));
 
   // check if user exists
   if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
-
-  // allowed to access this resource
-  if (req.user) {
-    const { organizationId } = req.user
-    if (organizationId != findUser.organizationId) {
-      return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
-    }
-  }
 
   return Promise.resolve({
     status: 200,
