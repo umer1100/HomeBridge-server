@@ -7,14 +7,14 @@
 
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../config/.env.development') });
-const request = require('supertest');
+var axios = require('axios');
 
 const { adminLogin } = require('../helpers/tests');
-const app = require('../server');
+let host = 'http://localhost:8000';
 let routeVersion = '/v1';
-let routePrefix = '/admin';
+let routePrefix = '/admins';
 let routeMethod = '/login';
-const adminLoginUrl = `${routeVersion}${routePrefix}${routeMethod}`;
+const adminLoginUrl = `${host}${routeVersion}${routePrefix}${routeMethod}`;
 
 const jwt = 'jwt-admin';
 
@@ -24,20 +24,20 @@ const jwt = 'jwt-admin';
   // We'll create an employer user through an Admin
   const adminEmail = 'admin-1@example.com';
   const adminPassword = 'password1';
-
-  const { token } = await request(app).post(adminLoginUrl).send({ email: adminEmail, password: adminPassword });
-
-  console.log(token);
+  let token = undefined;
+  await axios.post(adminLoginUrl, { email: adminEmail, password: adminPassword }).then(function (response) {
+    token = response.data.token;
+  });
 
   routePrefix = '/users';
   routeMethod = '/create';
-  const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
+  const routeUrl = `${host}${routeVersion}${routePrefix}${routeMethod}`;
 
   const params = {
     firstName: 'First',
     lastName: 'Last',
-    status: 'ONBOARDING',
-    email: 'email@email.com',
+    status: 'PENDING',
+    email: 'bullet@gmail.com',
     phone: '1234567890',
     roleType: 'EMPLOYER',
     organizationId: 1,
@@ -48,7 +48,8 @@ const jwt = 'jwt-admin';
     acceptedTerms: true
   };
 
-  const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
-  console.log(res.text);
+  await axios.post(routeUrl, params, { headers: { authorization: `${jwt} ${token}` } }).then(function (response) {
+    console.log(response.data);
+  });
   process.exit(0);
 })();

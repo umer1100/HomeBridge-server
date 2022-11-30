@@ -1,0 +1,12 @@
+<!--
+Variables:
+registerLink
+-->
+
+<html>
+  <body>
+    <center><span style="color:red"><%= locals.isTestEmail ? isTestEmail : '' %></span><br/></center>
+    <p>Please sign up for Ownerific by clicking the following link.</p>
+    <a href="<%= locals.registerLink %>" class="btn">Onboard your account.</a>
+  </body>
+</html>

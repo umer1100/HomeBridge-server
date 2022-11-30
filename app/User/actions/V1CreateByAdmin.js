@@ -157,13 +157,13 @@ async function V1CreateByAdmin(req) {
       }
     );
 
-    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
+    const registerAccountLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
 
     const result = await emailService.send({
       from: emailService.emails.doNotReply.address,
       name: emailService.emails.doNotReply.name,
-      subject: 'Email Confirmation',
-      template: 'ConfirmEmail',
+      subject: 'Register Account',
+      template: 'RegisterAccount',
       tos: [req.args.email],
       ccs: null,
       bccs: null,

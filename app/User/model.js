@@ -84,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       status: {
-        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE']),
+        type: DataTypes.ENUM(['PENDING', 'ONBOARDING', 'ACTIVE', 'INACTIVE']),
         allowNull: false,
         defaultValue: 'PENDING'
       },
@@ -276,7 +276,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: null
-      },
+      }
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically
