@@ -1,5 +1,5 @@
 /**
- * USER V1Read ACTION
+ * USER V1ReadByUser ACTION
  */
 
 'use strict';
@@ -15,7 +15,7 @@ const { user } = require('../../../models');
 
 // methods
 module.exports = {
-  V1Read
+  V1ReadByUser
 };
 
 /**
@@ -39,9 +39,9 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1Read(req) {
+async function V1ReadByUser(req) {
   const schema = joi.object({
-    id: joi.number().min(1).required()
+    id: joi.number().min(1).default(req.user.id).optional()
   });
 
   // validate
@@ -63,7 +63,7 @@ async function V1Read(req) {
 
   // allowed to access this resource
   if (req.user) {
-    const { organizationId } = req.user
+    const { organizationId } = req.user;
     if (organizationId != findUser.organizationId) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
     }

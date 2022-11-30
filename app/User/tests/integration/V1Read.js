@@ -155,14 +155,13 @@ describe('User.V1Read', async () => {
         expect(res.body.user.roleType).to.equal('EMPLOYER');
         expect(res.body.user.email).to.equal('user-1@example.com');
         expect(res.body.user.organizationId).to.equal(1);
-
       } catch (error) {
         throw error;
       }
     }); // [admin] should read an user
   }); // END Role: Admin
 
-    // Employer
+  // Employer
   describe('Role: Employer', async () => {
     const jwt = 'jwt-user';
     const employer = userFix[0];
@@ -181,7 +180,7 @@ describe('User.V1Read', async () => {
 
         expect(response.body.user.roleType).to.equal('EMPLOYER');
         expect(response.body.user.organizationId).to.equal(1);
-        expect(employee.organizationId).to.equal(1)
+        expect(employee.organizationId).to.equal(1);
 
         // read user request
         const res = await request(app).get(`${routeUrl}?id=${employee.id}`).set('authorization', `${jwt} ${token}`);
@@ -193,7 +192,6 @@ describe('User.V1Read', async () => {
         expect(res.body.user.roleType).to.equal('EMPLOYEE');
         expect(res.body.user.email).to.equal('user-4@example.com');
         expect(res.body.user.organizationId).to.equal(1);
-
       } catch (error) {
         throw error;
       }
@@ -208,7 +206,7 @@ describe('User.V1Read', async () => {
 
         expect(response.body.user.roleType).to.equal('EMPLOYER');
         expect(response.body.user.organizationId).to.equal(1);
-        expect(employee.organizationId).to.equal(2)
+        expect(employee.organizationId).to.equal(2);
 
         // read user request
         const res = await request(app).get(`${routeUrl}?id=${employee.id}`).set('authorization', `${jwt} ${token}`);
@@ -231,24 +229,7 @@ describe('User.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[Role: Manager] should fail to read users', async () => {
-      const manager = userFix[2];
-
-      try {
-        // login manager
-        const { token, response } = await userLogin(app, routeVersion, request, manager);
-        expect(response.body.user.roleType).to.equal('MANAGER');
-
-        const res = await request(app).get(`${routeUrl}?id=${employee.id}`).set('authorization', `${jwt} ${token}`);
-
-        expect(res.statusCode).to.equal(401);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
-      } catch (error) {
-        throw error;
-      }
-    }); // END [Role: Manager] should fail to read users
-
-    it('[Role: Guest] should fail to read users', async () => {
+    it('[Role: Guest] should fail to read organizational users', async () => {
       const guest = userFix[4];
 
       try {

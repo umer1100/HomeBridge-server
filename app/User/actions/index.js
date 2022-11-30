@@ -13,7 +13,8 @@ module.exports = {
   ...require('./V1CreateGuest'),
   ...require('./V1Login'),
   ...require('./V1ConfirmEmail'),
-  ...require('./V1Read'),
+  ...require('./V1ReadByUser'),
+  ...require('./V1ReadByAdmin'),
   ...require('./V1ResetPassword'),
   ...require('./V1UpdatePassword')
 };
