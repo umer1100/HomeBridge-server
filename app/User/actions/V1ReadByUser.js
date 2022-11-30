@@ -12,6 +12,7 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 
 // models
 const { user, organization } = require('../../../models');
+const { find } = require('../../../database/sequence');
 
 // methods
 module.exports = {
@@ -55,7 +56,7 @@ async function V1ReadByUser(req) {
       attributes: {
         exclude: user.getSensitiveData() // remove sensitive data
       },
-      include: { model: organization, as: 'organization' }
+      include: { model: organization }
     })
     .catch(err => Promise.reject(error));
 
