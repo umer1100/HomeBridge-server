@@ -127,6 +127,21 @@ describe('User.V1Read', async () => {
         throw error;
       }
     }); // END [Manager] should read himself
+
+    it('[User] should read themselves by default', async () => {
+      const manager = userFix[2];
+
+      try {
+        const { token, response } = await userLogin(app, routeVersion, request, manager);
+        expect(response.body.user.roleType).to.equal('MANAGER');
+
+        // read user request
+        const res = await request(app).get(`${routeUrl}`).set('authorization', `${jwt} ${token}`);
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    }); // END [User] should read themselves by default
   }); // END Role: all roles
 
   // Admin
