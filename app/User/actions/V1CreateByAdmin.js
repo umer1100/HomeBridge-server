@@ -103,7 +103,7 @@ async function V1CreateByAdmin(req) {
 
   // check passwords
   if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
-  req.args.password = req.args.password1; // set password
+  let password = req.args.password1; // set password
 
   try {
     // check if user email already exists
@@ -130,7 +130,7 @@ async function V1CreateByAdmin(req) {
       phone: req.args.phone,
       roleType: req.args.roleType,
       organizationId: req.args.organizationId,
-      password: req.args.password,
+      password: password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
       addressline2: req.args.addressline2,
@@ -157,7 +157,7 @@ async function V1CreateByAdmin(req) {
       }
     );
 
-    const registerAccountLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
+    const loginLink = `${WEB_HOSTNAME}/login`; // create URL using front end url
 
     const result = await emailService.send({
       from: emailService.emails.doNotReply.address,
@@ -168,7 +168,8 @@ async function V1CreateByAdmin(req) {
       ccs: null,
       bccs: null,
       args: {
-        emailConfirmLink
+        loginLink,
+        password
       }
     });
 
