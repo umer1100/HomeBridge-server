@@ -1,7 +1,6 @@
 /**
  * Script used to create a new employer user
  *
- * Remember to set database url
  *
  * node scripts/create_organization.js
  */
@@ -29,10 +28,10 @@ const jwt = 'jwt-admin';
   const params = {
     firstName: 'First',
     lastName: 'Last',
-    status: 'ACTIVE',
+    status: 'ONBOARDING',
     email: 'email@email.com',
     phone: '1234567890',
-    roleType: 'Employer',
+    roleType: 'EMPLOYER',
     organizationId: 1,
     timezone: 'America/Los_Angeles',
     locale: 'en',
