@@ -12,6 +12,7 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 
 // models
 const { user } = require('../../../models');
+const models = require('../../../models');
 
 // methods
 module.exports = {
@@ -67,6 +68,16 @@ async function V1ReadByUser(req) {
     if (organizationId != findUser.organizationId) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
     }
+  }
+  if (findUser.organizationId) {
+    let organization = await models.organization
+      .findByPk(findUser.organizationId, {
+        attributes: {
+          exclude: user.getSensitiveData() // remove sensitive data
+        }
+      })
+      .catch(err => Promise.reject(error));
+    findUser.organization = organization.dataValues;
   }
 
   return Promise.resolve({
