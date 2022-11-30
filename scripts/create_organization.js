@@ -6,8 +6,8 @@
  * node scripts/create_organization.js
  */
 
-const name = 'test2';
-const url = 'test2';
+const name = 'Organization Name';
+const url = 'www.example.com';
 
 let { V1Create } = require('../app/Organization/actions/V1Create');
 
