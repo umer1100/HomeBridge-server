@@ -11,7 +11,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const { user } = require('../../../models');
+const { user, organization } = require('../../../models');
 
 // methods
 module.exports = {
@@ -54,7 +54,8 @@ async function V1ReadByAdmin(req) {
     .findByPk(req.args.id, {
       attributes: {
         exclude: user.getSensitiveData() // remove sensitive data
-      }
+      },
+      include: { model: organization, as: 'organization' }
     })
     .catch(err => Promise.reject(error));
 
