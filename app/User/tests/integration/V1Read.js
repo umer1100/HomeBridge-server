@@ -128,7 +128,7 @@ describe('User.V1Read', async () => {
       }
     }); // END [Manager] should read himself
 
-    it('[User] should read themselves by default', async () => {
+    it('[Any] should read themselves by default', async () => {
       const manager = userFix[2];
 
       try {
@@ -138,10 +138,11 @@ describe('User.V1Read', async () => {
         // read user request
         const res = await request(app).get(`${routeUrl}`).set('authorization', `${jwt} ${token}`);
         expect(res.statusCode).to.equal(200);
+        expect(res.body.user.id).to.equal(manager.id);
       } catch (error) {
         throw error;
       }
-    }); // END [User] should read themselves by default
+    }); // END [Any] should read themselves by default
   }); // END Role: all roles
 
   // Admin
