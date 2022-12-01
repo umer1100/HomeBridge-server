@@ -41,7 +41,7 @@ const jwt = 'jwt-admin';
     email: 'email',
     phone: '1234567890',
     roleType: 'EMPLOYER',
-    organizationId: 1,
+    organizationId: 0,
     timezone: 'America/Los_Angeles',
     locale: 'en',
     password1: 'thisisapassword1F%',
