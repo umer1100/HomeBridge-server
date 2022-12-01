@@ -8,11 +8,9 @@ const path = require('path');
 const { NODE_ENV } = process.env;
 
 // if undefined or development, default to development
-if (NODE_ENV === undefined || NODE_ENV === 'development')
-  require('dotenv').config({ path: path.join(__dirname, '.env.development') });
+if (NODE_ENV === undefined || NODE_ENV === 'development') require('dotenv').config({ path: path.join(__dirname, '.env.development') });
 // if test
-else if (NODE_ENV === 'test')
-  require('dotenv').config({ path: path.join(__dirname, '.env.test') });
+else if (NODE_ENV === 'test') require('dotenv').config({ path: path.join(__dirname, '.env.test') });
 
 module.exports = {
   development: {

@@ -5,7 +5,7 @@
 'use strict';
 
 // ENV variables
-const { USER_WEB_HOST } = process.env;
+const { USER_WEB_HOST, TOKEN_EXPIRATION_TIME } = process.env;
 
 // third-party
 const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
@@ -91,7 +91,7 @@ async function V1Login(req, res) {
         return resolve({
           status: 201,
           success: true,
-          token: createJwtToken(updatedUser, USER_WEB_HOST),
+          token: createJwtToken(updatedUser, USER_WEB_HOST, TOKEN_EXPIRATION_TIME),
           user: updatedUser.dataValues
         });
       } catch (error) {

@@ -5,7 +5,7 @@
 'use strict';
 
 // ENV variables
-const { ADMIN_WEB_HOST } = process.env;
+const { ADMIN_WEB_HOST, TOKEN_EXPIRATION_TIME } = process.env;
 
 // third-party
 const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
@@ -88,7 +88,7 @@ async function V1Login(req, res) {
         return resolve({
           status: 201,
           success: true,
-          token: createJwtToken(updatedAdmin, ADMIN_WEB_HOST),
+          token: createJwtToken(updatedAdmin, ADMIN_WEB_HOST, TOKEN_EXPIRATION_TIME),
           admin: updatedAdmin.dataValues
         });
       } catch (error) {

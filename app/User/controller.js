@@ -12,11 +12,13 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 
 // actions
 const actions = require('./actions');
+const { isEmployer } = require('./helper');
 
 module.exports = {
   V1Create,
   V1Login,
   V1ConfirmEmail,
+  V1Read,
   V1ResetPassword,
   V1UpdatePassword
 };
@@ -98,8 +100,34 @@ async function V1Login(req, res, next) {
  * /v1/users/confirm-email
  *
  */
- async function V1ConfirmEmail(req, res, next) {
+async function V1ConfirmEmail(req, res, next) {
   let method = 'V1ConfirmEmail'; // which action method to use
+
+  // call correct method
+  try {
+    const result = await actions[method](req);
+
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
+ * Read Method
+ *
+ * /v1/users/read
+ *
+ * Must be logged in
+ * Roles: [admin, user]
+ */
+async function V1Read(req, res, next) {
+  let method = ''; // which action method to use
+
+  // which method to call
+  if (req.admin) method = `V1ReadByAdmin`;
+  else if (req.user) method = `V1ReadByUser`;
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   try {
@@ -118,7 +146,7 @@ async function V1Login(req, res, next) {
  *
  * Must be logged out
  */
- async function V1ResetPassword(req, res, next) {
+async function V1ResetPassword(req, res, next) {
   let method = 'V1ResetPassword';
 
   // call correct method
@@ -133,7 +161,7 @@ async function V1Login(req, res, next) {
  *
  * Must be logged out
  */
- async function V1UpdatePassword(req, res, next) {
+async function V1UpdatePassword(req, res, next) {
   let method = 'V1UpdatePassword';
 
   // call correct method
