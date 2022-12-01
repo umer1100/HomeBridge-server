@@ -15,7 +15,7 @@ const moment = require('moment-timezone');
 // email
 const email = require('../services/email');
 
-module.exports = function(err, req, res, next) {
+module.exports = function (err, req, res, next) {
   let userType = 'Logged Out';
   let user = { id: 'N/A', email: 'logged@out.com' };
 
@@ -36,23 +36,26 @@ module.exports = function(err, req, res, next) {
   // production
   if (NODE_ENV === 'production') {
     // send error email
-    email.send({
-      from: email.emails.error.address,
-      name: email.emails.error.name,
-      subject: 'URGENT! 500 Interal Server Error!',
-      template: 'ErrorRequest',
-      tos: [email.emails.error.address],
-      ccs: null,
-      bccs: null,
-      args: {
-        time: moment.tz('US/Pacific').format('LLLL'),
-        error: err,
-        reqRoute: req.url,
-        reqUserType: userType,
-        reqUser: user,
-        reqArgs: req.args
-      }
-    }, (err, result) => console.error(err)); // send error email
+    email.send(
+      {
+        from: email.emails.error.address,
+        name: email.emails.error.name,
+        subject: 'URGENT! 500 Interal Server Error!',
+        template: 'ErrorRequest',
+        tos: [email.emails.error.address],
+        ccs: null,
+        bccs: null,
+        args: {
+          time: moment.tz('US/Pacific').format('LLLL'),
+          error: err,
+          reqRoute: req.url,
+          reqUserType: userType,
+          reqUser: user,
+          reqArgs: req.args
+        }
+      },
+      (err, result) => console.error(err)
+    ); // send error email
 
     return res.status(500).json({
       status: 500,

@@ -114,6 +114,7 @@ function server() {
 
   // authentication middleware via passport
   app.use(auth.attachJWTAuth(passport));
+  app.use(auth.verifyJWTExpiration);
   app.use(auth.JWTAuth);
   app.use(auth.verifyJWTAuth);
 

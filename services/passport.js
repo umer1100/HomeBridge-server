@@ -164,13 +164,12 @@ module.exports = async passport => {
         process.nextTick(async () => {
           // check if user id is not found
           const user = await models.user
-            .findOne({
-              where: {
-                id: payload.sub // subject or id of user
-              }
-            })
-            .catch(err => done(err, null));
-
+          .findOne({
+            where: {
+              id: payload.sub // subject or id of user
+            }
+          })
+          .catch(err => done(err, null));
           return done(null, user ? user : false);
         });
       }

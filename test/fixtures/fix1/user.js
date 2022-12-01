@@ -77,6 +77,7 @@ module.exports = [
     roleType: 'GUEST',
     email: 'user-5@example.com',
     phone: '+13018148502',
+    organizationId: 2,
     salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
     password: 'password5F%',
     emailConfirmed: true

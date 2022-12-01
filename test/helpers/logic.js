@@ -61,7 +61,7 @@ describe('helpers/logic.js', () => {
   }); // END randomString
 
   // removeAllWhiteSpace
-  describe('removeAllWhiteSpace', function() {
+  describe('removeAllWhiteSpace', function () {
     it('should remove all white space, tabs and newlines successfully', done => {
       let str = '  path\t\n   over  !   \t\n';
       str = logic.removeAllWhiteSpace(str);
@@ -69,4 +69,25 @@ describe('helpers/logic.js', () => {
       done();
     }); // END should remove all white space, tabs and newlines successfully
   }); // END removeAllWhiteSpace
+
+  // return true if JWT is expired
+  describe('isJWTExpired', function () {
+    let isExpired;
+
+    it('should return true if JWT is expired', done => {
+      let TOKEN_EXPIRATION_TIME = 0;
+      let token = logic.createJwtToken({ id: 1 }, 'http://localhost:8000', TOKEN_EXPIRATION_TIME);
+      isExpired = logic.isJWTExpired(token);
+      expect(isExpired).to.be.true;
+      done();
+    }); // END should return true if JWT is expired
+
+    it('should return false if JWT is not expired', done => {
+      let TOKEN_EXPIRATION_TIME = 10;
+      let token = logic.createJwtToken({ id: 1 }, 'http://localhost:8000', TOKEN_EXPIRATION_TIME);
+      isExpired = logic.isJWTExpired(token);
+      expect(isExpired).to.be.false;
+      done();
+    }); // END should return false if JWT is not expired
+  }); // END isJWTExpired
 }); // END helpers/logic.js
