@@ -1,0 +1,13 @@
+<!--
+Variables:
+loginLink
+-->
+
+<html>
+  <body>
+    <center><span style="color:red"><%= locals.isTestEmail ? isTestEmail : '' %></span><br/></center>
+    <p>Please log in to Ownerific by clicking the following link and using your email and pre-generated password.</p>
+    <a href="<%= locals.loginLink %>" class="btn">Onboard your account.</a>
+    <p>Your pre-generated password is <b><%= locals.password %></b>. Once you log in, you will be prompted to change it.</p>
+  </body>
+</html>

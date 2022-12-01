@@ -87,8 +87,8 @@ async function V1Create(req) {
       }
     });
 
-    // check if duplicate organization user
-    if (duplicateOrganization) return Promise.resolve({ status: 201, success: true, organization: duplicateOrganization });
+    // check if duplicate organization
+    if (duplicateOrganization) return Promise.resolve({ status: 201, success: false, organization: duplicateOrganization });
 
     // create organization
     const newOrganization = await organization.create({

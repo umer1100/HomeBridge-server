@@ -5,20 +5,23 @@
 'use strict';
 
 // ENV variables
-const { REDIS_URL } = process.env;
+const { REDIS_URL, WEB_HOSTNAME } = process.env;
 
 // third-party
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const emailService = require('../../../services/email');
 
 // models
 const models = require('../../../models');
 
 // helpers
 const { isValidTimezone } = require('../../../helpers/validate');
+const { randomString } = require('../../../helpers/logic');
 const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/constants');
+
 const { join } = require('lodash');
 
 // methods
@@ -100,7 +103,7 @@ async function V1CreateByAdmin(req) {
 
   // check passwords
   if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
-  req.args.password = req.args.password1; // set password
+  let password = req.args.password1; // set password
 
   try {
     // check if user email already exists
@@ -127,7 +130,7 @@ async function V1CreateByAdmin(req) {
       phone: req.args.phone,
       roleType: req.args.roleType,
       organizationId: req.args.organizationId,
-      password: req.args.password,
+      password: password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
       addressline2: req.args.addressline2,
@@ -136,6 +139,22 @@ async function V1CreateByAdmin(req) {
       country: req.args.country,
       zipcode: req.args.zipcode,
       dateOfBirth: req.args.dateOfBirth
+    });
+
+    const loginLink = `${WEB_HOSTNAME}/login`; // create URL using front end url
+
+    const result = await emailService.send({
+      from: emailService.emails.doNotReply.address,
+      name: emailService.emails.doNotReply.name,
+      subject: 'Register Account',
+      template: 'RegisterAccount',
+      tos: [req.args.email],
+      ccs: null,
+      bccs: null,
+      args: {
+        loginLink,
+        password
+      }
     });
 
     // grab user without sensitive data
