@@ -33,11 +33,12 @@ const jwt = 'jwt-admin';
   routeMethod = '/create';
   const routeUrl = `${host}${routeVersion}${routePrefix}${routeMethod}`;
 
+  // Replace the following placeholder values
   const params = {
     firstName: 'First',
     lastName: 'Last',
     status: 'PENDING',
-    email: 'bullet@gmail.com',
+    email: 'email',
     phone: '1234567890',
     roleType: 'EMPLOYER',
     organizationId: 1,
