@@ -141,22 +141,6 @@ async function V1CreateByAdmin(req) {
       dateOfBirth: req.args.dateOfBirth
     });
 
-    // preparing for email confirmation
-    const emailConfirmationToken = randomString();
-
-    // update admin
-    await models.user.update(
-      {
-        emailConfirmedToken: emailConfirmationToken
-      },
-      {
-        fields: ['emailConfirmedToken'], // only these fields
-        where: {
-          email: req.args.email
-        }
-      }
-    );
-
     const loginLink = `${WEB_HOSTNAME}/login`; // create URL using front end url
 
     const result = await emailService.send({
