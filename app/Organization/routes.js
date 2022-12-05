@@ -23,7 +23,7 @@ module.exports = (passport, router) => {
   router.all('/v1/organizations/updatepassword', controller.V1UpdatePassword);
   router.all('/v1/organizations/updateemail', controller.V1UpdateEmail);
   router.all('/v1/organizations/export', controller.V1Export);
-
+  router.all('/v1/organizations/store-hris-access-token', controller.V1UpdateHrisAccessToken);
   // return router
   return router;
 };

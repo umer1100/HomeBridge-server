@@ -56,7 +56,10 @@ async function V1ReadByUser(req) {
       attributes: {
         exclude: user.getSensitiveData() // remove sensitive data
       },
-      include: { model: organization }
+      include: {
+        model: organization,
+        attributes: ['name', 'url', 'spendLimit']
+      }
     })
     .catch(err => Promise.reject(error));
 

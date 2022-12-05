@@ -20,7 +20,8 @@ module.exports = {
   V1ConfirmEmail,
   V1Read,
   V1ResetPassword,
-  V1UpdatePassword
+  V1UpdatePassword,
+  V1Update
 };
 
 /**
@@ -163,6 +164,25 @@ async function V1ResetPassword(req, res, next) {
  */
 async function V1UpdatePassword(req, res, next) {
   let method = 'V1UpdatePassword';
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+/**
+ * Update user
+ *
+ * /v1/users/update
+ *
+ * Must be logged in
+ */
+ async function V1Update(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user) method = 'V1Update';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   const result = await actions[method](req).catch(err => next(err));

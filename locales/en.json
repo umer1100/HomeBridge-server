@@ -35,11 +35,11 @@
 	"USER[User Already Exists]": "USER[User Already Exists]",
 	"ORGANIZATION[Organization Already Exists]": "ORGANIZATION[Organization Already Exists]",
 	"USER[Invalid Time Zone]": "USER[Invalid Time Zone]",
-	"USER[Invalid Login Credentials]": "USER[Invalid Login Credentials]",
+	"USER[Invalid Login Credentials]": "Invalid Login Credentials",
 	"USER[User Account Inactive]": "USER[User Account Inactive]",
 	"USER[User Account Deleted]": "USER[User Account Deleted]",
 	"USER[USER Account Does Not Exist]": "USER Account Does Not Exist",
 	"USER[Invalid Email Confirmation Token]": "USER[Invalid Email Confirmation Token]",
-	"USER[User Email confirmation is pending]": "USER[User Email confirmation is pending]",
+	"USER[User Email confirmation is pending]": "User Email Confirmation is pending",
 	"USER[Password Reset Token Is Required]":"Password Reset Token Is Required"
 }

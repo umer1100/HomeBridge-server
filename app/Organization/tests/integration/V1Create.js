@@ -92,9 +92,7 @@ describe('Organization.V1Create', async () => {
     });
 
     it('should not create new organization if already exists', async () => {
-
       try {
-
         const params1 = {
           name: 'Company Inc.',
           active: true,
@@ -120,9 +118,16 @@ describe('Organization.V1Create', async () => {
 
         // create organization request with same url request
         const res = await request(app).post(routeUrl).send(params2);
+        expect(res.statusCode).to.equal(201);
 
-        expect(res.statusCode).to.equal(400);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ORGANIZATION_ALREADY_EXISTS));
+        const getOrganizationsCount = await models.organization.count({
+          where: {
+            name: 'Company Inc.',
+            url: 'www.random-url.com'
+          }
+        });
+
+        expect(getOrganizationsCount).to.equal(1);
       } catch (error) {
         throw error;
       }
