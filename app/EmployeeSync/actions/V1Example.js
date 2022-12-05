@@ -1,5 +1,5 @@
 /**
- * ORGANIZATION V1ExampleTask TASK
+ * EMPLOYEESYNC V1Example ACTION
  */
 
 'use strict';
@@ -16,7 +16,7 @@ const Queue = require('bull'); // add background tasks to Queue: https://github.
 const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 const convert = require('convert-units'); // https://www.npmjs.com/package/convert-units
 const slugify = require('slugify'); // convert string to URL friendly string: https://www.npmjs.com/package/slugify
-const sanitize = require('sanitize-filename'); // sanitize filename: https://www.npmjs.com/package/sanitize-filename
+const sanitize = require("sanitize-filename"); // sanitize filename: https://www.npmjs.com/package/sanitize-filename
 const passport = require('passport'); // handle authentication: http://www.passportjs.org/docs/
 const currency = require('currency.js'); // handling currency operations (add, subtract, multiply) without JS precision issues: https://github.com/scurker/currency.js/
 const accounting = require('accounting'); // handle outputing readable format for currency: http://openexchangerates.github.io/accounting.js/
@@ -35,77 +35,57 @@ const { randomString } = require('../../../helpers/logic');
 const { LIST_INT_REGEX } = require('../../../helpers/constants');
 
 // queues
-const OrganizationQueue = new Queue('OrganizationQueue', REDIS_URL);
+const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // methods
 module.exports = {
-  V1ExampleTask
-};
+  V1Example
+}
 
 /**
  * Method Description
  *
- * @job = {
- *   @id - (INTEGER - REQUIRED): ID of the background job
- *   @data = {
- *     @alpha - (STRING - REQUIRED): Alpha argument description
- *     @beta - (BOOLEAN - OPTIONAL) [DEFAULT - 100]: Beta argument description
- *     @gamma - (NUMBER - OPTIONAL or REQUIRED): Cato argument description
- *     @delta - (STRING - REQUIRED): Delta argument description
- *     @zeta - (STRING - REQUIRED) [VALID - 'a', 'b']: Zeta argument description
- *   }
+ * GET  /v1/employeesyncs/<method>
+ * POST /v1/employeesyncs/<method>
+ *
+ * Must be logged out | Must be logged in | Can be both logged in or logged out
+ * Roles: ['admin', 'user']
+ *
+ * req.params = {}
+ * req.args = {
+ *   @alpha - (STRING - REQUIRED): Alpha argument description
+ *   @beta - (BOOLEAN - OPTIONAL) [DEFAULT - 100]: Beta argument description
+ *   @gamma - (NUMBER - OPTIONAL or REQUIRED): Cato argument description
+ *   @delta - (STRING - REQUIRED): Delta argument description
+ *   @zeta - (STRING - REQUIRED) [VALID - 'a', 'b']: Zeta argument description
  * }
  *
  * Success: Return something
+ * Errors:
+ *   400: BAD_REQUEST_INVALID_ARGUMENTS
+ *   401: UNAUTHORIZED
+ *   500: INTERNAL_SERVER_ERROR
  *
  * !IMPORTANT: This is an important message
  * !NOTE: This is a note
  * TODO: This is a todo
  */
-async function V1ExampleTask(job) {
-  const schema = joi
-    .object({
-      alpha: joi
-        .string()
-        .trim()
-        .min(1)
-        .lowercase()
-        .required()
-        .error(new Error(req.__('ORGANIZATION_V1Example_Invalid_Argument[alpha]'))),
-      beta: joi
-        .boolean()
-        .default(true)
-        .optional()
-        .error(new Error(req.__('ORGANIZATION_V1Example_Invalid_Argument[beta]'))),
-      gamma: joi
-        .number()
-        .integer()
-        .min(1)
-        .max(10)
-        .error(new Error(req.__('ORGANIZATION_V1Example_Invalid_Argument[gamma]'))),
-      delta: joi
-        .string()
-        .trim()
-        .lowercase()
-        .min(3)
-        .email()
-        .required()
-        .error(new Error(req.__('ORGANIZATION_V1Example_Invalid_Argument[delta]'))),
-      zeta: joi
-        .string()
-        .trim()
-        .valid('a', 'b')
-        .required()
-        .error(new Error(req.__('ORGANIZATION_V1Example_Invalid_Argument[zeta]')))
-    })
-    .with('alpha', 'beta') // must come together
+async function V1Example(req) {
+  const schema = joi.object({
+    alpha: joi.string().trim().min(1).lowercase().required().error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[alpha]'))),
+    beta: joi.boolean().default(true).optional().error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[beta]'))),
+    gamma: joi.number().integer().min(1).max(10).error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[gamma]'))),
+    delta: joi.string().trim().lowercase().min(3).email().required().error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[delta]'))),
+    zeta: joi.string().trim().valid('a', 'b').required().error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[zeta]')))
+  }).with('alpha', 'beta') // must come together
     .xor('beta', 'gamma') // one and not the other must exists
     .or('gamma', 'delta'); // at least one must exists
 
   // validate
-  const { error, value } = schema.validate(job.data);
-  if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
-  job.data = value; // updated arguments with type conversion
+  const { error, value } = schema.validate(req.args);
+  if (error)
+    return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
+  req.args = value; // updated arguments with type conversion
 
   try {
     /***** DO WORK HERE *****/
@@ -114,15 +94,20 @@ async function V1ExampleTask(job) {
     const data = { key: 'value' };
 
     // ADD BACKGROUND JOB TO QUEUE
-    const job = await OrganizationQueue.add('V1ExampleTask', data);
+    const job = await EmployeeSyncQueue.add('V1ExampleTask', data);
 
     // SOCKET EMIT EVENT
     io.to(`${SOCKET_ROOMS.GLOBAL}`).emit(SOCKET_EVENTS.EXAMPLE_EVENT, data);
     io.to(`${SOCKET_ROOMS.ADMIN}${'_adminId_'}`).emit(SOCKET_EVENTS.EXAMPLE_EVENT, data);
 
     // return
-    return Promise.resolve();
+    return Promise.resolve({
+      status: 200,
+      success: true,
+      jobId: job.id,
+      data: data
+    });
   } catch (error) {
     return Promise.reject(error);
   }
-} // END V1ExampleTask
+} // END V1Example
