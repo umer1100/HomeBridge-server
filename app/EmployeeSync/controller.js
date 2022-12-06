@@ -14,6 +14,7 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 
 // actions
 const actions = require('./actions');
+const { isEmployer } = require('../User/helper');
 
 // queues
 const Queue = require('bull'); // process background tasks from Queue
@@ -50,9 +51,9 @@ async function V1Example(req, res, next) {
 }
 
 /**
- * Import employees into organization from their HRIS
+ * Import employees into user database from their HRIS
  *
- * /v1/organizations/import
+ * /v1/employeesyncs/import
  *
  * Must be logged in
  * Roles: ['user']
@@ -64,7 +65,5 @@ async function V1Import(req, res, next) {
   if (isEmployer(req.user)) await EmployeeSyncQueue.add('V1Import', { organizationId: req.user.organizationId });
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
-  // call correct method
-  const result = await actions[method](req).catch(err => next(err));
-  return res.status(result.status).json(result);
+  return res.status(200).json('Started Import');
 }

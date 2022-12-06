@@ -60,41 +60,67 @@ module.exports = {
  * TODO: This is a todo
  */
 async function V1Import(job) {
-  const schema = joi
-    .object({
-      alpha: joi
-        .string()
-        .trim()
-        .min(1)
-        .lowercase()
-        .required()
-        .error(new Error(req.__('EMPLOYEESYNC_V1Example_Invalid_Argument[alpha]')))
-    })
-    .with('alpha', 'beta') // must come together
-    .xor('beta', 'gamma') // one and not the other must exists
-    .or('gamma', 'delta'); // at least one must exists
+  const schema = joi.object({
+    organizationId: joi.number().min(1).required().error(new Error('Organization id not valid.'))
+  });
 
   // validate
   const { error, value } = schema.validate(job.data);
   if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
   job.data = value; // updated arguments with type conversion
 
+  let { organizationId } = job.data;
+
   try {
     /***** DO WORK HERE *****/
 
-    let finchUrl = 'https://api.tryfinch.com/employer/directory';
+    let finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
+    let finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
+    let organization = await models.organization.findByPk(organizationId, {
+      attributes: ['hrisAccessToken']
+    });
+    //'ddfd541f-c160-41f8-80cc-a0e355ba7dba';
 
-    /**
-       * -H 'Authorization: Bearer ddfd541f-c160-41f8-80cc-a0e355ba7dba' \
-  -H 'Content-Type: application/json' \
-  -H 'Finch-API-Version: 2020-09-17'
-       */
-
-    got(finchUrl, {
+    let resp = await axios.get(finchDirectoryUrl, {
       headers: {
-        Authorization: `Bearer ${hris_token}`
+        Authorization: `Bearer ${organization.hrisAccessToken}`,
+        'Finch-API-Version': '2020-09-17'
       }
     });
+    if (resp.data) {
+      let body = { requests: [] };
+      resp.data.individuals.forEach(individual => {
+        body.requests.push({ individual_id: individual.id });
+      });
+
+      let individuals = await axios.post(finchIndividualUrl, body, {
+        headers: {
+          Authorization: `Bearer ${organization.hrisAccessToken}`,
+          'Finch-API-Version': '2020-09-17'
+        }
+      });
+
+      individuals.data.responses.forEach(individual => {
+        (async () => {
+          await models.user.create({
+            firstName: individual.body.first_name,
+            lastName: individual.body.last_name,
+            status: 'PENDING',
+            email: individual.body.emails[0].data,
+            roleType: 'EMPLOYEE',
+            password: 'PLACEHOLDER',
+            organizationId: organizationId,
+            addressline1: individual.body.residence.line1,
+            addressline2: individual.body.residence.line2,
+            city: individual.body.residence.city,
+            state: individual.body.residence.state,
+            country: individual.body.residence.country,
+            zipcode: individual.body.residence.postal_code,
+            dateOfBirth: individual.body.dob
+          });
+        })();
+      });
+    }
 
     // return
     return Promise.resolve();
