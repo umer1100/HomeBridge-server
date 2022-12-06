@@ -86,6 +86,13 @@ const LOCAL_ERROR_CODES = {
     error: 'USER.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
     status: 404,
     messages: ['USER[USER Account Does Not Exist]']
+  },
+
+  // V1UpdatePassword
+  USER_BAD_REQUEST_PASSWORD_AUTHENTICATION_FAILED: {
+    error: 'USER.BAD_REQUEST_PASSWORD_AUTHENTICATION_FAILED',
+    status: 400,
+    messages: ['USER[Password Authentication Failed]']
   }
 };
 

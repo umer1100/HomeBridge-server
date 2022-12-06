@@ -41,5 +41,7 @@
 	"USER[USER Account Does Not Exist]": "USER Account Does Not Exist",
 	"USER[Invalid Email Confirmation Token]": "USER[Invalid Email Confirmation Token]",
 	"USER[User Email confirmation is pending]": "User Email Confirmation is pending",
-	"USER[Password Reset Token Is Required]":"Password Reset Token Is Required"
+	"USER[Password Reset Token Is Required]": "Password Reset Token Is Required",
+	"Invalid Password Format": "Invalid Password Format",
+	"USER[Password Authentication Failed]": "Password Authentication Failed"
 }

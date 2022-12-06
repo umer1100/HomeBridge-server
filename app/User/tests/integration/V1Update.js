@@ -123,5 +123,33 @@ const user = require('../../../../test/fixtures/fix1/user');
          throw error;
        }
      }); // [user] should successfully update self if status is valid
-   }); // END Role: user
- }); // END User.V1Update
+
+     it('[user] should successfully update user fields', async () => {
+      const user1 = userFix[0];
+      try {
+
+        const { token } = await userLogin(app, routeVersion, request, user1);
+
+        const params = {
+          firstName: 'Ehsan',
+          lastName: 'Atif',
+          addressLine1: 'Address Line 1',
+          city: 'City 1',
+          zipcode: '12345',
+          state: 'State 1',
+          phone: '+13018148502',
+          dreamHomeDescription: 'Dream Home Description'
+        };
+
+        const res = await request(app)
+          .post(routeUrl)
+          .set('authorization', `${jwt} ${token}`)
+          .send(params);
+
+        expect(res.statusCode).to.equal(200);
+      } catch (error) {
+        throw error;
+      }
+    });
+   });
+ });
