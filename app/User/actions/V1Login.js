@@ -60,8 +60,8 @@ async function V1Login(req, res) {
       // return error message if user is inactive
       if (user.status === 'INACTIVE') return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_INACTIVE));
 
-      // return error message if user's emailConfirmed is false
-      if (!user.emailConfirmed) return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_EMAIL_CONFIRMATION_PENDING));
+      // return error message if user's emailConfirmed is false, ROLE [GUEST]
+      if (!user.emailConfirmed && user.roleType == 'GUEST') return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_EMAIL_CONFIRMATION_PENDING));
 
       // return error message if user is deleted
       if (user.deletedAt) return resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DELETED));
@@ -84,6 +84,10 @@ async function V1Login(req, res) {
         const updatedUser = await models.user.findByPk(user.id, {
           attributes: {
             exclude: models.user.getSensitiveData() // remove sensitive data
+          },
+          include: {
+            model: models.organization,
+            attributes: ['name', 'url', 'spendLimit']
           }
         });
 

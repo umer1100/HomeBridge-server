@@ -16,5 +16,6 @@ module.exports = {
   ...require('./V1ReadByUser'),
   ...require('./V1ReadByAdmin'),
   ...require('./V1ResetPassword'),
-  ...require('./V1UpdatePassword')
+  ...require('./V1UpdatePassword'),
+  ...require('./V1Update'),
 };

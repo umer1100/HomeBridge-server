@@ -19,7 +19,8 @@ module.exports = {
   V1Update,
   V1Query,
   V1UpdateEmail,
-  V1Export
+  V1Export,
+  V1UpdateHrisAccessToken
 };
 
 /**
@@ -131,6 +132,25 @@ async function V1Export(req, res, next) {
 
   // which method to call
   if (req.organization) method = `V1Export`;
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+/**
+ * Exchange Finch code with accessToken and update organization HrisAccessToken
+ *
+ * /v1/organizations/store-hris-access-token
+ *
+ * Employer must be logged in
+ */
+ async function V1UpdateHrisAccessToken(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1UpdateHrisAccessToken';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

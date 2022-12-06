@@ -76,6 +76,28 @@ describe('User.V1Login', async () => {
       }
     }); // END [logged-out] should login user successfully
 
+    it('[logged-out] should login user successfully and also return organization details', async () => {
+      const user1 = userFix[0];
+
+      // login params
+      const params = {
+        email: user1.email,
+        password: user1.password
+      };
+
+      try {
+        // login user
+        const res = await request(app).post(routeUrl).send(params);
+
+        expect(res.body).to.have.property('success', true);
+        expect(res.body).to.have.property('token').and.to.a('string');
+        expect(res.body).to.have.property('user').and.to.not.be.null;
+        expect(res.body.user).to.have.property('organization').and.to.not.be.null;
+      } catch (error) {
+        throw error;
+      }
+    }); // END [logged-out]  should login user successfully and also return organization details
+
     it('[logged-out] should fail to login user email or password is incorrect', async () => {
       const params = {
         email: 'random@email.com',
@@ -155,7 +177,7 @@ describe('User.V1Login', async () => {
       }
     }); // END [logged-out] should fail to login user if account is deleted
 
-    it('[logged-out] should fail to login user if email is not confirmed', async () => {
+    it('[logged-out] should fail to login user (GUEST) if email is not confirmed', async () => {
       const user = userFix[5];
 
       try {
@@ -163,6 +185,7 @@ describe('User.V1Login', async () => {
           email: user.email,
           password: user.password
         };
+        expect(user.roleType).to.equal('GUEST');
 
         // login user
         const res = await request(app).post(routeUrl).send(params);
@@ -172,6 +195,27 @@ describe('User.V1Login', async () => {
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should fail to login user if email is not confirmed
+    }); // END [logged-out] should fail to login user (GUEST) if email is not confirmed
+
+    it('[logged-out] should fail to login user (except GUEST) if email is not confirmed', async () => {
+      const user = userFix[2];
+
+      try {
+        const params = {
+          email: user.email,
+          password: user.password
+        };
+        expect(user.roleType).to.equal('MANAGER');
+
+        // login user
+        const res = await request(app).post(routeUrl).send(params);
+
+        expect(res.body).to.have.property('success', true);
+        expect(res.body).to.have.property('token').and.to.a('string');
+        expect(res.body).to.have.property('user').and.to.not.be.null;
+      } catch (error) {
+        throw error;
+      }
+    }); // END [logged-out] should fail to login user (GUEST) if email is not confirmed
   }); // END Role: Logged Out
 }); // END User.V1Login
