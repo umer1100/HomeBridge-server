@@ -13,7 +13,7 @@ const controller = require('./controller');
 // Returns a function that attaches EmployeeSync feature routes to the global router object
 module.exports = (passport, router) => {
   // routes - can also use router.get or router.post
-  router.all('/v1/employeesyncs/import', controller.V1Import);
+  router.all('/v1/hris-import/users', controller.V1Import);
 
   // return router
   return router;

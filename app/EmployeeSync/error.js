@@ -10,13 +10,6 @@
 /**
  * EmployeeSync Feature Local Error Codes
  */
-const LOCAL_ERROR_CODES = {
-  /* Place error codes below. Remember to prepend EMPLOYEESYNC to the key and error value  */
-  // EMPLOYEESYNC_BAD_REQUEST_ACCOUNT_INACTIVE: {
-  //   error: 'EMPLOYEESYNC.BAD_REQUEST_ACCOUNT_INACTIVE',
-  //   status: 401,
-  //   messages: ['EMPLOYEESYNC[Account is not active]']
-  // }
-};
+const LOCAL_ERROR_CODES = {};
 
 module.exports = LOCAL_ERROR_CODES;
