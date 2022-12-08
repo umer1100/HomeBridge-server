@@ -6,7 +6,7 @@
 
 module.exports = {
   isEmployer
-}
+};
 
 /**
  * Return true if roleType is Employer
@@ -14,6 +14,7 @@ module.exports = {
  * @roleType (USER OBJECT): the user roleType
  *
  */
- function isEmployer(roleType) {
-  return roleType == 'EMPLOYER'
+function isEmployer(user) {
+  const { roleType } = user;
+  return roleType == 'EMPLOYER';
 }

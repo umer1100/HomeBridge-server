@@ -9,12 +9,8 @@ const { NODE_ENV, REDIS_URL } = process.env;
 
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
-const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
-const io = require('socket.io-emitter')(REDIS_URL); // to emit real-time events to client-side applications: https://socket.io/docs/emit-cheatsheet/
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const slugify = require('slugify'); // convert string to URL friendly string: https://www.npmjs.com/package/slugify
-const passport = require('passport'); // handle authentication: http://www.passportjs.org/docs/
 const axios = require('axios');
 
 // services
@@ -23,12 +19,11 @@ const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const models = require('../../../models');
+const { user, organization } = require('../../../models');
 
 // helpers
 
 // queues
-const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // methods
 module.exports = {
@@ -62,11 +57,9 @@ async function V1Import(job) {
   let { organizationId } = job.data;
 
   try {
-    let finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
-    let finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
-    let organization = await models.organization.findByPk(organizationId, {
-      attributes: ['hrisAccessToken']
-    });
+    const finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
+    const finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
+    let organization = await organization.findByPk(organizationId);
 
     let resp = await axios.get(finchDirectoryUrl, {
       headers: {
@@ -89,7 +82,7 @@ async function V1Import(job) {
 
       individuals.data.responses.forEach(individual => {
         (async () => {
-          await models.user.create({
+          await user.create({
             firstName: individual.body.first_name,
             lastName: individual.body.last_name,
             status: 'PENDING',

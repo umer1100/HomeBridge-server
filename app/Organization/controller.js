@@ -8,7 +8,6 @@
 
 // helpers
 const { errorResponse, ERROR_CODES } = require('../../services/error');
-const { isEmployer } = require('../User/helper');
 
 // actions
 const actions = require('./actions');
@@ -146,7 +145,7 @@ async function V1Export(req, res, next) {
  *
  * Employer must be logged in
  */
- async function V1UpdateHrisAccessToken(req, res, next) {
+async function V1UpdateHrisAccessToken(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call

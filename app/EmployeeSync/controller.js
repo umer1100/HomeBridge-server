@@ -33,8 +33,6 @@ module.exports = {
  * Roles: ['user']
  */
 async function V1Import(req, res, next) {
-  let method = null; // which action method to use
-
   // which method to call
   if (isEmployer(req.user)) await EmployeeSyncQueue.add('V1Import', { organizationId: req.user.organizationId });
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
