@@ -27,7 +27,7 @@ module.exports = {
 /**
  * Import employees into user database from their HRIS
  *
- * /v1/employeesyncs/import
+ * /v1/hris-import/users
  *
  * Must be logged in
  * Roles: ['user']
