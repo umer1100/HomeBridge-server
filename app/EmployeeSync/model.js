@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // A paranoid table is one that, when told to delete a record, it will not truly delete it. Instead, a special column called deletedAt will have its value set to the timestamp of that deletion request. This means that paranoid tables perform a soft-deletion of records, instead of a hard-deletion.
       // For select (findOne, findAll etc) automatically ignore all rows when deletedAt is not null, if you really want to let the query see the soft-deleted records, you can pass the paranoid: false option to the query method
-      paranoid: true,
+      paranoid: false,
       freezeTableName: true, // allows sequelize to pluralize the model name
       tableName: 'EmployeeSyncs', // define table name, must be PascalCase!
       hooks: {},

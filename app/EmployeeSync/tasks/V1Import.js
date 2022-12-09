@@ -11,7 +11,8 @@ const { NODE_ENV, REDIS_URL } = process.env;
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const axios = require('axios');
+const axios = require('axios'); // http requests
+const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
 const email = require('../../../services/email');
@@ -19,7 +20,8 @@ const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const { user, organization } = require('../../../models');
+const models = require('../../../models');
+const { date } = require('@hapi/joi');
 
 // helpers
 
@@ -56,10 +58,25 @@ async function V1Import(job) {
 
   let { organizationId } = job.data;
 
+  let currentRun = await models.employeeSync.create({
+    organizationId: organizationId,
+    startedAt: moment.tz('UTC'),
+    status: 'RUNNING'
+  });
+
   try {
     const finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
     const finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
-    let organization = await organization.findByPk(organizationId);
+
+    let organization = await models.organization.findByPk(organizationId);
+    let preexistingUsers = await models.user.findAll({
+      where: {
+        organizationId: organizationId
+      },
+      attributes: ['finchID']
+    });
+    let preexistingFinchIDs = [];
+    preexistingUsers.forEach(user => preexistingFinchIDs.push(user.finchID));
 
     let resp = await axios.get(finchDirectoryUrl, {
       headers: {
@@ -69,6 +86,9 @@ async function V1Import(job) {
     });
     if (resp.data) {
       let body = { requests: [] };
+
+      let employeeTotal = resp.data.individuals.length;
+
       resp.data.individuals.forEach(individual => {
         body.requests.push({ individual_id: individual.id });
       });
@@ -80,31 +100,81 @@ async function V1Import(job) {
         }
       });
 
+      //
       individuals.data.responses.forEach(individual => {
         (async () => {
-          await user.create({
-            firstName: individual.body.first_name,
-            lastName: individual.body.last_name,
-            status: 'PENDING',
-            email: individual.body.emails[0].data,
-            roleType: 'EMPLOYEE',
-            password: 'PLACEHOLDER',
-            organizationId: organizationId,
-            addressLine1: individual.body.residence.line1,
-            addressLine2: individual.body.residence.line2,
-            city: individual.body.residence.city,
-            state: individual.body.residence.state,
-            country: individual.body.residence.country,
-            zipcode: individual.body.residence.postal_code,
-            dateOfBirth: individual.body.dob
-          });
+          if (preexistingFinchIDs.indexOf(individual.body.id) >= 0) {
+            preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
+          } else {
+            await models.user.create({
+              firstName: individual.body.first_name,
+              lastName: individual.body.last_name,
+              status: 'PENDING',
+              email: individual.body.emails[0].data,
+              roleType: 'EMPLOYEE',
+              password: 'PLACEHOLDER',
+              organizationId: organizationId,
+              addressLine1: individual.body.residence.line1,
+              addressLine2: individual.body.residence.line2,
+              city: individual.body.residence.city,
+              state: individual.body.residence.state,
+              country: individual.body.residence.country,
+              zipcode: individual.body.residence.postal_code,
+              dateOfBirth: individual.body.dob,
+              finchID: individual.body.id
+            });
+          }
+        })();
+      });
+
+      let removedUsers = preexistingFinchIDs;
+
+      // Set all users that are no longer in Finch to inactive and remove their organization ID
+      removedUsers.forEach(finchID => {
+        (async () => {
+          await models.user.update(
+            {
+              status: 'INACTIVE',
+              organizationId: null
+            },
+            {
+              where: { finchID: finchID }
+            }
+          );
         })();
       });
     }
 
+    models.employeeSync.update(
+      {
+        finishedAt: moment.tz('UTC'),
+        status: 'FINISHED',
+        succeeded: true,
+        description: {
+          removed: removedUsers.length,
+          added: employeeTotal - removedUsers.length
+        }
+      },
+      {
+        where: { id: currentRun.id }
+      }
+    );
+
     // return
     return Promise.resolve();
   } catch (error) {
+    models.employeeSync.update(
+      {
+        finishedAt: moment.tz('UTC'),
+        status: 'FINISHED',
+        succeeded: false,
+        description: { message: error }
+      },
+      {
+        where: { id: currentRun.id }
+      }
+    );
+
     return Promise.reject(error);
   }
 } // END V1ExampleTask
