@@ -31,7 +31,7 @@ const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // methods
 module.exports = {
-  V1Import
+  V1SyncAllOrganizations
 };
 
 /**
