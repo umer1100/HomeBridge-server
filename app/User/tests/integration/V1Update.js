@@ -134,6 +134,7 @@ const user = require('../../../../test/fixtures/fix1/user');
           firstName: 'Ehsan',
           lastName: 'Atif',
           addressLine1: 'Address Line 1',
+          addressLine2: 'Address Line 2',
           city: 'City 1',
           zipcode: '12345',
           state: 'State 1',

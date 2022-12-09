@@ -93,6 +93,12 @@ const LOCAL_ERROR_CODES = {
     error: 'USER.BAD_REQUEST_PASSWORD_AUTHENTICATION_FAILED',
     status: 400,
     messages: ['USER[Password Authentication Failed]']
+  },
+
+  USER_BAD_REQUEST_HAVE_NO_ORGANIZATION: {
+    error: 'USER.BAD_REQUEST_HAVE_NO_ORGANIZATION',
+    status: 400,
+    messages: ["USER[Doesn't belong to any organization]"]
   }
 };
 
