@@ -43,7 +43,7 @@
     firstName: joi.string().trim().min(1).optional(),
     lastName: joi.string().trim().min(1).optional(),
     addressLine1: joi.string().trim().min(1).optional(),
-    addressLine2: joi.string().trim().min(1).optional(),
+    addressLine2: joi.string().allow('').optional(),
     city: joi.string().trim().min(1).optional(),
     zipcode: joi.string().trim().min(1).optional(),
     status: joi.string().optional(),
