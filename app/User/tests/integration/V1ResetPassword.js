@@ -10,11 +10,9 @@ const path = require('path');
 // load test env
 require('dotenv').config({ path: path.join(__dirname, '../../../../config/.env.test') });
 
-// ENV variables
-const { WEB_HOSTNAME } = process.env;
-
 // third party
 const i18n = require('i18n'); // https://github.com/mashpie/i18n-node
+const bcrypt = require('bcrypt');
 
 // server & models
 const app = require('../../../../server');
@@ -25,7 +23,6 @@ const { expect } = require('chai');
 const request = require('supertest');
 
 // services
-const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
 const { reset, populate } = require('../../../../helpers/tests');
@@ -52,44 +49,71 @@ describe('User.V1ResetPassword', async () => {
       await populate('fix1');
     });
 
-    it('[logged-out] should call reset password successfully', async () => {
+    it('[user] should reset password successfully', async () => {
       const user1 = userFix[0];
-      const params = {
-        email: user1.email
-      };
-
       try {
-        // send reset request
-        const res = await request(app).post(routeUrl).send(params);
+        const resetPasswordParams = {
+          email:  user1.email
+        }
+
+        const resetPasswordRes = await request(app)
+        .post('/v1/users/send-reset-password-token')
+        .send(resetPasswordParams)
+
+        expect(resetPasswordRes.statusCode).to.equal(200);
+
+        const findUser = await user.findByPk(user1.id);
+        const params = {
+          password1: 'NEWPASSWORD1f%',
+          password2: 'NEWPASSWORD1f%',
+          passwordResetToken: findUser.passwordResetToken
+        }
+
+        // user password update request
+        const res = await request(app)
+          .post(routeUrl)
+          .send(params)
+
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
 
-        // check if resetPassword, passwordResetToken, passwordResetExpire are there
         const foundUser = await user.findByPk(user1.id);
-        expect(foundUser.passwordResetToken).to.be.a('string').with.lengthOf.at.least(64);
-        expect(foundUser.passwordResetExpire).to.not.be.null;
-
-        // check reset link
-        expect(res.body).to.have.property('resetLink', `${WEB_HOSTNAME}/UpdatePassword?passwordResetToken=${foundUser.passwordResetToken}`);
+        // check if password is new
+        expect(foundUser.password).to.equal(bcrypt.hashSync(params.password1, foundUser.salt));
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should call reset password successfully
+    }); // END [user] should reset password successfully
 
-    it('[logged-out] should fail to call reset password because email does not exist', async () => {
-      const params = {
-        email: 'noemail@email.com'
-      };
-
+    it('[user] should fail to reset password if password1 and password2 are not the same', async () => {
+      const user1 = userFix[0];
       try {
-        // send reset request
-        const res = await request(app).post(routeUrl).send(params);
+        const resetPasswordParams = {
+          email:  user1.email
+        }
 
-        expect(res.statusCode).to.equal(404);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+        const resetPasswordRes = await request(app)
+        .post('/v1/users/send-reset-password-token')
+        .send(resetPasswordParams)
+
+        expect(resetPasswordRes.statusCode).to.equal(200);
+
+        const findUser = await user.findByPk(user1.id);
+        const params = {
+          password1: 'NEWPASSWORD1f%',
+          password2: 'NEWPASSWORD2f%',
+          passwordResetToken: findUser.passwordResetToken
+        };
+
+        // call update password
+        const res = await request(app)
+          .post(routeUrl)
+          .send(params);
+
+        expect(res.statusCode).to.equal(400);
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should fail to call reset password because email does not exist
+    }); // END [user] should fail to update password if password1 and password2 are not the same
   }); // END Role: Logged Out
-}); // END User.V1ResetPassword
+}); // END User.V1UpdatePassword

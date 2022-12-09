@@ -10,5 +10,6 @@
 module.exports = {
   ...require('./V1Create'),
   ...require('./V1ReadByAdmin'),
-  ...require('./V1UpdateHrisAccessToken')
+  ...require('./V1UpdateHrisAccessToken'),
+  ...require('./V1GetUsers')
 };

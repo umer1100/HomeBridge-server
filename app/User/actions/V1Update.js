@@ -40,9 +40,18 @@
   */
  async function V1Update(req) {
    const schema = joi.object({
+    firstName: joi.string().trim().min(1).optional(),
+    lastName: joi.string().trim().min(1).optional(),
+    addressLine1: joi.string().trim().min(1).optional(),
+    addressLine2: joi.string().trim().min(1).optional(),
+    city: joi.string().trim().min(1).optional(),
+    zipcode: joi.string().trim().min(1).optional(),
     status: joi.string().optional(),
     primaryGoal: joi.string().trim().min(1).optional(),
     goalTimeline: joi.string().trim().min(1).optional(),
+    state: joi.string().trim().min(1).optional(),
+    phone: joi.string().trim().min(1).optional(),
+    dreamHomeDescription: joi.string().trim().min(1).optional()
    });
 
    // validate

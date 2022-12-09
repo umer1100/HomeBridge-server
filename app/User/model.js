@@ -288,6 +288,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: null
+      },
+
+      // The time span required to user to achieve his goals
+      dreamHomeDescription: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
       }
     },
     {
