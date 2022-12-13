@@ -37,5 +37,5 @@ async function V1Import(req, res, next) {
   if (isEmployer(req.user)) await EmployeeSyncQueue.add('V1Import', { organizationId: req.user.organizationId });
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
-  return res.status(200).json('Started Import');
+  return res.status(200).json({ success: true, message: 'Started Import' });
 }

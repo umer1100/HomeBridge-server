@@ -76,7 +76,7 @@ async function V1Import(job) {
       attributes: ['finchID']
     });
     let preexistingFinchIDs = [];
-    preexistingUsers.forEach(user => preexistingFinchIDs.push(user.finchID));
+    preexistingUsers.forEach(user => user.finchID ? preexistingFinchIDs.push(user.finchID) : null);
 
     let resp = await axios.get(finchDirectoryUrl, {
       headers: {
