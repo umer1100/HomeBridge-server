@@ -55,8 +55,7 @@
 
   const findOrganizationUsers = await organization.findByPk(organizationId, {
     include: {
-      model: user,
-      attributes: ['firstName', 'lastName', 'status', 'addressLine1', 'addressLine2', 'city', 'state', 'zipcode', 'email', 'roleType']
+      model: user
     }
   }).catch(err => Promise.reject(error));
 
