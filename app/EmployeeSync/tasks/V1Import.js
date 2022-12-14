@@ -76,7 +76,7 @@ async function V1Import(job) {
       attributes: ['finchID']
     });
     let preexistingFinchIDs = [];
-    preexistingUsers.forEach(user => user.finchID ? preexistingFinchIDs.push(user.finchID) : null);
+    preexistingUsers.forEach(user => (user.finchID ? preexistingFinchIDs.push(user.finchID) : null));
 
     let resp = await axios.get(finchDirectoryUrl, {
       headers: {
@@ -106,6 +106,7 @@ async function V1Import(job) {
           if (preexistingFinchIDs.indexOf(individual.body.id) >= 0) {
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
+            console.log('Adding email ' + individual.body.emails[0].data);
             await models.user.create({
               firstName: individual.body.first_name,
               lastName: individual.body.last_name,
@@ -127,7 +128,7 @@ async function V1Import(job) {
         })();
       });
 
-      let removedUsers = preexistingFinchIDs;
+      let removedUsers = preexistingFinchIDs ? preexistingFinchIDs : [];
 
       // Set all users that are no longer in Finch to inactive and remove their organization ID
       removedUsers.forEach(finchID => {
