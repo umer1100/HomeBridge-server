@@ -151,10 +151,7 @@ async function V1Import(job) {
         finishedAt: moment.tz('UTC'),
         status: 'FINISHED',
         succeeded: true,
-        description: {
-          removed: removedUsers.length,
-          added: employeeTotal - removedUsers.length
-        }
+        description: {}
       },
       {
         where: { id: currentRun.id }
