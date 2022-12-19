@@ -10,7 +10,7 @@ require('dotenv').config({ path: path.join(__dirname, '../config/.env.developmen
 var axios = require('axios');
 
 const { adminLogin } = require('../helpers/tests');
-let host = 'http://localhost:8000';
+let host = 'https://ownerific-api-staging.herokuapp.com';
 let routeVersion = '/v1';
 let routePrefix = '/admins';
 let routeMethod = '/login';
@@ -35,13 +35,12 @@ const jwt = 'jwt-admin';
 
   // Replace the following placeholder values
   const params = {
-    firstName: 'First',
-    lastName: 'Last',
-    status: 'PENDING',
-    email: 'email',
-    phone: '1234567890',
+    firstName: 'John',
+    lastName: 'Test',
+    status: 'ONBOARDING',
+    email: 'john+test7@ownerific.com',
     roleType: 'EMPLOYER',
-    organizationId: 0,
+    organizationId: 1,
     timezone: 'America/Los_Angeles',
     locale: 'en',
     password1: 'thisisapassword1F%',

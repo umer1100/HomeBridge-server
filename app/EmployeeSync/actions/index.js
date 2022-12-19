@@ -1,7 +1,7 @@
 /**
- * USER TASK
+ * EMPLOYEESYNC ACTION
  *
- * Aggregates all background task files to be exported here
+ * Aggregates all action method files to be exported here
  * !NOTE: This file is updated automatically using the feature gen/del commands and is sorted alphabetically
  */
 
