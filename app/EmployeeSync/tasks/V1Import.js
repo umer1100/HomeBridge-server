@@ -11,20 +11,17 @@ const { NODE_ENV, REDIS_URL } = process.env;
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const axios = require('axios'); // http requests
-const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
-const email = require('../../../services/email');
-const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
-const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const { getDirectory, getIndividuals } = require('../../../services/finch');
+const { joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
 const { date } = require('@hapi/joi');
 
 // helpers
-
+const { startSync, updateSync } = require('../helper');
 // queues
 
 // methods
@@ -58,16 +55,9 @@ async function V1Import(job) {
 
   let { organizationId } = job.data;
 
-  let currentRun = await models.employeeSync.create({
-    organizationId: organizationId,
-    startedAt: moment.tz('UTC'),
-    status: 'RUNNING'
-  });
+  let currentRunId = await startSync(organizationId);
 
   try {
-    const finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
-    const finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
-
     let organization = await models.organization.findByPk(organizationId);
     let preexistingUsers = await models.user.findAll({
       where: {
@@ -78,35 +68,21 @@ async function V1Import(job) {
     let preexistingFinchIDs = [];
     preexistingUsers.forEach(user => (user.finchID ? preexistingFinchIDs.push(user.finchID) : null));
 
-    let resp = await axios.get(finchDirectoryUrl, {
-      headers: {
-        Authorization: `Bearer ${organization.hrisAccessToken}`,
-        'Finch-API-Version': '2020-09-17'
-      }
-    });
-    if (resp.data) {
+    let resp = await getDirectory(organization.hrisAccessToken);
+    if (resp) {
       let body = { requests: [] };
 
-      let employeeTotal = resp.data.individuals.length;
-
-      resp.data.individuals.forEach(individual => {
+      resp.individuals.forEach(individual => {
         body.requests.push({ individual_id: individual.id });
       });
 
-      let individuals = await axios.post(finchIndividualUrl, body, {
-        headers: {
-          Authorization: `Bearer ${organization.hrisAccessToken}`,
-          'Finch-API-Version': '2020-09-17'
-        }
-      });
+      let individuals = await getIndividuals(body, organization.hrisAccessToken);
 
-      //
-      individuals.data.responses.forEach(individual => {
+      individuals.responses.forEach(individual => {
         (async () => {
           if (preexistingFinchIDs.indexOf(individual.body.id) >= 0) {
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
-            console.log('Adding email ' + individual.body.emails[0].data);
             await models.user.create({
               firstName: individual.body.first_name,
               lastName: individual.body.last_name,
@@ -146,33 +122,13 @@ async function V1Import(job) {
       });
     }
 
-    models.employeeSync.update(
-      {
-        finishedAt: moment.tz('UTC'),
-        status: 'FINISHED',
-        succeeded: true,
-        description: {}
-      },
-      {
-        where: { id: currentRun.id }
-      }
-    );
+    await updateSync(currentRunId, 'FINISHED', true, {});
 
     // return
     return Promise.resolve();
   } catch (error) {
-    models.employeeSync.update(
-      {
-        finishedAt: moment.tz('UTC'),
-        status: 'FINISHED',
-        succeeded: false,
-        description: { message: error }
-      },
-      {
-        where: { id: currentRun.id }
-      }
-    );
+    await updateSync(currentRunId, 'FINISHED', false, { message: error });
 
     return Promise.reject(error);
   }
-} // END V1ExampleTask
+} // END V1Import

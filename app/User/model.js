@@ -63,6 +63,7 @@
 
 // require custom node modules
 const bcrypt = require('bcrypt');
+const { reject } = require('lodash');
 const passport = require('passport');
 const constants = require('../../helpers/constants');
 const { randomString } = require('../../helpers/logic');
@@ -338,6 +339,26 @@ module.exports = (sequelize, DataTypes) => {
       bcrypt.compare(password, secret, async (err, result) => {
         return err ? reject(err) : resolve(result);
       });
+    });
+  };
+
+  User.createFinchEmployee = async (finchData, organizationId) => {
+    User.create({
+      firstName: finchData.first_name,
+      lastName: finchData.last_name,
+      status: 'PENDING',
+      email: finchData.emails[0].data,
+      roleType: 'EMPLOYEE',
+      password: 'PLACEHOLDER',
+      organizationId: organizationId,
+      addressLine1: finchData.residence.line1,
+      addressLine2: finchData.residence.line2,
+      city: finchData.residence.city,
+      state: finchData.residence.state,
+      country: finchData.residence.country,
+      zipcode: finchData.residence.postal_code,
+      dateOfBirth: finchData.dob,
+      finchID: finchData.id
     });
   };
 
