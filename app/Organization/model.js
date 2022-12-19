@@ -85,6 +85,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
 
+      // The finch (HRIS integration) access token
+      hrisAccessToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
       // To keep track that organization by paying or guest customer
       status: {
         type: DataTypes.ENUM(['PAYING', 'GUEST']),

@@ -6,6 +6,4 @@
 
 'use strict';
 
-module.exports = {
-  ...require('./V1ExportTask')
-}
+module.exports = { ...require('./V1ExportTask') };

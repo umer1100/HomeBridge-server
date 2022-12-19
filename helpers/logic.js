@@ -75,7 +75,7 @@ function createJwtToken(user, client, TOKEN_EXPIRATION_TIME) {
       iss: HOSTNAME,
       aud: client,
       iat: new Date().getTime(),
-      exp: new Date().getTime() + TOKEN_EXPIRATION_TIME * 60 * 1000
+      exp: new Date().getTime() + parseInt(TOKEN_EXPIRATION_TIME) * 60 * 1000
     },
     SESSION_SECRET
   );

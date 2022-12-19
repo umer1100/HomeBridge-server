@@ -15,6 +15,8 @@ module.exports = {
   ...require('./V1ConfirmEmail'),
   ...require('./V1ReadByUser'),
   ...require('./V1ReadByAdmin'),
+  ...require('./V1SendResetPasswordToken'),
   ...require('./V1ResetPassword'),
-  ...require('./V1UpdatePassword')
+  ...require('./V1Update'),
+  ...require('./V1UpdatePassword'),
 };

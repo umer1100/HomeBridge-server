@@ -19,7 +19,9 @@ module.exports = {
   V1Login,
   V1ConfirmEmail,
   V1Read,
+  V1SendResetPasswordToken,
   V1ResetPassword,
+  V1Update,
   V1UpdatePassword
 };
 
@@ -140,6 +142,21 @@ async function V1Read(req, res, next) {
 }
 
 /**
+ * Send Reset password Token to user
+ *
+ * /v1/users/send-reset-password-token
+ *
+ * Must be logged out
+ */
+async function V1SendResetPasswordToken(req, res, next) {
+  let method = 'V1SendResetPasswordToken';
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+/**
  * Reset password of user
  *
  * /v1/users/reset-password
@@ -155,14 +172,37 @@ async function V1ResetPassword(req, res, next) {
 }
 
 /**
+ * Update user
+ *
+ * /v1/users/update
+ *
+ * Must be logged in
+ */
+ async function V1Update(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user) method = 'V1Update';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+/**
  * Update password of user
  *
  * /v1/users/update-password
  *
- * Must be logged out
+ * Must be logged in
+ * Role: [User]
  */
-async function V1UpdatePassword(req, res, next) {
-  let method = 'V1UpdatePassword';
+ async function V1UpdatePassword(req, res, next) {
+  let method = null;
+
+  if (req.user) method = 'V1UpdatePassword';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   const result = await actions[method](req).catch(err => next(err));

@@ -26,4 +26,28 @@ console.log(`CLOCK process.env.NODE_ENV: ${NODE_ENV}`);
 const AdminQueue = new Queue('AdminQueue', REDIS_URL);
 
 // Example automatically make request. Run every 1 min.
-new CronJob('0 0 * * * *', () => { AdminQueue.add('V1ExportTask', { adminId: 1 }); }, null, true, 'UTC');
+new CronJob(
+  '0 0 * * * *',
+  () => {
+    AdminQueue.add('V1ExportTask', { adminId: 1 });
+  },
+  null,
+  true,
+  'UTC'
+);
+
+/************************/
+/***** EMPLOYEESYNC *****/
+/************************/
+const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+
+// Example automatically make request. Run every day at midnight.
+new CronJob(
+  '0 0 * * * *',
+  () => {
+    EmployeeSync.add('V1SyncAllOrganizations');
+  },
+  null,
+  true,
+  'UTC'
+);
