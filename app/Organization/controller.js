@@ -20,7 +20,8 @@ module.exports = {
   V1UpdateEmail,
   V1Export,
   V1UpdateHrisAccessToken,
-  V1GetUsers
+  V1GetUsers,
+  V1GetCompanyDetailsFromFinch
 };
 
 /**
@@ -163,6 +164,18 @@ async function V1GetUsers(req, res, next) {
 
   // which method to call
   if (req.user) method = 'V1GetUsers';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+async function V1GetCompanyDetailsFromFinch(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user) method = 'V1GetCompanyDetailsFromFinch';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
