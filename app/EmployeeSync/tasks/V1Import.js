@@ -13,7 +13,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
 
 // services
-const { getDirectory, getIndividuals } = require('../../../services/finch');
+const { getDirectory, getIndividuals, getEmployments } = require('../../../services/finch');
 const { joiErrorsMessage } = require('../../../services/error');
 
 // models
@@ -22,7 +22,6 @@ const { date } = require('@hapi/joi');
 
 // helpers
 const { startSync, updateSync } = require('../helper');
-// queues
 
 // methods
 module.exports = {
@@ -77,28 +76,52 @@ async function V1Import(job) {
       });
 
       let individuals = await getIndividuals(body, organization.hrisAccessToken);
+      let employments = await getEmployments(body, organization.hrisAccessToken);
+
+      let requiredEmploymentDetails = employments.responses.map(({body, individual_id}) => {
+        return {
+          finchID: individual_id,
+          title: body.title,
+          department: body.department.name,
+          endDate: body.end_date,
+          startDate: body.start_date,
+        }
+      })
 
       individuals.responses.forEach(individual => {
         (async () => {
+          const employmentAttributes = requiredEmploymentDetails.find((emp) => {
+            return emp.finchID === individual.body.id
+          })
+
+          const userAttributes = {
+            firstName: individual.body.first_name,
+            lastName: individual.body.last_name,
+            status: 'PENDING',
+            email: individual.body.emails[0].data,
+            roleType: 'EMPLOYEE',
+            password: 'PLACEHOLDER',
+            organizationId: organizationId,
+            addressLine1: individual.body.residence.line1,
+            addressLine2: individual.body.residence.line2,
+            city: individual.body.residence.city,
+            state: individual.body.residence.state,
+            country: individual.body.residence.country,
+            zipcode: individual.body.residence.postal_code,
+            dateOfBirth: individual.body.dob,
+            ...employmentAttributes
+          }
+
           if (preexistingFinchIDs.indexOf(individual.body.id) >= 0) {
+            models.user.update({
+              ...userAttributes
+            }, {
+              where: { finchID: individual.body.id }
+            })
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
             await models.user.create({
-              firstName: individual.body.first_name,
-              lastName: individual.body.last_name,
-              status: 'PENDING',
-              email: individual.body.emails[0].data,
-              roleType: 'EMPLOYEE',
-              password: 'PLACEHOLDER',
-              organizationId: organizationId,
-              addressLine1: individual.body.residence.line1,
-              addressLine2: individual.body.residence.line2,
-              city: individual.body.residence.city,
-              state: individual.body.residence.state,
-              country: individual.body.residence.country,
-              zipcode: individual.body.residence.postal_code,
-              dateOfBirth: individual.body.dob,
-              finchID: individual.body.id
+              ...userAttributes
             });
           }
         })();
