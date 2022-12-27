@@ -82,7 +82,7 @@ async function V1Import(job) {
         return {
           finchID: individual_id,
           title: body.title,
-          department: body.department.name,
+          department: body.department?.name,
           endDate: body.end_date,
           startDate: body.start_date,
         }
@@ -150,7 +150,7 @@ async function V1Import(job) {
     // return
     return Promise.resolve();
   } catch (error) {
-    await updateSync(currentRunId, 'FINISHED', false, { message: error });
+    await updateSync(currentRunId, 'FINISHED', false, { message: error || error.message });
 
     return Promise.reject(error);
   }
