@@ -11,30 +11,26 @@ const moment = require('moment-timezone'); // manage timezone and dates: https:/
 const models = require('../../models');
 
 module.exports = {
-  startSync,
+  createSync,
   updateSync
 };
 
-async function startSync(organizationId) {
+async function createSync(organizationId) {
   let currentRun = await models.employeeSync.create({
     organizationId: organizationId,
-    startedAt: moment.tz('UTC'),
-    status: 'RUNNING'
+    status: 'PENDING'
   });
 
   return currentRun.id;
 }
 
-async function updateSync(syncId, status, succeeded, description) {
-  await models.employeeSync.update(
-    {
-      finishedAt: moment.tz('UTC'),
-      status: status,
-      succeeded: succeeded,
-      description: description
-    },
+async function updateSync(syncId, updatedArguments) {
+  let currentRun = await models.employeeSync.update(
+    updatedArguments,
     {
       where: { id: syncId }
     }
   );
+
+  return currentRun.id;
 }

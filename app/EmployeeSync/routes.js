@@ -14,6 +14,7 @@ const controller = require('./controller');
 module.exports = (passport, router) => {
   // routes - can also use router.get or router.post
   router.all('/v1/hris-import/users', controller.V1Import);
+  router.all('/v1/hris-sync/last', controller.V1LastSync);
 
   // return router
   return router;

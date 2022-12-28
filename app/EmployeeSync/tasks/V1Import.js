@@ -11,6 +11,7 @@ const { NODE_ENV, REDIS_URL } = process.env;
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
+const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
 const { getDirectory, getIndividuals, getEmployments } = require('../../../services/finch');
@@ -21,7 +22,7 @@ const models = require('../../../models');
 const { date } = require('@hapi/joi');
 
 // helpers
-const { startSync, updateSync } = require('../helper');
+const { updateSync } = require('../helper');
 
 // methods
 module.exports = {
@@ -35,6 +36,7 @@ module.exports = {
  *   @id - (INTEGER - REQUIRED): ID of the background job
  *   @data = {
  *     @organizationId - (INTEGER - REQUIRED): the organization which is syncing the employee data
+ *     @currentRunId - (INTEGER - REQUIRED): the currently running sync ID
  *   }
  * }
  *
@@ -44,7 +46,8 @@ module.exports = {
  */
 async function V1Import(job) {
   const schema = joi.object({
-    organizationId: joi.number().min(1).required().error(new Error('Organization id not valid.'))
+    organizationId: joi.number().min(1).required().error(new Error('Organization id not valid.')),
+    currentRunId: joi.number().min(1).required().error(new Error('Current Sync ID not valid.'))
   });
 
   // validate
@@ -52,9 +55,12 @@ async function V1Import(job) {
   if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
   job.data = value; // updated arguments with type conversion
 
-  let { organizationId } = job.data;
+  let { organizationId, currentRunId } = job.data;
 
-  let currentRunId = await startSync(organizationId);
+  await updateSync(currentRunId, {
+    startedAt: moment.tz('UTC'),
+    status: 'RUNNING'
+  });
 
   try {
     let organization = await models.organization.findByPk(organizationId);
@@ -145,12 +151,22 @@ async function V1Import(job) {
       });
     }
 
-    await updateSync(currentRunId, 'FINISHED', true, {});
+    await updateSync(currentRunId, {
+      finishedAt: moment.tz('UTC'),
+      status: 'FINISHED',
+      succeeded: true,
+      description: {}
+    });
 
     // return
     return Promise.resolve();
   } catch (error) {
-    await updateSync(currentRunId, 'FINISHED', false, { message: error || error.message });
+    await updateSync(currentRunId, {
+      finishedAt: moment.tz('UTC'),
+      status: 'FINISHED',
+      succeeded: false,
+      description: { message: error || error.message }
+    });
 
     return Promise.reject(error);
   }
