@@ -41,7 +41,7 @@ new CronJob(
 /************************/
 const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
-// Example automatically make request. Run every day at midnight.
+// Syncs all Organization HRIS systems. Run every day at midnight.
 new CronJob(
   '0 0 * * * *',
   () => {
