@@ -45,7 +45,7 @@ const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 new CronJob(
   '0 0 * * * *',
   () => {
-    EmployeeSync.add('V1SyncAllOrganizations');
+    EmployeeSyncQueue.add('V1SyncAllOrganizations');
   },
   null,
   true,
