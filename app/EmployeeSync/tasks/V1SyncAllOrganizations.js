@@ -26,7 +26,6 @@ const { date } = require('@hapi/joi');
 // helpers
 
 // queues
-const Queue = require('bull'); // process background tasks from Queue
 const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // methods
