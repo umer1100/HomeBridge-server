@@ -38,11 +38,11 @@ module.exports = function (err, req, res, next) {
     // send error email
     email.send(
       {
-        from: email.emails.error.address,
-        name: email.emails.error.name,
+        from: email.emails.errors.address,
+        name: email.emails.errors.name,
         subject: 'URGENT! 500 Interal Server Error!',
         template: 'ErrorRequest',
-        tos: [email.emails.error.address],
+        tos: [email.emails.errors.address],
         ccs: null,
         bccs: null,
         args: {
