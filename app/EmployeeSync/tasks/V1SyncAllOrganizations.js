@@ -53,7 +53,7 @@ async function V1SyncAllOrganizations(job) {
   if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
   job.data = value; // updated arguments with type conversion
 
-  let organizations = await models.organizations.findAll({ where: { hrisAccessToken: { [OP.ne]: null } } });
+  let organizations = await models.organization.findAll({ where: { hrisAccessToken: { [OP.ne]: null } } });
 
   organizations.forEach(organization => {
     (async () => {
