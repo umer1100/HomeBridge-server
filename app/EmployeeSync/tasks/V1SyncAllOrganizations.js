@@ -54,7 +54,8 @@ async function V1SyncAllOrganizations(job) {
 
   organizations.forEach(organization => {
     (async () => {
-      await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id });
+      const currentRunId = await createSync(organizationId);
+      await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id, currentRunId: currentRunId });
     })();
   });
 
