@@ -8,5 +8,6 @@
 'use strict';
 
 module.exports = {
-  ...require('./V1Import')
+  ...require('./V1Import'),
+  ...require('./V1SyncAllOrganizations')
 };
