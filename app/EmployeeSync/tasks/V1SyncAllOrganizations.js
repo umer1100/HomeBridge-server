@@ -9,19 +9,16 @@ const { NODE_ENV, REDIS_URL } = process.env;
 
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
+const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const axios = require('axios'); // http requests
-const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
 const email = require('../../../services/email');
-const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
-const { date } = require('@hapi/joi');
 
 // helpers
 
