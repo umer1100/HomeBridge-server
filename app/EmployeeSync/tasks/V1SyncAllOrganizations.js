@@ -9,24 +9,21 @@ const { NODE_ENV, REDIS_URL } = process.env;
 
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
+const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const axios = require('axios'); // http requests
-const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
 const email = require('../../../services/email');
-const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
-const { date } = require('@hapi/joi');
 
 // helpers
+const { createSync } = require('../helper');
 
 // queues
-const Queue = require('bull'); // process background tasks from Queue
 const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // methods
@@ -54,11 +51,12 @@ async function V1SyncAllOrganizations(job) {
   if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
   job.data = value; // updated arguments with type conversion
 
-  let organizations = await models.organizations.findAll({ where: { hrisAccessToken: { [OP.ne]: null } } });
+  let organizations = await models.organization.findAll({ where: { hrisAccessToken: { [Op.ne]: null } } });
 
   organizations.forEach(organization => {
     (async () => {
-      await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id });
+      const currentRunId = await createSync(organization.id);
+      await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id, currentRunId: currentRunId });
     })();
   });
 
