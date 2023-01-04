@@ -21,7 +21,7 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 const models = require('../../../models');
 
 // helpers
-const { createSync } = require('../EmployeeSync/helper');
+const { createSync } = require('../helper');
 
 // queues
 const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
