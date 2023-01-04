@@ -32,7 +32,7 @@ const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // Syncs all Organization HRIS systems. Run every day at midnight.
 new CronJob(
-  '0 15 * * * *',
+  '0 0 0 * * *',
   () => {
     EmployeeSyncQueue.add('V1SyncAllOrganizations');
   },
