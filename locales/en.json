@@ -44,5 +44,6 @@
 	"USER[Password Reset Token Is Required]": "Password Reset Token Is Required",
 	"Invalid Password Format": "Invalid Password Format",
 	"USER[Password Authentication Failed]": "Password Authentication Failed",
-	"USER[Doesn't belong to any organization]": "USER[Doesn't belong to any organization]"
+	"USER[Doesn't belong to any organization]": "USER[Doesn't belong to any organization]",
+	"Sync Never Started": "Sync Never Started"
 }

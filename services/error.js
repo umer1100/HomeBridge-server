@@ -137,11 +137,11 @@ async function queueError(error, queue, job) {
     // send error email
     await email
       .send({
-        from: email.emails.error.address,
-        name: email.emails.error.name,
+        from: email.emails.errors.address,
+        name: email.emails.errors.name,
         subject: 'URGENT! 500 Worker Process Error!',
         template: 'ErrorQueue',
-        tos: [email.emails.error.address],
+        tos: [email.emails.errors.address],
         ccs: null,
         bccs: null,
         args: {

@@ -11,9 +11,10 @@ const { NODE_ENV, REDIS_URL } = process.env;
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
+const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
-const { getDirectory, getIndividuals } = require('../../../services/finch');
+const { getDirectory, getIndividuals, getEmployments } = require('../../../services/finch');
 const { joiErrorsMessage } = require('../../../services/error');
 
 // models
@@ -21,8 +22,7 @@ const models = require('../../../models');
 const { date } = require('@hapi/joi');
 
 // helpers
-const { startSync, updateSync } = require('../helper');
-// queues
+const { updateSync } = require('../helper');
 
 // methods
 module.exports = {
@@ -36,6 +36,7 @@ module.exports = {
  *   @id - (INTEGER - REQUIRED): ID of the background job
  *   @data = {
  *     @organizationId - (INTEGER - REQUIRED): the organization which is syncing the employee data
+ *     @currentRunId - (INTEGER - REQUIRED): the currently running sync ID
  *   }
  * }
  *
@@ -45,7 +46,8 @@ module.exports = {
  */
 async function V1Import(job) {
   const schema = joi.object({
-    organizationId: joi.number().min(1).required().error(new Error('Organization id not valid.'))
+    organizationId: joi.number().min(1).required().error(new Error('Organization id not valid.')),
+    currentRunId: joi.number().min(1).required().error(new Error('Current Sync ID not valid.'))
   });
 
   // validate
@@ -53,9 +55,12 @@ async function V1Import(job) {
   if (error) return Promise.resolve(new Error(joiErrorsMessage(error)));
   job.data = value; // updated arguments with type conversion
 
-  let { organizationId } = job.data;
+  let { organizationId, currentRunId } = job.data;
 
-  let currentRunId = await startSync(organizationId);
+  await updateSync(currentRunId, {
+    startedAt: moment.tz('UTC'),
+    status: 'RUNNING'
+  });
 
   try {
     let organization = await models.organization.findByPk(organizationId);
@@ -77,28 +82,55 @@ async function V1Import(job) {
       });
 
       let individuals = await getIndividuals(body, organization.hrisAccessToken);
+      let employments = await getEmployments(body, organization.hrisAccessToken);
+
+      let requiredEmploymentDetails = employments.responses.map(({body, individual_id}) => {
+        return {
+          finchID: individual_id,
+          title: body?.title,
+          department: body?.department?.name,
+          endDate: body?.end_date,
+          startDate: body?.start_date,
+          employmentType: body?.employment.type,
+          employmentSubtype: body?.employment.subtype
+        }
+      })
 
       individuals.responses.forEach(individual => {
         (async () => {
+          const employmentAttributes = requiredEmploymentDetails.find((emp) => {
+            return emp.finchID === individual.body.id
+          })
+
+          const userAttributes = {
+            firstName: individual.body?.first_name,
+            lastName: individual.body?.last_name,
+            sex: individual.body?.gender?.toUpperCase(),
+            status: 'PENDING',
+            email: individual.body?.emails[0]?.data,
+            roleType: 'EMPLOYEE',
+            password: 'PLACEHOLDER',
+            organizationId: organizationId,
+            addressLine1: individual.body?.residence?.line1,
+            addressLine2: individual.body?.residence?.line2,
+            city: individual.body.residence?.city,
+            state: individual.body.residence?.state,
+            country: individual.body.residence?.country,
+            zipcode: individual.body.residence?.postal_code,
+            dateOfBirth: individual.body?.dob,
+            ...employmentAttributes
+          }
+
           if (preexistingFinchIDs.indexOf(individual.body.id) >= 0) {
+            models.user.update({
+              ...userAttributes
+            }, {
+              where: { finchID: individual.body.id }
+            })
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
             await models.user.create({
-              firstName: individual.body.first_name,
-              lastName: individual.body.last_name,
-              status: 'PENDING',
-              email: individual.body.emails[0].data,
-              roleType: 'EMPLOYEE',
-              password: 'PLACEHOLDER',
-              organizationId: organizationId,
-              addressLine1: individual.body.residence.line1,
-              addressLine2: individual.body.residence.line2,
-              city: individual.body.residence.city,
-              state: individual.body.residence.state,
-              country: individual.body.residence.country,
-              zipcode: individual.body.residence.postal_code,
-              dateOfBirth: individual.body.dob,
-              finchID: individual.body.id
+              ...userAttributes
             });
           }
         })();
@@ -122,12 +154,22 @@ async function V1Import(job) {
       });
     }
 
-    await updateSync(currentRunId, 'FINISHED', true, {});
+    await updateSync(currentRunId, {
+      finishedAt: moment.tz('UTC'),
+      status: 'FINISHED',
+      succeeded: true,
+      description: {}
+    });
 
     // return
     return Promise.resolve();
   } catch (error) {
-    await updateSync(currentRunId, 'FINISHED', false, { message: error });
+    await updateSync(currentRunId, {
+      finishedAt: moment.tz('UTC'),
+      status: 'FINISHED',
+      succeeded: false,
+      description: { message: error || error.message }
+    });
 
     return Promise.reject(error);
   }

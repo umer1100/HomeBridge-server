@@ -2,8 +2,8 @@
  * EMPLOYEESYNC MODEL
  *
  * Find Table Schema Here: "/database/schema.sql"
- * 
- * 
+ *
+ *
  * -- HRIS Sync TABLE --
  * CREATE TABLE IF NOT EXISTS EmployeeSync (
  *  id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       status: {
-        type: DataTypes.ENUM(['RUNNING', 'FINISHED', 'CANCELLED', 'SCHEDULED']),
+        type: DataTypes.ENUM(['PENDING', 'RUNNING', 'FINISHED', 'CANCELLED', 'SCHEDULED']),
         allowNull: false
       },
 

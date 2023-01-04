@@ -25,6 +25,7 @@ const tasks = require('./tasks');
 module.exports = () => {
   // Process EmployeeSync Feature Background Tasks
   EmployeeSyncQueue.process('V1Import', tasks.V1Import);
+  EmployeeSyncQueue.process('V1SyncAllOrganizations', tasks.V1SyncAllOrganizations);
   EmployeeSyncQueue.on('failed', async (job, error) => queueError(error, EmployeeSyncQueue, job));
   EmployeeSyncQueue.on('stalled', async job => queueError(new Error('Queue Stalled.'), EmployeeSyncQueue, job));
   EmployeeSyncQueue.on('error', async error => queueError(error, EmployeeSyncQueue));

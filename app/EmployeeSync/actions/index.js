@@ -7,4 +7,6 @@
 
 'use strict';
 
-module.exports = {};
+module.exports = {
+  ...require('./V1LastSync'),
+};

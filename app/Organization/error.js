@@ -74,6 +74,12 @@ const LOCAL_ERROR_CODES = {
     error: 'ORGANIZATION.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
     status: 404,
     messages: ['ORGANIZATION[ORGANIZATION Account Does Not Exist]']
+  },
+
+  ORGANIZATION_BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH: {
+    error: 'ORGANIZATION.BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH',
+    status: 404,
+    messages: ['ORGANIZATION[ORGANIZATION Does not integrated with finch]']
   }
 };
 
