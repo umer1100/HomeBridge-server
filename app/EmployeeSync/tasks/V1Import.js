@@ -87,10 +87,12 @@ async function V1Import(job) {
       let requiredEmploymentDetails = employments.responses.map(({body, individual_id}) => {
         return {
           finchID: individual_id,
-          title: body.title,
-          department: body.department?.name,
-          endDate: body.end_date,
-          startDate: body.start_date,
+          title: body?.title,
+          department: body?.department?.name,
+          endDate: body?.end_date,
+          startDate: body?.start_date,
+          employmentType: body?.employment.type,
+          employmentSubtype: body?.employment.subtype
         }
       })
 
@@ -101,20 +103,21 @@ async function V1Import(job) {
           })
 
           const userAttributes = {
-            firstName: individual.body.first_name,
-            lastName: individual.body.last_name,
+            firstName: individual.body?.first_name,
+            lastName: individual.body?.last_name,
+            sex: individual.body?.gender?.toUpperCase(),
             status: 'PENDING',
-            email: individual.body.emails[0].data,
+            email: individual.body?.emails[0]?.data,
             roleType: 'EMPLOYEE',
             password: 'PLACEHOLDER',
             organizationId: organizationId,
-            addressLine1: individual.body.residence.line1,
-            addressLine2: individual.body.residence.line2,
-            city: individual.body.residence.city,
-            state: individual.body.residence.state,
-            country: individual.body.residence.country,
-            zipcode: individual.body.residence.postal_code,
-            dateOfBirth: individual.body.dob,
+            addressLine1: individual.body?.residence?.line1,
+            addressLine2: individual.body?.residence?.line2,
+            city: individual.body.residence?.city,
+            state: individual.body.residence?.state,
+            country: individual.body.residence?.country,
+            zipcode: individual.body.residence?.postal_code,
+            dateOfBirth: individual.body?.dob,
             ...employmentAttributes
           }
 

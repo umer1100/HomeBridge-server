@@ -320,7 +320,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null
-      }
+      },
+
+      employmentType: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      employmentSubtype: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically
