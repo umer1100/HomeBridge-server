@@ -13,7 +13,7 @@ const controller = require('./controller');
 // Returns a function that attaches PlaidAccount feature routes to the global router object
 module.exports = (passport, router) => {
   // routes - can also use router.get or router.post
-  router.all('/v1/plaidaccounts/example', controller.V1Example);
+  router.all('/v1/plaidaccounts/createaccesstoken', controller.V1CreateAccessToken);
 
   // return router
   return router;
