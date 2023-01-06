@@ -150,14 +150,15 @@ CREATE TABLE IF NOT EXISTS EmployeeSync (
 
 
 
--- Account TABLE --
-CREATE TABLE IF NOT EXISTS Account (
+-- Plaid Account TABLE --
+CREATE TABLE IF NOT EXISTS PlaidAccount (
   id BIGSERIAL PRIMARY KEY NOT NULL,
 
   userId BIGINT DEFAULT NULL REFERENCES Users(id),
 
   plaidItemId TEXT NOT NULL UNIQUE,
-  plaidAccountID TEXT NOT NULL UNIQUE,
+  plaidAccountId TEXT NOT NULL UNIQUE,
+  plaidAccessToken TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   mask TEXT NOT NULL,
   currentBalance REAL DEFAULT 0.0,

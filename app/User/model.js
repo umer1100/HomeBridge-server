@@ -363,6 +363,10 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
   };
 
+  User.associate = models => {
+    User.hasMany(models.plaidAccount);
+  };
+
   // sensitive data method
   User.getSensitiveData = () => {
     return sensitiveData;
