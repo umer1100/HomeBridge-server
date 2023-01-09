@@ -13,7 +13,8 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 const actions = require('./actions');
 
 module.exports = {
-  V1Example
+  V1Example,
+  V1CreateAccessToken
 };
 
 /**

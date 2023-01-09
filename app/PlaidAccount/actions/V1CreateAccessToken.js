@@ -82,7 +82,7 @@ async function V1CreateAccessToken(req) {
     });
 
     const plaidClient = new plaid.PlaidApi(configuration);
-    const tokenExchange = plaidClient.itemPublicTokenExchange({ public_token: req.args.publicToken });
+    const tokenExchange = await plaidClient.itemPublicTokenExchange({ public_token: req.args.publicToken });
     const accessToken = tokenExchange.data.access_token;
     const itemId = tokenExchange.data.item_id;
 

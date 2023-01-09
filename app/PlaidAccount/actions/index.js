@@ -8,5 +8,6 @@
 'use strict';
 
 module.exports = {
-  ...require('./V1Example')
+  ...require('./V1Example'),
+  ...require('./V1CreateAccessToken')
 }
