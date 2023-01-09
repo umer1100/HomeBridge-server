@@ -6,13 +6,11 @@
  * id BIGSERIAL PRIMARY KEY NOT NULL,
 
  * userId BIGINT DEFAULT NULL REFERENCES Users(id),
- * plaidItemId TEXT NOT NULL UNIQUE,
- * plaidAccountId TEXT NOT NULL UNIQUE,
- * plaidAccessToken TEXT NOT NULL UNIQUE,
+ * itemId TEXT NOT NULL UNIQUE,
+ * accountId TEXT NOT NULL UNIQUE,
+ * accessToken TEXT NOT NULL UNIQUE,
  * name TEXT NOT NULL,
  * mask TEXT NOT NULL,
- * currentBalance REAL DEFAULT 0.0,
- * availableBalance REAL DEFAULT 0.0,
  * processorToken TEXT DEFAULT NULL,
  * custUrl TEXT DEFAULT NULL,
  * fundingSourceURL TEXT DEFAULT NULL,
@@ -35,17 +33,17 @@ module.exports = (sequelize, DataTypes) => {
     {
       // All foreign keys are added in associations
 
-      plaidItemId: {
+      itemId: {
         type: DataTypes.TEXT,
         allowNull: false
       },
 
-      plaidAccountId: {
+      accountId: {
         type: DataTypes.TEXT,
         allowNull: false
       },
 
-      plaidAccessToken: {
+      accessToken: {
         type: DataTypes.TEXT,
         allowNull: false
       },
@@ -58,24 +56,6 @@ module.exports = (sequelize, DataTypes) => {
       mask: {
         type: DataTypes.TEXT,
         allowNull: false
-      },
-
-      currentBalance: {
-        type: DataTypes.REAL,
-        allowNull: false,
-        defaultValue: 0.0,
-        validate: {
-          isDecimal: true
-        }
-      },
-
-      availableBalance: {
-        type: DataTypes.REAL,
-        allowNull: false,
-        defaultValue: 0.0,
-        validate: {
-          isDecimal: true
-        }
       },
 
       processorToken: {

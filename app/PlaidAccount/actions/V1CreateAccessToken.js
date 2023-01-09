@@ -13,6 +13,7 @@ const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
 const io = require('socket.io-emitter')(REDIS_URL); // to emit real-time events to client-side applications: https://socket.io/docs/emit-cheatsheet/
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const axios = require('axios');
+const plaid = require('plaid');
 
 // services
 const email = require('../../../services/email');
@@ -52,9 +53,6 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  *
- * !IMPORTANT: This is an important message
- * !NOTE: This is a note
- * TODO: This is a todo
  */
 async function V1CreateAccessToken(req) {
   const schema = joi.object({
@@ -72,19 +70,42 @@ async function V1CreateAccessToken(req) {
   req.args = value; // updated arguments with type conversion
 
   try {
-    let response = await axios.post(PLAID_CREATE_LINK_TOKEN_URL, {
-      publicToken: req.args.publicToken
+    const configuration = new plaid.Configuration({
+      basePath: plaid.PlaidEnvironments[PLAID_ENVIRONMENT],
+      baseOptions: {
+        headers: {
+          'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
+          'PLAID-SECRET': PLAID_CLIENT_SECRET,
+          'Plaid-Version': '2020-09-14'
+        }
+      }
     });
 
-    const accessToken = response.data.access_token;
-    const itemId = response.data.item_id;
+    const plaidClient = new plaid.PlaidApi(configuration);
+    const tokenExchange = plaidClient.itemPublicTokenExchange({ public_token: req.args.publicToken });
+    const accessToken = tokenExchange.data.access_token;
+    const itemId = tokenExchange.data.item_id;
+
+    let accounts = req.args.accounts;
+
+    accounts.forEach(account => {
+      (async () => {
+        await models.plaidAccount.create({
+          account_id: account.id,
+          name: account.name,
+          accessToken: accessToken,
+          itemId: itemId,
+          mask: account.mask,
+          type: account.type,
+          subtype: account.subtype
+        });
+      })();
+    });
 
     // return
     return Promise.resolve({
       status: 200,
-      success: true,
-      jobId: job.id,
-      data: data
+      success: true
     });
   } catch (error) {
     return Promise.reject(error);

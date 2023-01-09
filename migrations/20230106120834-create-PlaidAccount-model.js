@@ -20,18 +20,18 @@ module.exports = {
         allowNull: false
       },
 
-      plaidItemId: {
+      itemId: {
         type: Sequelize.TEXT,
         unique: true,
         allowNull: false
       },
 
-      plaidAccountId: {
+      accountId: {
         type: Sequelize.TEXT,
         allowNull: false
       },
 
-      plaidAccessToken: {
+      accessToken: {
         type: Sequelize.TEXT,
         unique: true,
         allowNull: false
@@ -45,34 +45,6 @@ module.exports = {
       mask: {
         type: Sequelize.TEXT,
         allowNull: false
-      },
-
-      currentBalance: {
-        type: Sequelize.REAL,
-        allowNull: false,
-        defaultValue: 0.0,
-        validate: {
-          isDecimal: true
-        },
-        get() {
-          // convert string to float
-          const rawValue = this.getDataValue(example3);
-          return Number(rawValue);
-        }
-      },
-
-      availableBalance: {
-        type: Sequelize.REAL,
-        allowNull: false,
-        defaultValue: 0.0,
-        validate: {
-          isDecimal: true
-        },
-        get() {
-          // convert string to float
-          const rawValue = this.getDataValue(example3);
-          return Number(rawValue);
-        }
       },
 
       processorToken: {
