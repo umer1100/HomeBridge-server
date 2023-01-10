@@ -22,7 +22,8 @@ module.exports = {
   V1SendResetPasswordToken,
   V1ResetPassword,
   V1Update,
-  V1UpdatePassword
+  V1UpdatePassword,
+  V1PlaidCreateLinkToken
 };
 
 /**
@@ -205,6 +206,15 @@ async function V1ResetPassword(req, res, next) {
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+async function V1PlaidCreateLinkToken(req, res, next) {
+  let method = null;
+  if (req.user) method = 'V1PlaidCreateLinkToken';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result.status).json(result);
 }

@@ -19,4 +19,5 @@ module.exports = {
   ...require('./V1ResetPassword'),
   ...require('./V1Update'),
   ...require('./V1UpdatePassword'),
+  ...require('./V1PlaidCreateLinkToken')
 };
