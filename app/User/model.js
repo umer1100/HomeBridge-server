@@ -361,9 +361,6 @@ module.exports = (sequelize, DataTypes) => {
   // association
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
-  };
-
-  User.associate = models => {
     User.hasMany(models.plaidAccount);
   };
 

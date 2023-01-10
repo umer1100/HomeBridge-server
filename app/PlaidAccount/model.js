@@ -60,17 +60,17 @@ module.exports = (sequelize, DataTypes) => {
 
       processorToken: {
         type: DataTypes.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       custUrl: {
         type: DataTypes.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       fundingSourceUrl: {
         type: DataTypes.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       type: {

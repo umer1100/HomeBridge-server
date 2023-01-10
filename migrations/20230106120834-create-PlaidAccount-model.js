@@ -22,7 +22,6 @@ module.exports = {
 
       itemId: {
         type: Sequelize.TEXT,
-        unique: true,
         allowNull: false
       },
 
@@ -33,7 +32,6 @@ module.exports = {
 
       accessToken: {
         type: Sequelize.TEXT,
-        unique: true,
         allowNull: false
       },
 
@@ -49,17 +47,17 @@ module.exports = {
 
       processorToken: {
         type: Sequelize.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       custUrl: {
         type: Sequelize.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       fundingSourceUrl: {
         type: Sequelize.TEXT,
-        allowNull: false
+        defaultValue: null
       },
 
       type: {
@@ -79,6 +77,13 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        defaultValue: null,
+        validate: {
+          isDate: true
+        }
       }
     });
   },
