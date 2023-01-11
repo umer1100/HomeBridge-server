@@ -12,7 +12,7 @@ const { REDIS_URL } = process.env;
 
 // third party node modules
 const Queue = require('bull'); // process background tasks from Queue
-const AccountQueue = new Queue('AccountQueue', REDIS_URL);
+const PlaidAccountQueue = new Queue('PlaidAccountQueue', REDIS_URL);
 
 // services
 const { queueError } = require('../../services/error');

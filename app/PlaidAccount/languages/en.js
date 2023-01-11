@@ -9,5 +9,7 @@
 'use strict';
 
 module.exports = {
-  'ACCOUNT[Example Message]': 'Example Message'
+  'ACCOUNT[Example Message]': 'Example Message',
+  'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]': 'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]',
+	'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]': 'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]'
 };

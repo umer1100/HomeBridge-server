@@ -1,5 +1,5 @@
 /**
- * ACCOUNT V1Example ACTION
+ * ACCOUNT V1CreateAccessToken ACTION
  */
 
 'use strict';
@@ -99,7 +99,7 @@ async function V1CreateAccessToken(req) {
       }
     })
     await models.plaidAccount.bulkCreate(accounts)
-    // return
+
     return Promise.resolve({
       status: 200,
       success: true

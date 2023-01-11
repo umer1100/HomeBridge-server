@@ -156,9 +156,9 @@ CREATE TABLE IF NOT EXISTS PlaidAccount (
 
   userId BIGINT DEFAULT NULL REFERENCES Users(id),
 
-  plaidItemId TEXT NOT NULL UNIQUE,
-  plaidAccountId TEXT NOT NULL UNIQUE,
-  plaidAccessToken TEXT NOT NULL UNIQUE,
+  itemId TEXT NOT NULL UNIQUE,
+  accountId TEXT NOT NULL UNIQUE,
+  accessToken TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   mask TEXT NOT NULL,
   currentBalance REAL DEFAULT 0.0,
