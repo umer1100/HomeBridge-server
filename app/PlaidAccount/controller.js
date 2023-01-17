@@ -13,7 +13,8 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 const actions = require('./actions');
 
 module.exports = {
-  V1CreateAccessToken
+  V1CreateAccessToken,
+  V1CreateLinkToken
 };
 
 /**
@@ -39,4 +40,14 @@ async function V1CreateAccessToken(req, res, next) {
   } catch (error) {
     return next(error);
   }
+}
+
+async function V1CreateLinkToken(req, res, next) {
+  let method = null;
+
+  if (req.user) method = 'V1CreateLinkToken';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
 }

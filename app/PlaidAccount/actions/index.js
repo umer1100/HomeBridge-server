@@ -9,5 +9,6 @@
 
 module.exports = {
   ...require('./V1Example'),
+  ...require('./V1CreateLinkToken'),
   ...require('./V1CreateAccessToken')
 }
