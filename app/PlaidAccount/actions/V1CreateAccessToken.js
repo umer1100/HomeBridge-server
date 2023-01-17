@@ -15,6 +15,7 @@ const plaid = require('plaid');
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const { createDwollaCustomer, createDwollaCustomerFundingSource } = require('../../../services/dwolla');
 
 // models
 const models = require('../../../models');
@@ -53,7 +54,8 @@ async function V1CreateAccessToken(req) {
       .min(1)
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]'))),
-    accounts: joi.array()
+    accounts: joi
+      .array()
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]')))
   });
@@ -80,13 +82,25 @@ async function V1CreateAccessToken(req) {
     const accessToken = tokenExchange.data.access_token;
 
     const itemResponse = await axios.post(PLAID_GET_ITEM, {
-      'access_token': accessToken,
-      'client_id': PLAID_CLIENT_ID,
-      'secret': PLAID_CLIENT_SECRET
-    })
+      access_token: accessToken,
+      client_id: PLAID_CLIENT_ID,
+      secret: PLAID_CLIENT_SECRET
+    });
 
     let accounts = req.args.accounts;
+
     accounts = accounts.map(account => {
+      const processorRequest = {
+        access_token: accessToken,
+        account_id: account.id,
+        processor: 'dwolla'
+      };
+      const processorTokenResponse = await plaid.processorTokenCreate(processorRequest);
+      processorToken = processorTokenResponse.data.processor_token;
+      let ssn = '';
+      customerUrl = await createDwollaCustomer(firstName, lastName, ssn, req.user.email);
+      fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
+
       return {
         accountId: account.id,
         name: account.name,
@@ -94,11 +108,13 @@ async function V1CreateAccessToken(req) {
         mask: account.mask,
         type: account.type,
         subtype: account.subtype,
+        customerUrl: customerUrl,
+        fundingSourceUrl: fundingSourceUrl,
         userId: req.user.id,
         accessToken
-      }
-    })
-    await models.plaidAccount.bulkCreate(accounts)
+      };
+    });
+    await models.plaidAccount.bulkCreate(accounts);
 
     return Promise.resolve({
       status: 200,
