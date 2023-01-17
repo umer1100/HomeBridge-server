@@ -5,10 +5,10 @@ const axios = require('axios');
 const { PLAID_CLIENT_ID, PLAID_CLIENT_SECRET, PLAID_CREATE_LINK_TOKEN_URL } = process.env;
 
 module.exports = {
-  V1PlaidCreateLinkToken
+  V1CreateLinkToken
 };
 
-async function V1PlaidCreateLinkToken() {
+async function V1CreateLinkToken() {
   try {
     let res = await axios.post(PLAID_CREATE_LINK_TOKEN_URL, {
       user: {

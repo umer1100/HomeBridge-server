@@ -27,8 +27,8 @@ module.exports = {
 /**
  * Method Description
  *
- * GET  /v1/plaidaccounts/createaccesstoken
- * POST /v1/plaidaccounts/createaccesstoken
+ * GET  /v1/plaidAccounts/createAccessToken
+ * POST /v1/plaidAccounts/createAccessToken
  *
  * Must be logged in
  * Roles: ['user']

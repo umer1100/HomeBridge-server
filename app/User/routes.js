@@ -21,7 +21,6 @@ module.exports = (passport, router) => {
   router.all('/v1/users/reset-password', controller.V1ResetPassword);
   router.all('/v1/users/update-password', controller.V1UpdatePassword);
   router.all('/v1/users/update', controller.V1Update)
-  router.all('/v1/users/link-token/create', controller.V1PlaidCreateLinkToken)
   // return router
   return router;
 };
