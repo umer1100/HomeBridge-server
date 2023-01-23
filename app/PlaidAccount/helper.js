@@ -9,6 +9,7 @@ const { PLAID_CLIENT_ID, PLAID_CLIENT_SECRET, PLAID_GET_ITEM, PLAID_ENVIRONMENT 
 const plaid = require('plaid');
 
 module.exports = {
+  linkTokenCreate,
   itemPublicTokenExchange,
   itemGet,
   identityGet,
@@ -27,6 +28,11 @@ const configuration = new plaid.Configuration({
 });
 
 const plaidClient = new plaid.PlaidApi(configuration);
+
+async function linkTokenCreate(payload) {
+  const response = await plaidClient.linkTokenCreate(payload);
+  return response;
+}
 
 async function itemPublicTokenExchange(payload) {
   const tokenExchange = await plaidClient.itemPublicTokenExchange(payload);
@@ -47,5 +53,3 @@ async function itemRemove(payload) {
   const itemRemoveResponse = await plaidClient.itemRemove(payload);
   return itemRemoveResponse;
 }
-
- 
