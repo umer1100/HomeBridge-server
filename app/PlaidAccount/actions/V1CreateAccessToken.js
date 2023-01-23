@@ -81,39 +81,62 @@ async function V1CreateAccessToken(req) {
     const tokenExchange = await plaidClient.itemPublicTokenExchange({ public_token: req.args.publicToken });
     const accessToken = tokenExchange.data.access_token;
 
-    const itemResponse = await axios.post(PLAID_GET_ITEM, {
+    const itemResponse = await axios.post('https://sandbox.plaid.com/item/get', {
       access_token: accessToken,
       client_id: PLAID_CLIENT_ID,
       secret: PLAID_CLIENT_SECRET
     });
 
+    let ssn = '123456789';
+    let customerUrl = await createDwollaCustomer(
+      req.user.firstName,
+      req.user.lastName,
+      ssn,
+      req.user.email,
+      req.user.addressLine1,
+      req.user.city,
+      req.user.state,
+      req.user.zipcode,
+      req.user.dateOfBirth
+    );
+
+    console.log(customerUrl);
+
     let accounts = req.args.accounts;
 
-    accounts = accounts.map(account => {
-      const processorRequest = {
-        access_token: accessToken,
-        account_id: account.id,
-        processor: 'dwolla'
-      };
-      const processorTokenResponse = await plaid.processorTokenCreate(processorRequest);
-      processorToken = processorTokenResponse.data.processor_token;
-      let ssn = '';
-      customerUrl = await createDwollaCustomer(firstName, lastName, ssn, req.user.email);
-      fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
+    accounts = await Promise.all(
+      accounts.map(async account => {
+        const processorRequest = {
+          access_token: accessToken,
+          account_id: account.id,
+          processor: 'dwolla'
+        };
 
-      return {
-        accountId: account.id,
-        name: account.name,
-        itemId: itemResponse?.data?.item?.item_id,
-        mask: account.mask,
-        type: account.type,
-        subtype: account.subtype,
-        customerUrl: customerUrl,
-        fundingSourceUrl: fundingSourceUrl,
-        userId: req.user.id,
-        accessToken
-      };
-    });
+        const processorTokenResponse = await plaidClient.processorTokenCreate(processorRequest);
+
+        let processorToken = processorTokenResponse.data.processor_token;
+        let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
+        console.log(customerUrl);
+        console.log(fundingSourceUrl);
+
+        return {
+          accountId: account.id,
+          name: account.name,
+          itemId: itemResponse?.data?.item?.item_id,
+          mask: account.mask,
+          type: account.type,
+          subtype: account.subtype,
+          custUrl: customerUrl,
+          fundingSourceUrl: fundingSourceUrl,
+          userId: req.user.id,
+          accessToken,
+          processorToken
+        };
+      })
+    );
+
+    console.log(accounts);
+
     await models.plaidAccount.bulkCreate(accounts);
 
     return Promise.resolve({
