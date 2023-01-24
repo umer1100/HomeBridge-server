@@ -4,18 +4,14 @@
 
 'use strict';
 
-// ENV variables
-const { PLAID_CLIENT_ID, PLAID_CLIENT_SECRET, PLAID_GET_ITEM, PLAID_ENVIRONMENT } = process.env;
-
 // third-party
-const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
-const axios = require('axios');
-const plaid = require('plaid');
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 const { createDwollaCustomer, createDwollaCustomerFundingSource } = require('../../../services/dwolla');
+
+const { itemPublicTokenExchange, itemGet } = require('../helper');
 
 // models
 const models = require('../../../models');
@@ -57,7 +53,13 @@ async function V1CreateAccessToken(req) {
     accounts: joi
       .array()
       .required()
-      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]')))
+      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]'))),
+    institutionName: joi
+      .string()
+      .trim()
+      .min(1)
+      .required()
+      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]')))
   });
 
   // validate
@@ -66,25 +68,11 @@ async function V1CreateAccessToken(req) {
   req.args = value; // updated arguments with type conversion
 
   try {
-    const configuration = new plaid.Configuration({
-      basePath: plaid.PlaidEnvironments[PLAID_ENVIRONMENT],
-      baseOptions: {
-        headers: {
-          'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
-          'PLAID-SECRET': PLAID_CLIENT_SECRET,
-          'Plaid-Version': '2020-09-14'
-        }
-      }
-    });
-
-    const plaidClient = new plaid.PlaidApi(configuration);
-    const tokenExchange = await plaidClient.itemPublicTokenExchange({ public_token: req.args.publicToken });
+    const tokenExchange = await itemPublicTokenExchange({ public_token: req.args.publicToken });
     const accessToken = tokenExchange.data.access_token;
 
-    const itemResponse = await axios.post('https://sandbox.plaid.com/item/get', {
-      access_token: accessToken,
-      client_id: PLAID_CLIENT_ID,
-      secret: PLAID_CLIENT_SECRET
+    const itemResponse = await itemGet({
+      access_token: accessToken
     });
 
     let ssn = '123456789';
@@ -130,7 +118,8 @@ async function V1CreateAccessToken(req) {
           fundingSourceUrl: fundingSourceUrl,
           userId: req.user.id,
           accessToken,
-          processorToken
+          processorToken,
+          institutionName: req?.args?.institutionName
         };
       })
     );

@@ -11,5 +11,7 @@
 module.exports = {
   'ACCOUNT[Example Message]': 'Example Message',
   'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]': 'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]',
-	'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]': 'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]'
+	'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]': 'PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]',
+	"PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]": "PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]",
+	"PLAIDACCOUNT_V1UnlinkAccounts_Invalid_Argument[publicToken]": "PLAIDACCOUNT_V1UnlinkAccounts_Invalid_Argument[publicToken]"
 };

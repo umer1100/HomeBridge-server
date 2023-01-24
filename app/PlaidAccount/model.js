@@ -81,6 +81,11 @@ module.exports = (sequelize, DataTypes) => {
       subtype: {
         type: DataTypes.TEXT,
         defaultValue: null
+      },
+
+      institutionName: {
+        type: DataTypes.TEXT,
+        defaultValue: null
       }
     },
     {
