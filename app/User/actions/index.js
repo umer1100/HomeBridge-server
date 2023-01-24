@@ -18,5 +18,5 @@ module.exports = {
   ...require('./V1SendResetPasswordToken'),
   ...require('./V1ResetPassword'),
   ...require('./V1Update'),
-  ...require('./V1UpdatePassword'),
+  ...require('./V1UpdatePassword')
 };

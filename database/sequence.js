@@ -9,5 +9,6 @@ module.exports = [
   'admin',
   'organization',
   'user',
-  'employeeSync'
+  'employeeSync',
+  'account'
 ];
