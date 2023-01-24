@@ -1,5 +1,5 @@
 /**
- * ACCOUNT V1CreateAccessToken ACTION
+ * PLAIDACCOUNT V1CreateAccessToken ACTION
  */
 
 'use strict';
@@ -32,6 +32,8 @@ module.exports = {
  * req.params = {}
  * req.args = {
  *   @publicToken - (STRING - REQUIRED): Public token used to generate access token
+ *   @accounts - (Array - REQUIRED): Accounts array return by plaid onSuccess method
+ *   @institutionName - (STRING - REQUIRED): Bank name or plaid item name
  * }
  *
  * Success: Return something

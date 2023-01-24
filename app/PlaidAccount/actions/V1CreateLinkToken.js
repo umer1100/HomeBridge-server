@@ -1,14 +1,30 @@
 'use strict';
 
-const axios = require('axios');
-
-const { PLAID_CLIENT_ID, PLAID_CLIENT_SECRET, PLAID_CREATE_LINK_TOKEN_URL } = process.env;
+const { PLAID_CLIENT_ID } = process.env;
 const { linkTokenCreate } = require('../helper');
-
 
 module.exports = {
   V1CreateLinkToken
 };
+
+/**
+ * Method Description
+ *
+ * GET  /v1/plaidAccounts/createLinkToken
+ * POST /v1/plaidAccounts/createLinkToken
+ *
+ * Must be logged in
+ * Roles: ['user']
+ *
+ * req.params = {}
+ * req.args = {}
+ *
+ * Success: Return something
+ * Errors:
+ *   401: UNAUTHORIZED
+ *   500: INTERNAL_SERVER_ERROR
+ *
+ */
 
 async function V1CreateLinkToken() {
   const request = {

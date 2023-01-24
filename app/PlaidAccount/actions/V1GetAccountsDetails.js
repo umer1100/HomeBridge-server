@@ -8,6 +8,27 @@ module.exports = {
   V1GetAccountsDetails
 };
 
+/**
+ * Method Description
+ *
+ * GET  /v1/plaidAccounts/getAccountsDetails
+ * POST /v1/plaidAccounts/getAccountsDetails
+ *
+ * Must be logged in
+ * Roles: ['user']
+ *
+ * req.params = {}
+ * req.args = {
+ *   @user - (STRING - REQUIRED): user object to get his account details
+ * }
+ *
+ * Success: Return something
+ * Errors:
+ *   401: UNAUTHORIZED
+ *   500: INTERNAL_SERVER_ERROR
+ *
+ */
+
 async function V1GetAccountsDetails(req) {
   try {
     let plaidAccounts = await models.plaidAccount.findAll({

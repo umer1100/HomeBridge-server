@@ -41,6 +41,7 @@ async function linkTokenCreate(payload) {
   const response = await plaidClient.linkTokenCreate(payload);
   return response;
 }
+
 /**
  * Exchange public token for an access token
  *
@@ -87,7 +88,6 @@ async function identityGet(payload) {
  *
  * Docs: https://plaid.com/docs/api/items/#itemremove
  */
-
 
 async function itemRemove(payload) {
   const itemRemoveResponse = await plaidClient.itemRemove(payload);

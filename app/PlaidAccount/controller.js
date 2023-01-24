@@ -20,9 +20,9 @@ module.exports = {
 };
 
 /**
- * CreateAccessToken Method
+ * V1CreateAccessToken Method
  *
- * /v1/plaidaccounts/createaccesstokens
+ * /v1/plaidAccounts/createAccessToken
  *
  * Must be logged in
  * Roles: ['user']
@@ -44,6 +44,15 @@ async function V1CreateAccessToken(req, res, next) {
   }
 }
 
+/**
+ * V1CreateLinkToken Method
+ *
+ * /v1/plaidAccounts/createLinkToken
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
+
 async function V1CreateLinkToken(req, res, next) {
   let method = null;
 
@@ -54,20 +63,40 @@ async function V1CreateLinkToken(req, res, next) {
   return res.status(result.status).json(result);
 }
 
+/**
+ * V1GetAccountsDetails Method
+ *
+ * /v1/plaidAccounts/getAccountsDetails
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
+
 async function V1GetAccountsDetails(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1GetAccountsDetails';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result?.status).json(result);
 }
+
+/**
+ * V1UnlinkAccounts Method
+ *
+ * /v1/plaidAccounts/unlinkAccounts
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
 
 async function V1UnlinkAccounts(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1UnlinkAccounts';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result?.status).json(result);
 }
