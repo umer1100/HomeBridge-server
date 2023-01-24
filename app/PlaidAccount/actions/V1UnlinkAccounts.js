@@ -9,6 +9,28 @@ module.exports = {
   V1UnlinkAccounts
 };
 
+/**
+ * Method Description
+ *
+ * GET  /v1/plaidAccounts/unlinkAccounts
+ * POST /v1/plaidAccounts/unlinkAccounts
+ *
+ * Must be logged in
+ * Roles: ['user']
+ *
+ * req.params = {
+ *  @itemId - (STRING - REQUIRED): item id to unlink accounts
+ * }
+ * req.args = {}
+ *
+ * Success: Return something
+ * Errors:
+ *   400: BAD_REQUEST_INVALID_ARGUMENTS
+ *   401: UNAUTHORIZED
+ *   500: INTERNAL_SERVER_ERROR
+ *
+ */
+
 async function V1UnlinkAccounts(req) {
   const schema = joi.object({
     itemId: joi
@@ -24,7 +46,6 @@ async function V1UnlinkAccounts(req) {
   req.args = value;
 
   try {
-    debugger
     let accounts = await models.plaidAccount.findAll({
       where: {
         itemId: req.args.itemId
@@ -35,7 +56,7 @@ async function V1UnlinkAccounts(req) {
       'access_token': accounts[0]?.accessToken
     });
 
-    if(itemRemoveResponse) {
+    if (itemRemoveResponse) {
       await models.plaidAccount.destroy({
         where: {
           itemId: req.args.itemId
