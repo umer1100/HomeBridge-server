@@ -24,7 +24,6 @@ async function V1UnlinkAccounts(req) {
   req.args = value;
 
   try {
-    debugger
     let accounts = await models.plaidAccount.findAll({
       where: {
         itemId: req.args.itemId
