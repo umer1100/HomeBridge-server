@@ -21,7 +21,8 @@ module.exports = {
   V1Export,
   V1UpdateHrisAccessToken,
   V1GetUsers,
-  V1GetCompanyDetailsFromFinch
+  V1GetCompanyDetailsFromFinch,
+  V1GetUsersPlaidAccountDetails
 };
 
 /**
@@ -179,6 +180,24 @@ async function V1GetCompanyDetailsFromFinch(req, res, next) {
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+/**
+ * Query and return organization and all associated users with their plaid accounts
+ *
+ * /v1/organization/users-plaid-accounts
+ *
+ * Must be logged in
+ */
+
+async function V1GetUsersPlaidAccountDetails(req, res, next) {
+  let method = null;
+
+  if (req.user) method = 'V1GetUsersPlaidAccountDetails';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result?.status).json(result);
 }
