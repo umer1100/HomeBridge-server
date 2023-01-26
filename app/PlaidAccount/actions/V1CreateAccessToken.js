@@ -11,7 +11,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 const { createDwollaCustomer, createDwollaCustomerFundingSource } = require('../../../services/dwolla');
 
-const { itemPublicTokenExchange, itemGet } = require('../helper');
+const { itemPublicTokenExchange, itemGet, processorTokenCreate } = require('../../../services/plaid');
 
 // models
 const models = require('../../../models');
@@ -77,7 +77,7 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
-    let ssn = '123456789';
+    let ssn = '123456789'; // TODO: replace with Finch SSN call
     let customerUrl = await createDwollaCustomer(
       req.user.firstName,
       req.user.lastName,
@@ -90,8 +90,6 @@ async function V1CreateAccessToken(req) {
       req.user.dateOfBirth
     );
 
-    console.log(customerUrl);
-
     let accounts = req.args.accounts;
 
     accounts = await Promise.all(
@@ -102,12 +100,8 @@ async function V1CreateAccessToken(req) {
           processor: 'dwolla'
         };
 
-        const processorTokenResponse = await plaidClient.processorTokenCreate(processorRequest);
-
-        let processorToken = processorTokenResponse.data.processor_token;
+        const processorToken = await processorTokenCreate(processorRequest);
         let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
-        console.log(customerUrl);
-        console.log(fundingSourceUrl);
 
         return {
           accountId: account.id,
@@ -125,8 +119,6 @@ async function V1CreateAccessToken(req) {
         };
       })
     );
-
-    console.log(accounts);
 
     await models.plaidAccount.bulkCreate(accounts);
 
