@@ -45,5 +45,11 @@
 	"Invalid Password Format": "Invalid Password Format",
 	"USER[Password Authentication Failed]": "Password Authentication Failed",
 	"USER[Doesn't belong to any organization]": "USER[Doesn't belong to any organization]",
-	"Sync Never Started": "Sync Never Started"
+	"Sync Never Started": "Sync Never Started",
+	"PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]": "PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]",
+	"PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]": "PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]",
+	"PLAIDACCOUNT_V1UnlinkAccounts_Invalid_Argument[publicToken]": "PLAIDACCOUNT_V1UnlinkAccounts_Invalid_Argument[publicToken]",
+	"PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]": "PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]",
+	"TRANSACTION_V1Example_Invalid_Argument[alpha]": "TRANSACTION_V1Example_Invalid_Argument[alpha]",
+	"TRANSACTION_V1Example_Invalid_Argument[sourcedAccountId]": "TRANSACTION_V1Example_Invalid_Argument[sourcedAccountId]"
 }

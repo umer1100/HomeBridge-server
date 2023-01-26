@@ -9,14 +9,8 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
-<<<<<<< HEAD
 const { createDwollaCustomer, createDwollaCustomerFundingSource } = require('../../../services/dwolla');
-
 const { itemPublicTokenExchange, itemGet, processorTokenCreate } = require('../../../services/plaid');
-=======
-
-const { itemPublicTokenExchange, itemGet } = require('../helper');
->>>>>>> b0e2abc85a54804e4aee8d047a7729e57662bbe4
 
 // models
 const models = require('../../../models');
@@ -57,15 +51,16 @@ async function V1CreateAccessToken(req) {
       .min(1)
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]'))),
-    accounts: joi.array()
+    accounts: joi
+      .array()
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]'))),
     institutionName: joi
-    .string()
-    .trim()
-    .min(1)
-    .required()
-    .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]'))),
+      .string()
+      .trim()
+      .min(1)
+      .required()
+      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]')))
   });
 
   // validate

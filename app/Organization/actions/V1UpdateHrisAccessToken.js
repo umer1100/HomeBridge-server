@@ -60,19 +60,19 @@ async function V1UpdateHrisAccessToken(req) {
   if (!findOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
   // exchange finch temporary code with permanent access token
-  // let accessToken = await axios
-  //   .post(`${FINCH_BASE_URI}/auth/token`, req.args, {
-  //     auth: {
-  //       username: FINCH_CLIENT_ID,
-  //       password: FINCH_CLIENT_SECRET
-  //     }
-  //   })
-  //   .then(async response => {
-  //     return response.data.access_token;
-  //   })
-  //   .catch(error => {
-  //     return Promise.reject(error);
-  //   });
+  let accessToken = await axios
+    .post(`${FINCH_BASE_URI}/auth/token`, req.args, {
+      auth: {
+        username: FINCH_CLIENT_ID,
+        password: FINCH_CLIENT_SECRET
+      }
+    })
+    .then(async response => {
+      return response.data.access_token;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
 
   try {
     // update organization
