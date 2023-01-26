@@ -1,5 +1,5 @@
 /**
- * USER V1ExampleTask TASK
+ * TRANSACTION V1ExampleTask TASK
  */
 
 'use strict';
@@ -35,7 +35,7 @@ const { randomString } = require('../../../helpers/logic');
 const { LIST_INT_REGEX } = require('../../../helpers/constants');
 
 // queues
-const UserQueue = new Queue('UserQueue', REDIS_URL);
+const TransactionQueue = new Queue('TransactionQueue', REDIS_URL);
 
 // methods
 module.exports = {
@@ -64,11 +64,11 @@ module.exports = {
  */
 async function V1ExampleTask(job) {
   const schema = joi.object({
-    alpha: joi.string().trim().min(1).lowercase().required().error(new Error(req.__('USER_V1Example_Invalid_Argument[alpha]'))),
-    beta: joi.boolean().default(true).optional().error(new Error(req.__('USER_V1Example_Invalid_Argument[beta]'))),
-    gamma: joi.number().integer().min(1).max(10).error(new Error(req.__('USER_V1Example_Invalid_Argument[gamma]'))),
-    delta: joi.string().trim().lowercase().min(3).email().required().error(new Error(req.__('USER_V1Example_Invalid_Argument[delta]'))),
-    zeta: joi.string().trim().valid('a', 'b').required().error(new Error(req.__('USER_V1Example_Invalid_Argument[zeta]')))
+    alpha: joi.string().trim().min(1).lowercase().required().error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[alpha]'))),
+    beta: joi.boolean().default(true).optional().error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[beta]'))),
+    gamma: joi.number().integer().min(1).max(10).error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[gamma]'))),
+    delta: joi.string().trim().lowercase().min(3).email().required().error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[delta]'))),
+    zeta: joi.string().trim().valid('a', 'b').required().error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[zeta]')))
   }).with('alpha', 'beta') // must come together
     .xor('beta', 'gamma') // one and not the other must exists
     .or('gamma', 'delta'); // at least one must exists
@@ -86,7 +86,7 @@ async function V1ExampleTask(job) {
     const data = { key: 'value' };
 
     // ADD BACKGROUND JOB TO QUEUE
-    const job = await UserQueue.add('V1ExampleTask', data);
+    const job = await TransactionQueue.add('V1ExampleTask', data);
 
     // SOCKET EMIT EVENT
     io.to(`${SOCKET_ROOMS.GLOBAL}`).emit(SOCKET_EVENTS.EXAMPLE_EVENT, data);

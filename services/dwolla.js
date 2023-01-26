@@ -7,7 +7,8 @@ var appToken = new Client({
 
 module.exports = {
   createDwollaCustomer,
-  createDwollaCustomerFundingSource
+  createDwollaCustomerFundingSource,
+  transferFunds
 };
 
 // create Dwolla Customer and obtain customer url
@@ -26,35 +27,47 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
       ssn
     };
     const response = await dwolla.post('customers', requestBody);
-    return response.headers.location;
+    return response.headers.get('Location');
   } catch (error) {
     console.log('error:', error);
-    res.status(500);
+    if (error._embedded.errors[0].code === 'Duplicate') return error._embedded.errors[0]._links.about.href;
   }
 }
 
 // send processor token to Dwolla customer url to create customer Funding source and obtain customer funding source url
 async function createDwollaCustomerFundingSource(account, customerUrl, processorToken) {
   try {
-    const response = await axios.post(
-      `${customerUrl}/funding-sources`,
-      {
-        plaidToken: processorToken,
-        name: account.subtype
-      },
-      {
-        headers: {
-          'content-type': 'application/json',
-          Authorization: `Bearer ${DWOLLA_ACCESS_TOKEN}`,
-          Accept: 'application/vnd.dwolla.v1.hal+json'
-        }
-      }
-    );
-    return response.headers.location;
+    let requestBody = {
+      plaidToken: processorToken,
+      name: account.subtype
+    };
+
+    const response = await dwolla.post(`${customerUrl}/funding-sources`, requestBody);
+    return response.headers.get('Location');
   } catch (error) {
     console.log('error:', error);
-    res.status(500);
   }
+}
+
+async function transferFunds(sourcedLink, fundedLink, amount) {
+  var requestBody = {
+    _links: {
+      source: {
+        href: sourcedLink
+      },
+      destination: {
+        href: fundedLink
+      }
+    },
+    amount: {
+      currency: 'USD',
+      value: amount
+    }
+  };
+
+  // For Dwolla API applications, an dwolla can be used for this endpoint. (https://developers.dwolla.com/api-reference/authorization/application-authorization)
+  let resp = await dwolla.post('transfers', requestBody); // => 'https://api.dwolla.com/transfers/d76265cd-0951-e511-80da-0aa34a9b2388'
+  return resp.headers.get('Location');
 }
 
 var Client = require('dwolla-v2').Client;

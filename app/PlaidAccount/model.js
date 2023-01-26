@@ -103,7 +103,15 @@ module.exports = (sequelize, DataTypes) => {
 
   // association
   PlaidAccount.associate = models => {
-    PlaidAccount.belongsTo(models.organization, { foreignKey: 'userId' });
+    PlaidAccount.belongsTo(models.user, { foreignKey: 'userId' });
+  };
+
+  PlaidAccount.associate = models => {
+    PlaidAccount.hasMany(models.transaction, { foreignKey: 'fundedAccountId' });
+  };
+
+  PlaidAccount.associate = models => {
+    PlaidAccount.hasMany(models.transaction, { foreignKey: 'sourcedAccountId' });
   };
 
   return PlaidAccount;

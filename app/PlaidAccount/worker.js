@@ -17,14 +17,10 @@ const PlaidAccountQueue = new Queue('PlaidAccountQueue', REDIS_URL);
 // services
 const { queueError } = require('../../services/error');
 
-// tasks
-const tasks = require('./tasks');
-
 // Function is called in /worker.js
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js
 module.exports = () => {
   // Process PlaidAccount Feature Background Tasks
-  PlaidAccountQueue.process('V1ExampleTask', tasks.V1ExampleTask);
   PlaidAccountQueue.on('failed', async (job, error) => queueError(error, PlaidAccountQueue, job));
   PlaidAccountQueue.on('stalled', async job => queueError(new Error('Queue Stalled.'), PlaidAccountQueue, job));
   PlaidAccountQueue.on('error', async error => queueError(error, PlaidAccountQueue));

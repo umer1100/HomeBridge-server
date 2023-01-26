@@ -21,8 +21,9 @@ module.exports = (passport, router) => {
   router.all('/v1/organizations/export', controller.V1Export);
   router.all('/v1/organizations/store-hris-access-token', controller.V1UpdateHrisAccessToken);
   router.all('/v1/organizations/users', controller.V1GetUsers);
+  router.all('/v1/organization/users-plaid-accounts', controller.V1GetUsersPlaidAccountDetails);
   router.all('/v1/hris/company', controller.V1GetCompanyDetailsFromFinch);
-  
+
   // return router
   return router;
 };
