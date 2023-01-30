@@ -149,7 +149,8 @@ async function V1CreateGuest(req) {
       primaryGoal,
       goalTimeline,
       organizationId,
-      roleType: role
+      roleType: role,
+      source: 'Manual'
     });
     // preparing for email confirmation
     const emailConfirmationToken = randomString();
