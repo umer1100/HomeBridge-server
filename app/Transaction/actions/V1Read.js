@@ -44,9 +44,7 @@ module.exports = {
  * Roles: ['user']
  *
  * req.params = {}
- * req.args = {
- *   @accountId - (STRING - OPTIONAL): Transactions of a specific account
- * }
+ * req.args = {}
  *
  * Success: Return something
  * Errors:
@@ -59,19 +57,6 @@ module.exports = {
  * TODO: This is a todo
  */
 async function V1Read(req) {
-  const schema = joi.object({
-    accountId: joi
-      .number()
-      .min(1)
-      .optional()
-      .error(new Error(req.__('TRANSACTION_V1Example_Invalid_Argument[sourcedAccountId]')))
-  });
-
-  // validate
-  const { error, value } = schema.validate(req.args);
-  if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
-  req.args = value; // updated arguments with type conversion
-
   try {
     let accounts = await models.plaidAccount.findAll({ where: { userId: req.user.id }, attributes: ['id'], raw: true });
     accounts = accounts.map(account => account.id);
@@ -79,23 +64,35 @@ async function V1Read(req) {
       where: {
         [Op.or]: [{ sourcedAccountId: { [Op.in]: accounts } }, { fundedAccountId: { [Op.in]: accounts } }]
       },
-      include: {
+      include: [{
         model: models.plaidAccount,
+        as: 'fundedAccount',
         required: true
-      },
+      }, {
+        model: models.plaidAccount,
+        as: 'sourceAccount',
+        required: true
+      }],
       raw: true
     });
 
-    // transactions = transactions.map(transaction => {
-    //   amount, fundedAccountId;
-    // });
-
-    // console.log(transactions);
+    transactions = transactions.map(transaction => {
+      return {
+        fundedAccId: transaction['fundedAccount.id'],
+        sourceAccId: transaction['sourceAccount.id'],
+        fundedAccName: transaction['fundedAccount.name'],
+        sourceAccName: transaction['sourceAccount.name'],
+        fundedAccInstitutionName: transaction['fundedAccount.institutionName'],
+        sourceAccInstitutionName: transaction['sourceAccount.institutionName'],
+        amount: transaction['amount']
+      }
+    });
 
     // return
     return Promise.resolve({
       status: 200,
-      success: true
+      success: true,
+      data: transactions
     });
   } catch (error) {
     return Promise.reject(error);

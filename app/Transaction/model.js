@@ -64,8 +64,8 @@ module.exports = (sequelize, DataTypes) => {
 
   // association
   Transaction.associate = models => {
-    Transaction.belongsTo(models.plaidAccount, { foreignKey: 'fundedAccountId' });
-    Transaction.belongsTo(models.plaidAccount, { foreignKey: 'sourcedAccountId' });
+    Transaction.belongsTo(models.plaidAccount, { as: 'fundedAccount', foreignKey: 'fundedAccountId' });
+    Transaction.belongsTo(models.plaidAccount, { as: 'sourceAccount', foreignKey: 'sourcedAccountId' });
   };
 
   return Transaction;
