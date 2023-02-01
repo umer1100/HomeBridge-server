@@ -10,5 +10,6 @@ module.exports = [
   'organization',
   'user',
   'employeeSync',
-  'account'
+  'account',
+  'creditWallet'
 ];
