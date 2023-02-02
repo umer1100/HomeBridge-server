@@ -2,7 +2,7 @@
 
 const models = require('../../../models');
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
-const { identityGet } = require('../helper');
+const { identityGet } = require('../../../services/plaid');
 
 module.exports = {
   V1GetAccountsDetails
@@ -39,28 +39,30 @@ async function V1GetAccountsDetails(req) {
     });
 
     // since access_token can be same for different account in the same bank
-    let uniqueAccessTokens = _.uniq(_.map(plaidAccounts, 'accessToken'))
+    let uniqueAccessTokens = _.uniq(_.map(plaidAccounts, 'accessToken'));
 
-    let accountsData = await Promise.all(uniqueAccessTokens.map(async(accessToken) => {
-      let account = plaidAccounts.find(acc => acc.accessToken === accessToken)
+    let accountsData = await Promise.all(
+      uniqueAccessTokens.map(async accessToken => {
+        let account = plaidAccounts.find(acc => acc.accessToken === accessToken);
 
-      //make a call to plaid identity api to fetch latest account balances
-      let itemData = await identityGet({
-        access_token: accessToken
-      });
+        //make a call to plaid identity api to fetch latest account balances
+        let itemData = await identityGet({
+          access_token: accessToken
+        });
 
-      // we need respective ids (primary keys) from our database
-      let accounts = itemData?.data?.accounts.map((account) => {
-        let { id } = plaidAccounts.find(acc => acc.accountId === account.account_id)
-        return { id, ...account}
+        // we need respective ids (primary keys) from our database
+        let accounts = itemData?.data?.accounts.map(account => {
+          let { id } = plaidAccounts.find(acc => acc.accountId === account.account_id);
+          return { id, ...account };
+        });
+
+        return {
+          accounts,
+          institutionName: account.institutionName,
+          itemId: account.itemId
+        };
       })
-
-      return {
-        accounts,
-        institutionName: account.institutionName,
-        itemId: account.itemId
-      }
-    }))
+    );
 
     return Promise.resolve({
       status: 200,
