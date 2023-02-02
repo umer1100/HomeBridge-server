@@ -14,15 +14,15 @@ module.exports = {
 /**
  * create Dwolla Customer and obtain customer url
  *
- * @param {*} firstName
- * @param {*} lastName
- * @param {*} ssn
- * @param {*} email
- * @param {*} address1
- * @param {*} city
- * @param {*} state
- * @param {*} postalCode
- * @param {*} dateOfBirth
+ * @param firstName
+ * @param lastName
+ * @param ssn
+ * @param email
+ * @param address1
+ * @param city
+ * @param state
+ * @param postalCode
+ * @param dateOfBirth
  * @returns Dwolla link referring to customer
  */
 async function createDwollaCustomer(firstName, lastName, ssn, email, address1, city, state, postalCode, dateOfBirth) {
@@ -50,9 +50,9 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
 /**
  * Send processor token to Dwolla customer url to create customer Funding source and obtain customer funding source url
  *
- * @param {*} account
- * @param {*} customerUrl
- * @param {*} processorToken
+ * @param account
+ * @param customerUrl
+ * @param processorToken
  * @returns dwolla url referring to a customer's account
  */
 async function createDwollaCustomerFundingSource(account, customerUrl, processorToken) {
@@ -73,9 +73,9 @@ async function createDwollaCustomerFundingSource(account, customerUrl, processor
  *
  * Transfers money between two accounts using dwolla
  *
- * @param {*} sourcedLink - where the money is coming from (dwolla link)
- * @param {*} fundedLink - where the money is going to (dwolla link)
- * @param {*} amount - the amount of money being transferred
+ * @param sourcedLink - where the money is coming from (dwolla link)
+ * @param fundedLink - where the money is going to (dwolla link)
+ * @param amount - the amount of money being transferred
  * @returns link referring to record of transaction
  */
 async function transferFunds(sourcedLink, fundedLink, amount) {
