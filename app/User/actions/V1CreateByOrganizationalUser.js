@@ -146,6 +146,8 @@ async function V1CreateByOrganizationalUser(req) {
       source: 'Manual'
     });
 
+    const wallet = models.creditWallet.create({ userId: req.user.id });
+
     // grab user without sensitive data
     const returnUser = await models.user
       .findByPk(newUser.id, {
