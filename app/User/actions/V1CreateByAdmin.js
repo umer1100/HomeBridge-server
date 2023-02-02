@@ -138,7 +138,8 @@ async function V1CreateByAdmin(req) {
       state: req.args.state,
       country: req.args.country,
       zipcode: req.args.zipcode,
-      dateOfBirth: req.args.dateOfBirth
+      dateOfBirth: req.args.dateOfBirth,
+      source: 'Manual'
     });
 
     const loginLink = `${WEB_HOSTNAME}/login`; // create URL using front end url

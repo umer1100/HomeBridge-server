@@ -157,7 +157,8 @@ module.exports = (sequelize, DataTypes) => {
 
       addressLine2: {
         type: DataTypes.TEXT,
-        allowNull: true
+        defaultValue: '',
+        allowNull: false
       },
 
       city: {
@@ -333,6 +334,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null
       },
+
+      source: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      }
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically

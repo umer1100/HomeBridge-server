@@ -20,7 +20,8 @@ module.exports = (passport, router) => {
   router.all('/v1/users/send-reset-password-token', controller.V1SendResetPasswordToken);
   router.all('/v1/users/reset-password', controller.V1ResetPassword);
   router.all('/v1/users/update-password', controller.V1UpdatePassword);
-  router.all('/v1/users/update', controller.V1Update)
+  router.all('/v1/users/update', controller.V1Update);
+  router.all('/v1/users/sendBulkInvitation', controller.V1BulkInvitation);
   // return router
   return router;
 };

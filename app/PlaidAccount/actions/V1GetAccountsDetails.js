@@ -31,20 +31,33 @@ module.exports = {
 
 async function V1GetAccountsDetails(req) {
   try {
+    // fetch all plaid accounts for user that exist in our DB
     let plaidAccounts = await models.plaidAccount.findAll({
       where: {
         userId: req.user.id
       }
     });
+
+    // since access_token can be same for different account in the same bank
     let uniqueAccessTokens = _.uniq(_.map(plaidAccounts, 'accessToken'));
+
     let accountsData = await Promise.all(
       uniqueAccessTokens.map(async accessToken => {
         let account = plaidAccounts.find(acc => acc.accessToken === accessToken);
+
+        //make a call to plaid identity api to fetch latest account balances
         let itemData = await identityGet({
           access_token: accessToken
         });
+
+        // we need respective ids (primary keys) from our database
+        let accounts = itemData?.data?.accounts.map(account => {
+          let { id } = plaidAccounts.find(acc => acc.accountId === account.account_id);
+          return { id, ...account };
+        });
+
         return {
-          accounts: itemData?.data?.accounts,
+          accounts,
           institutionName: account.institutionName,
           itemId: account.itemId
         };

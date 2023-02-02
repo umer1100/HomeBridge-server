@@ -142,7 +142,8 @@ async function V1CreateByOrganizationalUser(req) {
       state: req.args.state,
       country: req.args.country,
       zipcode: req.args.zipcode,
-      dateOfBirth: req.args.dateOfBirth
+      dateOfBirth: req.args.dateOfBirth,
+      source: 'Manual'
     });
 
     // grab user without sensitive data

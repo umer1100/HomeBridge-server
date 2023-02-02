@@ -23,8 +23,13 @@ module.exports = {
   V1ResetPassword,
   V1Update,
   V1UpdatePassword,
-  V1PlaidCreateLinkToken
+  V1PlaidCreateLinkToken,
+  V1BulkInvitation
 };
+
+const { REDIS_URL } = process.env;
+const Queue = require('bull');
+const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
 
 /**
  * Example Method
@@ -217,4 +222,15 @@ async function V1PlaidCreateLinkToken(req, res, next) {
 
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result.status).json(result);
+}
+
+async function V1BulkInvitation(req, res, next) {
+  if (req.user) {
+    await BulkInvitationQueue.add('V1BulkInvitation', {
+      users: req.args.users
+    });
+  }
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  return res.status(200).json({ success: true, message: 'Started Sending Emails' });
 }
