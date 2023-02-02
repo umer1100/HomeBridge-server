@@ -1,8 +1,8 @@
 var Client = require('dwolla-v2').Client;
-var appToken = new Client({
+var dwolla = new Client({
   key: process.env.DWOLLA_APP_KEY,
   secret: process.env.DWOLLA_APP_SECRET,
-  environment: 'sandbox' // defaults to 'production'
+  environment: process.env.DWOLLA_APP_ENVIRONMENT
 });
 
 module.exports = {
@@ -11,7 +11,20 @@ module.exports = {
   transferFunds
 };
 
-// create Dwolla Customer and obtain customer url
+/**
+ * create Dwolla Customer and obtain customer url
+ *
+ * @param {*} firstName
+ * @param {*} lastName
+ * @param {*} ssn
+ * @param {*} email
+ * @param {*} address1
+ * @param {*} city
+ * @param {*} state
+ * @param {*} postalCode
+ * @param {*} dateOfBirth
+ * @returns Dwolla link referring to customer
+ */
 async function createDwollaCustomer(firstName, lastName, ssn, email, address1, city, state, postalCode, dateOfBirth) {
   try {
     const requestBody = {
@@ -34,7 +47,14 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
   }
 }
 
-// send processor token to Dwolla customer url to create customer Funding source and obtain customer funding source url
+/**
+ * Send processor token to Dwolla customer url to create customer Funding source and obtain customer funding source url
+ *
+ * @param {*} account
+ * @param {*} customerUrl
+ * @param {*} processorToken
+ * @returns dwolla url referring to a customer's account
+ */
 async function createDwollaCustomerFundingSource(account, customerUrl, processorToken) {
   try {
     let requestBody = {
@@ -49,6 +69,15 @@ async function createDwollaCustomerFundingSource(account, customerUrl, processor
   }
 }
 
+/**
+ *
+ * Transfers money between two accounts using dwolla
+ *
+ * @param {*} sourcedLink - where the money is coming from (dwolla link)
+ * @param {*} fundedLink - where the money is going to (dwolla link)
+ * @param {*} amount - the amount of money being transferred
+ * @returns link referring to record of transaction
+ */
 async function transferFunds(sourcedLink, fundedLink, amount) {
   var requestBody = {
     _links: {
@@ -69,10 +98,3 @@ async function transferFunds(sourcedLink, fundedLink, amount) {
   let resp = await dwolla.post('transfers', requestBody); // => 'https://api.dwolla.com/transfers/d76265cd-0951-e511-80da-0aa34a9b2388'
   return resp.headers.get('Location');
 }
-
-var Client = require('dwolla-v2').Client;
-const dwolla = new Client({
-  environment: 'sandbox', // Defaults to "production"
-  key: 'aA8qBpHoyUiovcmIUAnZugUfRj7FrybCCoIliZK21857X4tYZz',
-  secret: '7Ychcka2BSxqnRkdn1MKaPiDjKYu4VFnplrIGZXMmWTkkwonpn'
-});
