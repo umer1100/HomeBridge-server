@@ -23,9 +23,7 @@ const tasks = require('./tasks');
 // Function is called in /worker.js
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js
 module.exports = () => {
-
   // Process Transaction Feature Background Tasks
-  TransactionQueue.process('V1ExampleTask', tasks.V1ExampleTask);
   TransactionQueue.on('failed', async (job, error) => queueError(error, TransactionQueue, job));
   TransactionQueue.on('stalled', async job => queueError(new Error('Queue Stalled.'), TransactionQueue, job));
   TransactionQueue.on('error', async error => queueError(error, TransactionQueue));
@@ -33,5 +31,5 @@ module.exports = () => {
   // future tasks below
 
   // return array of queues to the top level worker.js to gracefully close them
-  return [TransactionQueue];  // return empty array [] if not using any queues in this feature
-}
+  return [TransactionQueue]; // return empty array [] if not using any queues in this feature
+};
