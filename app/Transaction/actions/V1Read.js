@@ -46,15 +46,12 @@ module.exports = {
  * req.params = {}
  * req.args = {}
  *
- * Success: Return something
+ * Success: Return list of transactions
  * Errors:
  *   400: BAD_REQUEST_INVALID_ARGUMENTS
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  *
- * !IMPORTANT: This is an important message
- * !NOTE: This is a note
- * TODO: This is a todo
  */
 async function V1Read(req) {
   try {
@@ -64,15 +61,18 @@ async function V1Read(req) {
       where: {
         [Op.or]: [{ sourcedAccountId: { [Op.in]: accounts } }, { fundedAccountId: { [Op.in]: accounts } }]
       },
-      include: [{
-        model: models.plaidAccount,
-        as: 'fundedAccount',
-        required: true
-      }, {
-        model: models.plaidAccount,
-        as: 'sourceAccount',
-        required: true
-      }],
+      include: [
+        {
+          model: models.plaidAccount,
+          as: 'fundedAccount',
+          required: true
+        },
+        {
+          model: models.plaidAccount,
+          as: 'sourceAccount',
+          required: true
+        }
+      ],
       raw: true
     });
 
@@ -85,7 +85,7 @@ async function V1Read(req) {
         fundedAccInstitutionName: transaction['fundedAccount.institutionName'],
         sourceAccInstitutionName: transaction['sourceAccount.institutionName'],
         amount: transaction['amount']
-      }
+      };
     });
 
     // return

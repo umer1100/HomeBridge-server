@@ -35,28 +35,27 @@ module.exports = {
 };
 
 /**
- * Method Description
+ * Processes a transaction through Dwolla and stores the log internally
  *
- * GET  /v1/transactions/<method>
- * POST /v1/transactions/<method>
+ * GET  /v1/transactions/create
+ * POST /v1/transactions/create
  *
- * Must be logged out | Must be logged in | Can be both logged in or logged out
- * Roles: ['admin', 'user']
+ * Must be logged in
+ * Roles: ['user']
  *
  * req.params = {}
  * req.args = {
- *   @alpha - (STRING - REQUIRED): Alpha argument description
+ *   @sourcedAccountId - (NUMBER - REQUIRED): Primary key of the account from which the money is flowing form
+ *   @fundedAccountId - (NUMBER - REQUIRED): Primary key of the account from which the money is flowing to
+ *   @amount - (NUMBER - REQUIRED): amount of money that is going from the sourced account to the funded account
  * }
  *
- * Success: Return something
+ * Success: Return successful response
  * Errors:
  *   400: BAD_REQUEST_INVALID_ARGUMENTS
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  *
- * !IMPORTANT: This is an important message
- * !NOTE: This is a note
- * TODO: This is a todo
  */
 async function V1Create(req) {
   const schema = joi.object({
