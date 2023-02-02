@@ -157,7 +157,8 @@ module.exports = (sequelize, DataTypes) => {
 
       addressLine2: {
         type: DataTypes.TEXT,
-        allowNull: true
+        defaultValue: '',
+        allowNull: false
       },
 
       city: {
