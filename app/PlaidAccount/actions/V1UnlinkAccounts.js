@@ -1,6 +1,6 @@
 'use strict';
 
-const { itemRemove } = require('../helper');
+const { itemRemove } = require('../../../services/plaid');
 const models = require('../../../models');
 const joi = require('@hapi/joi');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
