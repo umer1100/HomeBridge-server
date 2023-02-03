@@ -14,42 +14,30 @@ const io = require('socket.io-emitter')(REDIS_URL); // to emit real-time events 
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
 const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
-const convert = require('convert-units'); // https://www.npmjs.com/package/convert-units
-const slugify = require('slugify'); // convert string to URL friendly string: https://www.npmjs.com/package/slugify
-const sanitize = require('sanitize-filename'); // sanitize filename: https://www.npmjs.com/package/sanitize-filename
-const passport = require('passport'); // handle authentication: http://www.passportjs.org/docs/
-const currency = require('currency.js'); // handling currency operations (add, subtract, multiply) without JS precision issues: https://github.com/scurker/currency.js/
-const accounting = require('accounting'); // handle outputing readable format for currency: http://openexchangerates.github.io/accounting.js/
 
 // services
-const email = require('../../../services/email');
-const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
 
 // helpers
-const { getOffset, getOrdering, convertStringListToWhereStmt } = require('../../../helpers/cruqd');
-const { randomString } = require('../../../helpers/logic');
-const { LIST_INT_REGEX } = require('../../../helpers/constants');
 
 // queues
-const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
 
 // methods
 module.exports = {
-  V1Example
+  V1Create
 };
 
 /**
  * Method Description
  *
- * GET  /v1/creditwallets/<method>
- * POST /v1/creditwallets/<method>
+ * GET  /v1/creditwallets/create
+ * POST /v1/creditwallets/create
  *
- * Must be logged out | Must be logged in | Can be both logged in or logged out
- * Roles: ['admin', 'user']
+ * Must be logged in
+ * Roles: ['user']
  *
  * req.params = {}
  * req.args = {
@@ -70,7 +58,7 @@ module.exports = {
  * !NOTE: This is a note
  * TODO: This is a todo
  */
-async function V1Example(req) {
+async function V1Create(req) {
   const schema = joi.object({
     alpha: joi
       .string()
