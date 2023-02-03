@@ -50,15 +50,18 @@ async function V1AddMonthlyCredit(job) {
   job.data = value; // updated arguments with type conversion
 
   try {
+    // Find all active users
     let activeUsers = models.user.findAll({
       where: {
         status: 'active'
       }
     });
 
-    activeUsers.forEach(user => {
-      let credit = Math.min(30, user.createdAt.diff(today, 'days'));
-      models.creditWallet.increment('ownerificDollars', { by: credit, where: { id: user.id } });
+    var today = moment(Date.now());
+    // For each user, add 30 ownerific dollars, or a prorated amount based on when they signed up
+    activeUsers.forEach(async user => {
+      let credit = Math.min(30, today.diff(moment(user.createdAt), 'days'));
+      await models.creditWallet.increment('ownerificDollars', { by: credit, where: { userId: user.id } });
     });
 
     // return
