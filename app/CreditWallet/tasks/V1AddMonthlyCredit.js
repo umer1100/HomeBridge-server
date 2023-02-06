@@ -1,5 +1,5 @@
 /**
- * CREDITWALLET V1ExampleTask TASK
+ * CREDITWALLET V1AddMonthlyCredit TASK
  */
 
 'use strict';

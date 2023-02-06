@@ -12,11 +12,10 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 
 // models
 const models = require('../../../models');
-const { find } = require('../../../database/sequence');
 
 // methods
 module.exports = {
-  V1ReadByUser
+  V1Read
 };
 
 /**
@@ -40,7 +39,7 @@ module.exports = {
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
-async function V1ReadByUser(req) {
+async function V1Read(req) {
   const schema = joi.object({
     id: joi.number().min(1).default(req.user.id).optional()
   });
