@@ -9,8 +9,8 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
-
-const { itemPublicTokenExchange, itemGet } = require('../helper');
+const { createDwollaCustomer, createDwollaCustomerFundingSource } = require('../../../services/dwolla');
+const { itemPublicTokenExchange, itemGet, processorTokenCreate } = require('../../../services/plaid');
 
 // models
 const models = require('../../../models');
@@ -51,15 +51,16 @@ async function V1CreateAccessToken(req) {
       .min(1)
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[publicToken]'))),
-    accounts: joi.array()
+    accounts: joi
+      .array()
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[accounts]'))),
     institutionName: joi
-    .string()
-    .trim()
-    .min(1)
-    .required()
-    .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]'))),
+      .string()
+      .trim()
+      .min(1)
+      .required()
+      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]')))
   });
 
   // validate
@@ -72,24 +73,53 @@ async function V1CreateAccessToken(req) {
     const accessToken = tokenExchange.data.access_token;
 
     const itemResponse = await itemGet({
-      'access_token': accessToken
+      access_token: accessToken
     });
 
+    let ssn = '123456789'; // TODO: replace with Finch SSN call
+    let customerUrl = await createDwollaCustomer(
+      req.user.firstName,
+      req.user.lastName,
+      ssn,
+      req.user.email,
+      req.user.addressLine1,
+      req.user.city,
+      req.user.state,
+      req.user.zipcode,
+      req.user.dateOfBirth
+    );
+
     let accounts = req.args.accounts;
-    accounts = accounts.map(account => {
-      return {
-        accountId: account.id,
-        name: account.name,
-        itemId: itemResponse?.data?.item?.item_id,
-        mask: account.mask,
-        type: account.type,
-        subtype: account.subtype,
-        userId: req.user.id,
-        accessToken,
-        institutionName: req?.args?.institutionName
-      }
-    })
-    await models.plaidAccount.bulkCreate(accounts)
+
+    accounts = await Promise.all(
+      accounts.map(async account => {
+        const processorRequest = {
+          access_token: accessToken,
+          account_id: account.id,
+          processor: 'dwolla'
+        };
+
+        const processorToken = await processorTokenCreate(processorRequest);
+        let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
+
+        return {
+          accountId: account.id,
+          name: account.name,
+          itemId: itemResponse?.data?.item?.item_id,
+          mask: account.mask,
+          type: account.type,
+          subtype: account.subtype,
+          custUrl: customerUrl,
+          fundingSourceUrl: fundingSourceUrl,
+          userId: req.user.id,
+          accessToken,
+          processorToken,
+          institutionName: req?.args?.institutionName
+        };
+      })
+    );
+
+    await models.plaidAccount.bulkCreate(accounts);
 
     return Promise.resolve({
       status: 200,

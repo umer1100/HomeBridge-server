@@ -1,7 +1,7 @@
 'use strict';
 
 const { PLAID_CLIENT_ID } = process.env;
-const { linkTokenCreate } = require('../helper');
+const { linkTokenCreate } = require('../../../services/plaid');
 
 module.exports = {
   V1CreateLinkToken
@@ -29,12 +29,12 @@ module.exports = {
 async function V1CreateLinkToken() {
   const request = {
     user: {
-      client_user_id: PLAID_CLIENT_ID,
+      client_user_id: PLAID_CLIENT_ID
     },
     client_name: 'Ownerific',
     products: ['auth', 'transactions', 'identity'],
     country_codes: ['US'],
-    language: 'en',
+    language: 'en'
   };
 
   try {
