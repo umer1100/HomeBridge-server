@@ -363,7 +363,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         afterCreate(user, options) {
-          models.creditWallet.create({ userId: user.id });
+          sequelize.models.creditWallet.create({ userId: user.id });
         }
       },
       indexes: []
@@ -374,6 +374,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
     User.hasMany(models.plaidAccount);
+    User.hasOne(models.creditWallet);
   };
 
   // sensitive data method

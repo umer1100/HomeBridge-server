@@ -58,6 +58,6 @@ async function V1Read(req) {
   return Promise.resolve({
     status: 200,
     success: true,
-    user: findCreditWallet.dataValues
+    data: findCreditWallet.dataValues
   });
 } // END V1Read
