@@ -169,7 +169,7 @@ async function V1CreateGuest(req) {
     );
 
 
-    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${false}`; // create URL using front end url
+    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
 
     const result = await emailService.send({
       from: emailService.emails.doNotReply.address,

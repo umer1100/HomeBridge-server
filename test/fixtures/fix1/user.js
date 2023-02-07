@@ -101,14 +101,15 @@ module.exports = [
     id: 7,
     timezone: 'UTC',
     locale: 'en',
-    status: 'ACTIVE',
+    status: 'PENDING',
     firstName: 'John',
     lastName: 'Leo',
-    roleType: 'GUEST',
+    roleType: 'EMPLOYEE',
     email: 'user-7@example.com',
     phone: '+13018148502',
     salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
     password: 'password5F%',
-    emailConfirmed: true
+    emailConfirmed: false,
+    emailConfirmedToken: randomString()
   },
 ];

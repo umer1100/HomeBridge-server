@@ -110,7 +110,7 @@ async function V1Import(job) {
             password: 'PLACEHOLDER',
             organizationId: organizationId,
             addressLine1: individual.body?.residence?.line1,
-            addressLine2: individual.body?.residence?.line2,
+            addressLine2: individual.body?.residence?.line2 || '',
             city: individual.body.residence?.city,
             state: individual.body.residence?.state,
             country: individual.body.residence?.country,
