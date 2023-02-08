@@ -58,7 +58,11 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
       tableName: 'CreditWallets', // define table name, must be PascalCase!
-      hooks: {},
+      hooks: {
+        afterUpdate(creditWallet, options) {
+          sequelize.models.creditWalletLogs.create({ creditWalletId: creditWallet.id, ownerificDollars: creditWallet.ownerificDollars });
+        }
+      },
       indexes: []
     }
   );
