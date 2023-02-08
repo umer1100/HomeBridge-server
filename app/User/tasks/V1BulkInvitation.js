@@ -16,8 +16,8 @@ module.exports = {
 async function V1BulkInvitation(job) {
   const schema = joi.object({
     users: joi.array()
-    .required()
-    .error(new Error('Users array is not valid'))
+      .required()
+      .error(new Error('Users array is not valid'))
   });
 
   const { error, value } = schema.validate(job.data);
@@ -25,6 +25,7 @@ async function V1BulkInvitation(job) {
   job.data = value;
 
   let { users } = job.data;
+
   users.forEach(async (user) => {
     const userData = await models.user.findOne({
       where: {
@@ -37,21 +38,25 @@ async function V1BulkInvitation(job) {
       const password = bcrypt.hashSync(passwordToSend, userData.salt);
       const emailConfirmationToken = randomString();
       const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${true}`;
+
       await userData.update({
         emailConfirmedToken: emailConfirmationToken,
         password: password
       });
+
       await emailService.send({
         from: emailService.emails.doNotReply.address,
         name: emailService.emails.doNotReply.name,
         subject: 'Please use this link to login to ownerific',
         template: 'InvitationEmail',
-        tos: [user.email],
+        tos: [user?.email],
         ccs: null,
         bccs: null,
         args: {
           emailConfirmLink,
-          password: passwordToSend
+          password: passwordToSend,
+          firstName: user?.firstName,
+          lastName: user?.lastName || ''
         }
       });
     }
