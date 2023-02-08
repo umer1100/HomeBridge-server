@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // All foreign keys are added in associations
 
-      userId: {
+      creditWalletId: {
         type: DataTypes.BIGINT,
         allowNull: false
       },
@@ -42,10 +42,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         get() {
           // convert string to float
-          const rawValue = this.getDataValue(example3);
+          const rawValue = this.getDataValue(ownerificDollars);
           return Number(rawValue);
         }
       },
+
       description: {
         type: DataTypes.JSONB,
         allowNull: true,
@@ -60,10 +61,19 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
       tableName: 'CreditWalletLogs', // define table name, must be PascalCase!
-      hooks: {},
+      hooks: {
+        afterCreate(user, options) {
+          sequelize.models.creditWalletLog.create({ userId: user.id });
+        }
+      },
       indexes: []
     }
   );
+
+  // association
+  CreditWalletLogs.associate = models => {
+    CreditWalletLogs.belongsTo(models.creditWallet, { foreignKey: 'creditWalletId' });
+  };
 
   return CreditWalletLogs;
 };
