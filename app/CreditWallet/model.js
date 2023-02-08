@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         get() {
           // convert string to float
-          const rawValue = this.getDataValue(example3);
+          const rawValue = this.getDataValue(ownerificDollars);
           return Number(rawValue);
         }
       }
