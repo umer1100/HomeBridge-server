@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('CreditWallets', {
+    await queryInterface.createTable('CreditWalletLogs', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
 
-      userId: {
+      creditWalletId: {
         type: Sequelize.BIGINT,
         allowNull: false
       },
@@ -23,9 +23,15 @@ module.exports = {
         },
         get() {
           // convert string to float
-          const rawValue = this.getDataValue(example3);
+          const rawValue = this.getDataValue(ownerificDollars);
           return Number(rawValue);
         }
+      },
+
+      description: {
+        type: Sequelize.JSONB,
+        allowNull: true,
+        defaultValue: null
       },
 
       createdAt: {
@@ -45,6 +51,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('CreditWallets');
+    await queryInterface.dropTable('CreditWalletLogs');
   }
 };

@@ -5,4 +5,13 @@
 
 'use strict';
 
-module.exports = ['admin', 'organization', 'user', 'employeeSync', 'account', 'creditWallet', 'transaction'];
+module.exports = [
+  'admin',
+  'organization',
+  'user',
+  'employeeSync',
+  'account',
+  'creditWallet',
+  'transaction',
+  'creditWalletLog'
+];
