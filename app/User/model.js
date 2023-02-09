@@ -67,6 +67,7 @@ const { reject } = require('lodash');
 const passport = require('passport');
 const constants = require('../../helpers/constants');
 const { randomString } = require('../../helpers/logic');
+const models = require('../../models');
 
 // sensitive data that should not be exposed
 const sensitiveData = ['salt', 'password', 'passwordResetToken'];
@@ -359,6 +360,10 @@ module.exports = (sequelize, DataTypes) => {
           // generate the salt
           user.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
           user.password = bcrypt.hashSync(user.password, user.salt);
+        },
+
+        afterCreate(user, options) {
+          sequelize.models.creditWallet.create({ userId: user.id });
         }
       },
       indexes: []
@@ -369,6 +374,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
     User.hasMany(models.plaidAccount);
+    User.hasOne(models.creditWallet);
   };
 
   // sensitive data method

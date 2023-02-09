@@ -11,5 +11,7 @@ module.exports = [
   'user',
   'employeeSync',
   'account',
-  'transaction'
+  'creditWallet',
+  'transaction',
+  'creditWalletLog'
 ];
