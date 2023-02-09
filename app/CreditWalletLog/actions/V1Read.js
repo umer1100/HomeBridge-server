@@ -50,7 +50,7 @@ async function V1Read(req) {
   req.args = value; // updated arguments with type conversion
 
   // find credit wallet logs
-  const findCreditWalletLogs = await models.creditWallet.findOne({ where: { creditWalletId: req.args.id } }).catch(err => Promise.reject(error));
+  const findCreditWalletLogs = await models.creditWalletLog.findAll({ where: { creditWalletId: req.args.id } })
 
   // check if credit wallet logs exists
   if (!findCreditWalletLogs) return Promise.resolve(errorResponse(req, ERROR_CODES.CREDITWALLETLOG_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
@@ -58,6 +58,6 @@ async function V1Read(req) {
   return Promise.resolve({
     status: 200,
     success: true,
-    data: findCreditWallet.dataValues
+    data: findCreditWalletLogs
   });
 } // END V1Read

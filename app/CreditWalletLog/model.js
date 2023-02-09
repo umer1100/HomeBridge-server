@@ -24,7 +24,7 @@ const constants = require('../../helpers/constants');
 
 module.exports = (sequelize, DataTypes) => {
   const CreditWalletLogs = sequelize.define(
-    'creditWalletLogs',
+    'creditWalletLog',
     {
       // All foreign keys are added in associations
 
@@ -39,11 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0.0,
         validate: {
           isDecimal: true
-        },
-        get() {
-          // convert string to float
-          const rawValue = this.getDataValue(ownerificDollars);
-          return Number(rawValue);
         }
       },
 

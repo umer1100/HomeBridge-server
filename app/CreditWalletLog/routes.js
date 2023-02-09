@@ -14,7 +14,7 @@ const controller = require('./controller');
 module.exports = (passport, router) => {
 
   // routes - can also use router.get or router.post
-  router.all('/v1/creditwalletlogs/example', controller.V1Example);
+  router.all('/v1/creditwalletlogs/read', controller.V1Read);
 
   // return router
   return router;
