@@ -1,8 +1,8 @@
 var Client = require('dwolla-v2').Client;
 var dwolla = new Client({
-  key: process.env.DWOLLA_APP_KEY,
-  secret: process.env.DWOLLA_APP_SECRET,
-  environment: process.env.DWOLLA_APP_ENVIRONMENT
+  key: 'aA8qBpHoyUiovcmIUAnZugUfRj7FrybCCoIliZK21857X4tYZz',
+  secret: '7Ychcka2BSxqnRkdn1MKaPiDjKYu4VFnplrIGZXMmWTkkwonpn',
+  environment: 'sandbox'
 });
 
 module.exports = {
@@ -27,6 +27,11 @@ module.exports = {
  */
 async function createDwollaCustomer(firstName, lastName, ssn, email, address1, city, state, postalCode, dateOfBirth) {
   try {
+    // Check to see if customer already exists, and if so return that customer's URL
+    let search = await dwolla.get('customers', { email: email });
+    let doesExist = search.body._embedded.customers.find(x => x.status == 'verified');
+    if (doesExist.length == 1) return doesExist._links.self.href;
+
     const requestBody = {
       firstName,
       lastName,
