@@ -1,8 +1,8 @@
 var Client = require('dwolla-v2').Client;
 var dwolla = new Client({
-  key: 'aA8qBpHoyUiovcmIUAnZugUfRj7FrybCCoIliZK21857X4tYZz',
-  secret: '7Ychcka2BSxqnRkdn1MKaPiDjKYu4VFnplrIGZXMmWTkkwonpn',
-  environment: 'sandbox'
+  key: process.env.DWOLLA_APP_KEY,
+  secret: process.env.DWOLLA_APP_SECRET,
+  environment: process.env.DWOLLA_APP_ENVIRONMENT
 });
 
 module.exports = {
