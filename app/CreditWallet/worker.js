@@ -25,7 +25,7 @@ const tasks = require('./tasks');
 module.exports = () => {
 
   // Process CreditWallet Feature Background Tasks
-  CreditWalletQueue.process('V1ExampleTask', tasks.V1ExampleTask);
+  CreditWalletQueue.process('V1ExampleTask', tasks.V1AddMonthlyCredit);
   CreditWalletQueue.on('failed', async (job, error) => queueError(error, CreditWalletQueue, job));
   CreditWalletQueue.on('stalled', async job => queueError(new Error('Queue Stalled.'), CreditWalletQueue, job));
   CreditWalletQueue.on('error', async error => queueError(error, CreditWalletQueue));

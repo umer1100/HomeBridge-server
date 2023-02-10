@@ -8,5 +8,5 @@
 'use strict';
 
 module.exports = {
-  ...require('./V1AddMonthylCredit')
+  ...require('./V1AddMonthlyCredit')
 };
