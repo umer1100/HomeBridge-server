@@ -76,7 +76,7 @@ async function V1UpdateHrisAccessToken(req) {
 
   try {
     // update organization
-    // await findOrganization.update({ hrisAccessToken: accessToken });
+    await findOrganization.update({ hrisAccessToken: accessToken });
 
     return Promise.resolve({
       status: 200,

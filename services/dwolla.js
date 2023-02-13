@@ -30,7 +30,7 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
     // Check to see if customer already exists, and if so return that customer's URL
     let search = await dwolla.get('customers', { email: email });
     let doesExist = search.body._embedded.customers.find(x => x.status == 'verified');
-    if (doesExist.length == 1) return doesExist._links.self.href;
+    if (doesExist) return doesExist._links.self.href;
 
     const requestBody = {
       firstName,
@@ -48,7 +48,6 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
     return response.headers.get('Location');
   } catch (error) {
     console.log('error:', error);
-    if (error._embedded.errors[0].code === 'Duplicate') return error._embedded.errors[0]._links.about.href;
   }
 }
 
