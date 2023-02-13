@@ -8,6 +8,7 @@ var dwolla = new Client({
 module.exports = {
   createDwollaCustomer,
   createDwollaCustomerFundingSource,
+  removeDwollaFundingSource,
   transferFunds
 };
 
@@ -70,6 +71,23 @@ async function createDwollaCustomerFundingSource(account, customerUrl, processor
     return response.headers.get('Location');
   } catch (error) {
     console.log('error:', error);
+  }
+}
+
+/**
+ * Deletes the funding source for a customer
+ *
+ * @param fundingSourceUrl
+ */
+async function removeDwollaFundingSource(fundingSourceUrl) {
+  try {
+    let requestBody = {
+      removed: true
+    };
+
+    await dwolla.post(fundingSourceUrl, requestBody);
+  } catch (error) {
+    console.log('Error:', error);
   }
 }
 

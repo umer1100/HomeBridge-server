@@ -4,6 +4,7 @@ const { itemRemove } = require('../../../services/plaid');
 const models = require('../../../models');
 const joi = require('@hapi/joi');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const { removeDwollaFundingSource } = require('../../../services/dwolla');
 
 module.exports = {
   V1UnlinkAccounts
@@ -53,10 +54,12 @@ async function V1UnlinkAccounts(req) {
     });
 
     let itemRemoveResponse = await itemRemove({
-      'access_token': accounts[0]?.accessToken
+      access_token: accounts[0]?.accessToken
     });
 
     if (itemRemoveResponse) {
+      await removeDwollaFundingSource(accounts[0].fundingSourceUrl);
+
       await models.plaidAccount.destroy({
         where: {
           itemId: req.args.itemId
