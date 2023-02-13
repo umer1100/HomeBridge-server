@@ -57,9 +57,11 @@ async function V1UnlinkAccounts(req) {
       access_token: accounts[0]?.accessToken
     });
 
-    if (itemRemoveResponse) {
-      await removeDwollaFundingSource(accounts[0].fundingSourceUrl);
+    accounts.forEach(async account => {
+      await removeDwollaFundingSource(account.fundingSourceUrl);
+    });
 
+    if (itemRemoveResponse) {
       await models.plaidAccount.destroy({
         where: {
           itemId: req.args.itemId
