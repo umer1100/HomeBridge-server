@@ -9,25 +9,16 @@ const { NODE_ENV, REDIS_URL } = process.env;
 
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
-const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
-const io = require('socket.io-emitter')(REDIS_URL); // to emit real-time events to client-side applications: https://socket.io/docs/emit-cheatsheet/
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
-const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
-const currency = require('currency.js'); // handling currency operations (add, subtract, multiply) without JS precision issues: https://github.com/scurker/currency.js/
 
 // services
-const email = require('../../../services/email');
 const { transferFunds } = require('../../../services/dwolla');
-const { SOCKET_ROOMS, SOCKET_EVENTS } = require('../../../services/socket');
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
 
 // helpers
-
-// queues
-const TransactionQueue = new Queue('TransactionQueue', REDIS_URL);
 
 // methods
 module.exports = {
@@ -101,6 +92,6 @@ async function V1Create(req) {
       success: true
     });
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(JSON.parse(error?.message)?.message || error);
   }
 } // END V1Create

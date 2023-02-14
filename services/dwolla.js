@@ -48,7 +48,7 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
     const response = await dwolla.post('customers', requestBody);
     return response.headers.get('Location');
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(JSON.parse(error?.message)?.message || error);
   }
 }
 
@@ -70,7 +70,7 @@ async function createDwollaCustomerFundingSource(account, customerUrl, processor
     const response = await dwolla.post(`${customerUrl}/funding-sources`, requestBody);
     return response.headers.get('Location');
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(JSON.parse(error?.message)?.message || error);
   }
 }
 
@@ -87,7 +87,7 @@ async function removeDwollaFundingSource(fundingSourceUrl) {
 
     await dwolla.post(fundingSourceUrl, requestBody);
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(JSON.parse(error?.message)?.message || error);
   }
 }
 
