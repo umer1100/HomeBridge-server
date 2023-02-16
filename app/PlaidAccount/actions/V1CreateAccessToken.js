@@ -126,6 +126,12 @@ async function V1CreateAccessToken(req) {
       success: true
     });
   } catch (error) {
+    if (error.status === 400)
+      return Promise.resolve({
+        status: 400,
+        success: false,
+        error: error
+      });
     return Promise.reject(error);
   }
 } // END V1CreateAccessToken
