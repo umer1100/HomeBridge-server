@@ -92,7 +92,6 @@ async function V1CreateAccessToken(req) {
 
   // validate
   const user_schema_error = user_schema.validate(user_pii, { abortEarly: false }).error;
-  console.log(user_schema_error);
   if (user_schema_error)
     return Promise.resolve(
       errorResponse(
