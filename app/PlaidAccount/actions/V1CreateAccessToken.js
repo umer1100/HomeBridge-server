@@ -68,6 +68,40 @@ async function V1CreateAccessToken(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
+  const user_schema = joi.object({
+    firstName: joi.string().trim().min(1).required(),
+    lastName: joi.string().trim().min(1).required(),
+    email: joi.string().trim().min(1).required(),
+    addressLine1: joi.string().trim().min(1).required(),
+    city: joi.string().trim().min(1).required(),
+    state: joi.string().trim().min(1).required(),
+    zipcode: joi.string().trim().min(1).required(),
+    dateOfBirth: joi.string().trim().min(1).required()
+  });
+
+  let user_pii = {
+    firstName: req.user.firstName,
+    lastName: req.user.lastName,
+    email: req.user.email,
+    addressLine1: req.user.addressLine1,
+    city: req.user.city,
+    state: req.user.state,
+    zipcode: req.user.zipcode,
+    dateOfBirth: req.user.dateOfBirth
+  };
+
+  // validate
+  const user_schema_error = user_schema.validate(user_pii, { abortEarly: false }).error;
+  console.log(user_schema_error);
+  if (user_schema_error)
+    return Promise.resolve(
+      errorResponse(
+        req,
+        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
+        user_schema_error.details.map(e => e.message)
+      )
+    );
+
   try {
     const tokenExchange = await itemPublicTokenExchange({ public_token: req.args.publicToken });
     const accessToken = tokenExchange.data.access_token;
@@ -77,18 +111,7 @@ async function V1CreateAccessToken(req) {
     });
 
     let ssn = '123456789'; // TODO: replace with Finch SSN call
-    let customerUrl = await createDwollaCustomer(
-      req.user.firstName,
-      req.user.lastName,
-      ssn,
-      req.user.email,
-      req.user.addressLine1,
-      req.user.city,
-      req.user.state,
-      req.user.zipcode,
-      req.user.dateOfBirth
-    );
-
+    let customerUrl = await createDwollaCustomer({ ssn, ...user_pii });
     let accounts = req.args.accounts;
 
     accounts = await Promise.all(
