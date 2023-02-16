@@ -79,7 +79,7 @@ const LOCAL_ERROR_CODES = {
   ORGANIZATION_BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH: {
     error: 'ORGANIZATION.BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH',
     status: 404,
-    messages: ['ORGANIZATION[ORGANIZATION Does not integrated with finch]']
+    messages: ['ORGANIZATION has not integrated with HRIS system']
   }
 };
 

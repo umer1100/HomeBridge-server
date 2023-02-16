@@ -61,6 +61,13 @@ async function V1ConfirmEmail(req) {
     // if user cannot be found
     if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_EMAIL_CONFIRMATION_TOKEN));
 
+    // User [Role: Guest] should only receive confirmation email
+
+    if (findUser?.roleType == 'GUEST' && invitationEmail) {
+      return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
+    }
+
+    // User [Role: Not Guest] should only receive invitation email
     if (findUser?.roleType != 'GUEST' &&
        (invitationEmail?.toLowerCase() == 'false' || !invitationEmail)) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));

@@ -41,7 +41,7 @@ module.exports = {
  * Success: Return a true.
  * Errors:
  *   400: BAD_REQUEST_INVALID_ARGUMENTS
- *   400: USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL
+ *   400: USER_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN
  *   401: UNAUTHORIZED
  *   500: INTERNAL_SERVER_ERROR
  */
@@ -68,7 +68,7 @@ async function V1ResetPassword(req) {
       }
     });
 
-    if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+    if (!findUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_PASSWORD_RESET_TOKEN));
 
     const newPassword = bcrypt.hashSync(password1, findUser.salt);
 

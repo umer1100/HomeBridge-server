@@ -76,7 +76,7 @@
     return Promise.resolve({
       status: 200,
       success: true,
-      user: findUser.dataValues
+      data: findUser.dataValues
     });
   } catch (error) {
     return Promise.reject(error);

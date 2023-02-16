@@ -63,6 +63,6 @@
    return Promise.resolve({
      status: 200,
      success: true,
-     lastSync: findLastSync.dataValues
+     data: findLastSync.dataValues
    });
  } // END V1Read

@@ -168,7 +168,6 @@ async function V1CreateGuest(req) {
       }
     );
 
-
     const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
 
     const result = await emailService.send({
@@ -182,6 +181,9 @@ async function V1CreateGuest(req) {
       args: {
         emailConfirmLink
       }
+    }).catch(err => {
+      newUser.destroy(); // destroy if error
+      return Promise.reject(err);
     });
 
     // grab user without sensitive data
