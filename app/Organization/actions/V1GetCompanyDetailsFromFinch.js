@@ -31,7 +31,7 @@
   * Success: Return users.
   * Errors:
   *   400: USER_BAD_REQUEST_HAVE_NO_ORGANIZATION
-  *   404: ORGANIZATION_BAD_REQUEST_HAVE_NO_HRIS_ACCESS_TOKEN
+  *   404: ORGANIZATION_BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH
   *   401: UNAUTHORIZED
   *   500: INTERNAL_SERVER_ERROR
   */
@@ -43,14 +43,14 @@
   let findOrganization = await organization.findByPk(organizationId);
   const { hrisAccessToken } = findOrganization
 
-  if (!hrisAccessToken) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_HAVE_NO_HRIS_ACCESS_TOKEN));
+  if (!hrisAccessToken) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH));
 
   try {
     let resp = await getCompany(hrisAccessToken)
     return Promise.resolve({
       status: 200,
       success: true,
-      company: resp
+      data: resp
     });
   } catch (error) {
     return Promise.reject(error);

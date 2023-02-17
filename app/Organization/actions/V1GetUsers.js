@@ -65,6 +65,6 @@
   return Promise.resolve({
     status: 200,
     success: true,
-    user: findOrganizationUsers.users
+    data: findOrganizationUsers.users
   });
  } // END V1Read

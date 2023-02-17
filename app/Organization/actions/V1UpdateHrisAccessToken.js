@@ -57,7 +57,7 @@ async function V1UpdateHrisAccessToken(req) {
   const findOrganization = await organization.findByPk(req.user.organizationId).catch(err => Promise.reject(error));
 
   // check if organization exists
-  if (!findOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+  if (!findOrganization) return Promise.resolve(errorResponse(req, ERROR_CODES.ORGANIZATION_BAD_REQUEST_DOES_NOT_INTEGRATED_WITH_FINCH));
 
   // exchange finch temporary code with permanent access token
   let accessToken = await axios
@@ -76,12 +76,11 @@ async function V1UpdateHrisAccessToken(req) {
 
   try {
     // update organization
-    // await findOrganization.update({ hrisAccessToken: accessToken });
+    await findOrganization.update({ hrisAccessToken: accessToken });
 
     return Promise.resolve({
       status: 200,
       success: true,
-      organization: findOrganization.dataValues
     });
   } catch (error) {
     return Promise.reject(error);
