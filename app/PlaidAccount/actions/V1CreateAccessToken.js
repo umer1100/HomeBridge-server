@@ -78,7 +78,7 @@ async function V1CreateAccessToken(req) {
     city: joi.string().trim().min(1).required(),
     state: joi.string().trim().min(1).required(),
     zipcode: joi.string().trim().min(1).required(),
-    dateOfBirth: joi.string().trim().min(1).required()
+    dateOfBirth: joi.object().required()
   });
 
   let user_pii = {
