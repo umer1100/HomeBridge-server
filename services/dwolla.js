@@ -26,7 +26,7 @@ module.exports = {
  * @param dateOfBirth
  * @returns Dwolla link referring to customer
  */
-async function createDwollaCustomer(firstName, lastName, ssn, email, address1, city, state, postalCode, dateOfBirth) {
+async function createDwollaCustomer(firstName, lastName, ssn, email, addressLine1, city, state, zipcode, dateOfBirth) {
   try {
     // Check to see if customer already exists, and if so return that customer's URL
     let search = await dwolla.get('customers', { email: email });
@@ -38,10 +38,10 @@ async function createDwollaCustomer(firstName, lastName, ssn, email, address1, c
       lastName,
       email,
       type: 'personal',
-      address1,
+      address1: addressLine1,
       city,
       state,
-      postalCode,
+      postalCode: zipcode,
       dateOfBirth,
       ssn
     };
