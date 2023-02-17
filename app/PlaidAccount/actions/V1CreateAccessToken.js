@@ -34,6 +34,7 @@ module.exports = {
  *   @publicToken - (STRING - REQUIRED): Public token used to generate access token
  *   @accounts - (Array - REQUIRED): Accounts array return by plaid onSuccess method
  *   @institutionName - (STRING - REQUIRED): Bank name or plaid item name
+ *   @ssn - (STRING - REQUIRED): ssn number
  * }
  *
  * Success: Return something
@@ -60,7 +61,8 @@ async function V1CreateAccessToken(req) {
       .trim()
       .min(1)
       .required()
-      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]')))
+      .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]'))),
+    ssn: joi.string().trim().min(1).required(),
   });
 
   // validate
@@ -76,11 +78,10 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
-    let ssn = '123456789'; // TODO: replace with Finch SSN call
     let customerUrl = await createDwollaCustomer(
       req.user.firstName,
       req.user.lastName,
-      ssn,
+      req.args.ssn,
       req.user.email,
       req.user.addressLine1,
       req.user.city,

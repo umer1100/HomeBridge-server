@@ -51,7 +51,8 @@
     goalTimeline: joi.string().trim().min(1).optional(),
     state: joi.string().trim().min(1).optional(),
     phone: joi.string().trim().min(1).optional(),
-    dreamHomeDescription: joi.string().trim().min(1).optional()
+    dreamHomeDescription: joi.string().trim().min(1).optional(),
+    dateOfBirth: joi.string().trim().min(1).optional(),
    });
 
    // validate
