@@ -62,7 +62,7 @@ async function V1CreateAccessToken(req) {
       .min(1)
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]'))),
-    ssn: joi.string().trim().min(1).required(),
+    ssn: joi.string().trim().min(1).required()
   });
 
   // validate
