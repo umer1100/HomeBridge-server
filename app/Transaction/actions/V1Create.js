@@ -92,6 +92,12 @@ async function V1Create(req) {
       success: true
     });
   } catch (error) {
-    return Promise.reject(JSON.parse(error?.message)?.message || error);
+    return Promise.resolve(
+      errorResponse(
+        req,
+        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
+        error
+      )
+    );
   }
 } // END V1Create

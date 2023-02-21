@@ -41,8 +41,8 @@ const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
 async function V1Create(req, res, next) {
   let method = ''; // which action method to use
 
-  if (req.admin) method = `V1CreateByAdmin`;
-  else if (req.user && req.user.roleType !== ROLES.GUEST) method = `V1CreateByOrganizationalUser`;
+  if (req.admin) method = 'V1CreateByAdmin';
+  else if (req.user && req.user.roleType !== ROLES.GUEST) method = 'V1CreateByOrganizationalUser';
   else if (req.user && req.user.roleType === ROLES.GUEST) return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
   else method = 'V1CreateGuest';
 
@@ -158,7 +158,7 @@ async function V1ResetPassword(req, res, next) {
  *
  * Must be logged in
  */
- async function V1Update(req, res, next) {
+async function V1Update(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
@@ -178,7 +178,7 @@ async function V1ResetPassword(req, res, next) {
  * Must be logged in
  * Role: [User]
  */
- async function V1UpdatePassword(req, res, next) {
+async function V1UpdatePassword(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1UpdatePassword';

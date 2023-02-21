@@ -68,11 +68,18 @@ async function V1UnlinkAccounts(req) {
         }
       });
     }
+
     return Promise.resolve({
       status: 200,
       success: true
     });
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.resolve(
+      errorResponse(
+        req,
+        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
+        error
+      )
+    );
   }
 }

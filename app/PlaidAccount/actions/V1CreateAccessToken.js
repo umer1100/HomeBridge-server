@@ -6,6 +6,7 @@
 
 // third-party
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
+const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
@@ -78,7 +79,7 @@ async function V1CreateAccessToken(req) {
     city: joi.string().trim().min(1).required(),
     state: joi.string().trim().min(1).required(),
     zipcode: joi.string().trim().min(1).required(),
-    dateOfBirth: joi.object().required()
+    dateOfBirth: joi.string().required()
   });
 
   let user_pii = {
@@ -89,7 +90,7 @@ async function V1CreateAccessToken(req) {
     city: req.user.city,
     state: req.user.state,
     zipcode: req.user.zipcode,
-    dateOfBirth: req.user.dateOfBirth
+    dateOfBirth: moment(req.user.dateOfBirth).utc().format("YYYY-MM-DD") || ''
   };
 
   // validate
@@ -149,6 +150,12 @@ async function V1CreateAccessToken(req) {
       success: true
     });
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.resolve(
+      errorResponse(
+        req,
+        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
+        error
+      )
+    );
   }
 } // END V1CreateAccessToken

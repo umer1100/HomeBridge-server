@@ -48,7 +48,11 @@ async function createDwollaCustomer({ firstName, lastName, ssn, email, addressLi
     const response = await dwolla.post('customers', requestBody);
     return response.headers.get('Location');
   } catch (error) {
-    return Promise.reject(JSON.parse(error?.message)?.message || error);
+    return Promise.reject(
+      error?.body?._embedded?.errors.map(error => error?.message) ||
+      JSON.parse(error?.message)?.message ||
+      error
+    );
   }
 }
 
@@ -70,7 +74,11 @@ async function createDwollaCustomerFundingSource(account, customerUrl, processor
     const response = await dwolla.post(`${customerUrl}/funding-sources`, requestBody);
     return response.headers.get('Location');
   } catch (error) {
-    return Promise.reject(JSON.parse(error?.message)?.message || error);
+    return Promise.reject(
+      error?.body?._embedded?.errors.map(error => error?.message) ||
+      JSON.parse(error?.message)?.message ||
+      error
+    );
   }
 }
 
@@ -87,7 +95,11 @@ async function removeDwollaFundingSource(fundingSourceUrl) {
 
     await dwolla.post(fundingSourceUrl, requestBody);
   } catch (error) {
-    return Promise.reject(JSON.parse(error?.message)?.message || error);
+    return Promise.reject(
+      error?.body?._embedded?.errors.map(error => error?.message) ||
+      JSON.parse(error?.message)?.message ||
+      error
+    );
   }
 }
 
@@ -117,6 +129,14 @@ async function transferFunds(sourcedLink, fundedLink, amount) {
   };
 
   // For Dwolla API applications, an dwolla can be used for this endpoint. (https://developers.dwolla.com/api-reference/authorization/application-authorization)
-  let resp = await dwolla.post('transfers', requestBody); // => 'https://api.dwolla.com/transfers/d76265cd-0951-e511-80da-0aa34a9b2388'
-  return resp.headers.get('Location');
+  try {
+    let resp = await dwolla.post('transfers', requestBody); // => 'https://api.dwolla.com/transfers/d76265cd-0951-e511-80da-0aa34a9b2388'
+    return resp.headers.get('Location');
+  } catch (error) {
+    return Promise.reject(
+      error?.body?._embedded?.errors.map(error => error?.message) ||
+      JSON.parse(error?.message)?.message ||
+      error
+    );
+  }
 }

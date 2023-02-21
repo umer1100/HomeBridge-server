@@ -94,7 +94,7 @@ describe('Organization.V1GetUsers', async () => {
 
 
     it('[user] should fail to get users if no params are provided and user does not belong to any organization', async () => {
-      let user = userFix[6];
+      let user = userFix[7];
 
       try {
         const { token } = await userLogin(app, routeVersion, request, user);

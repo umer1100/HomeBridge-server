@@ -112,4 +112,19 @@ module.exports = [
     emailConfirmed: false,
     emailConfirmedToken: randomString()
   },
+  {
+    id: 8,
+    timezone: 'UTC',
+    locale: 'en',
+    status: 'ACTIVE',
+    firstName: 'John',
+    lastName: 'Zeo',
+    roleType: 'EMPLOYEE',
+    email: 'user-8@example.com',
+    phone: '+14018148502',
+    salt: '2-TYIUJHGIUYGDJHGAIHGKDYHJAGKSHJDGFKGHHGEKFH',
+    password: 'password^F%',
+    emailConfirmed: true,
+    emailConfirmedToken: randomString()
+  },
 ];

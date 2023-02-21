@@ -138,7 +138,7 @@ describe('User.V1Read', async () => {
         // read user request
         const res = await request(app).get(`${routeUrl}`).set('authorization', `${jwt} ${token}`);
         expect(res.statusCode).to.equal(200);
-        expect(res.body.user.id).to.equal(manager.id);
+        expect(res.body.data.id).to.equal(manager.id);
       } catch (error) {
         throw error;
       }
@@ -202,12 +202,12 @@ describe('User.V1Read', async () => {
         const res = await request(app).get(`${routeUrl}?id=${employee.id}`).set('authorization', `${jwt} ${token}`);
 
         expect(res.statusCode).to.equal(200);
-        expect(res.body.user.id).to.equal(4);
-        expect(res.body.user.firstName).to.equal('Gorang');
-        expect(res.body.user.lastName).to.equal('Pall');
-        expect(res.body.user.roleType).to.equal('EMPLOYEE');
-        expect(res.body.user.email).to.equal('user-4@example.com');
-        expect(res.body.user.organizationId).to.equal(1);
+        expect(res.body.data.id).to.equal(4);
+        expect(res.body.data.firstName).to.equal('Gorang');
+        expect(res.body.data.lastName).to.equal('Pall');
+        expect(res.body.data.roleType).to.equal('EMPLOYEE');
+        expect(res.body.data.email).to.equal('user-4@example.com');
+        expect(res.body.data.organizationId).to.equal(1);
       } catch (error) {
         throw error;
       }

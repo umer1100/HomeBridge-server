@@ -5,22 +5,22 @@
 'use strict';
 
 // ENV variables
-const { REDIS_URL } = process.env;
+const { WEB_HOSTNAME } = process.env;
 
 // third-party
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
+const emailService = require('../../../services/email');
 
 // models
 const models = require('../../../models');
 
 // helpers
-const { isValidTimezone, isValidRoleAction } = require('../../../helpers/validate');
+const { isValidRoleAction } = require('../../../helpers/validate');
 const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/constants');
-const { join } = require('lodash');
-const { ROLES } = require('../../../helpers/constants');
+const { randomString } = require('../../../helpers/logic');
 
 // methods
 module.exports = {
@@ -40,15 +40,25 @@ module.exports = {
  * req.args = {
  *   @firstName - (STRING - REQUIRED): The first name of the new user
  *   @lastName - (STRING - REQUIRED): The last name of the new user
- *   @status - (STRING - REQUIRED): Status of the user
+ *   @status - (STRING - DEFAULT('PENDING')): Status of the user
  *   @email - (STRING - REQUIRED): The email of the user,
- *   @phone - (STRING - REQUIRED): The phone of the user,
+ *   @phone - (STRING - OPTIONAL): Phone number of user
  *   @roleType - (STRING - REQUIRED): The role type of the user
- *   @timezone - (STRING - REQUIRED): The timezone of the user
- *   @locale - (STRING - REQUIRED): The language of the user
- *   @password1 - (STRING - REQUIRED): The unhashed password1 of the user
- *   @password2 - (STRING - REQUIRED): The unhashed password2 of the user
- *   @acceptedTerms - (BOOLEAN - REQUIRED): Whether terms is accepted or not
+ *   @organizationId - (NUMBER - DEFAULT(user.organizationId)): The Organization Id of user
+ *   @timezone - (STRING - OPTIONAL): Timezone of user
+ *   @locale - (STRING - OPTIONAL): Locale of user
+ *   @password1 - (STRING - OPTIONAL) Password of the user
+ *   @password2 - (STRING - OPTIONAL) Confirm password of the user
+ *   @acceptedTerms - (BOOLEAN - OPTIONAL) Is user accept Term
+ *   @kycIdType - (STRING - OPTIONAL) kycIdType of user
+ *   @kycIdNumber - (STRING - OPTIONAL) kycIdNumber of user
+ *   @addressline1 - (STRING - OPTIONAL) Address line 1 of the User
+ *   @addressline2 - (STRING - OPTIONAL) Address line 2 of the user
+ *   @city - (STRING - OPTIONAL) city of the user
+ *   @state - (STRING - OPTIONAL) state of the user
+ *   @country - (STRING - OPTIONAL) country of the user
+ *   @zipcode - (STRING - OPTIONAL) zip code of the user
+ *   @dateOfBirth - (DATE - OPTIONAL) Date of birth of the user
  * }
  *
  * Success: Return an user
@@ -64,26 +74,24 @@ async function V1CreateByOrganizationalUser(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
-    status: joi.string().required(),
+    status: joi.string().default('PENDING'),
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
-    roleType: joi.string().trim(),
-    organizationId: joi.number().integer().min(1).required(),
+    roleType: joi.string().trim().required(),
+    organizationId: joi.number().integer().default(req.user.organizationId).min(1),
     timezone: joi.string().min(1),
     locale: joi.string().min(1),
     password1: joi
       .string()
       .min(PASSWORD_LENGTH_MIN)
       .regex(PASSWORD_REGEX)
-      .required()
       .error(new Error(req.__('USER[Invalid Password Format]'))),
     password2: joi
       .string()
       .min(PASSWORD_LENGTH_MIN)
       .regex(PASSWORD_REGEX)
-      .required()
       .error(new Error(req.__('USER[Invalid Password Format]'))),
-    acceptedTerms: joi.boolean().required(),
+    acceptedTerms: joi.boolean(),
     kycIdType: joi.string().min(1).trim(),
     kycIdNumber: joi.string().min(1).trim(),
     addressline1: joi.string().trim().min(1),
@@ -94,15 +102,12 @@ async function V1CreateByOrganizationalUser(req) {
     zipcode: joi.string().trim().min(1),
     dateOfBirth: joi.date()
   });
+
   // validate
   const { error, value } = schema.validate(req.args);
 
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
-
-  // check passwords
-  if (req.args.password1 !== req.args.password2) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PASSWORDS_NOT_EQUAL));
-  req.args.password = req.args.password1; // set password
 
   try {
     // check if user email already exists
@@ -115,13 +120,10 @@ async function V1CreateByOrganizationalUser(req) {
     // check of duplicate user user
     if (duplicateUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_USER_ALREADY_EXISTS));
 
-    // check timezone
-    if (!isValidTimezone(req.args.timezone)) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_INVALID_TIMEZONE));
-
+    // Generating Random Password
+    const password = randomString({ len: 10 });
     // validate roleType
     if (!isValidRoleAction(req.user.roleType, req.args.roleType)) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
-    // validate organizationId
-    // if (req.user.organizationId !== req.args.organizationId) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
     // create user
     const newUser = await models.user.create({
@@ -134,7 +136,7 @@ async function V1CreateByOrganizationalUser(req) {
       phone: req.args.phone,
       roleType: req.args.roleType,
       organizationId: req.args.organizationId,
-      password: req.args.password,
+      password: password,
       acceptedTerms: req.args.acceptedTerms,
       addressline1: req.args.addressline1,
       addressline2: req.args.addressline2,
@@ -146,7 +148,44 @@ async function V1CreateByOrganizationalUser(req) {
       source: 'Manual'
     });
 
-    const wallet = models.creditWallet.create({ userId: req.user.id });
+    // preparing for email confirmation token
+    const emailConfirmationToken = randomString();
+
+    // Updated EmailCOnfirmation token for User
+    await models.user.update(
+      {
+        emailConfirmedToken: emailConfirmationToken,
+      },
+      {
+        fields: ['emailConfirmedToken'], // only these fields
+        where: {
+          email: req.args.email
+        }
+      }
+    );
+
+    // create URL using front end url
+    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${true}`;
+
+    //sending email with invitation token and password
+    await emailService.send({
+      from: emailService.emails.doNotReply.address,
+      name: emailService.emails.doNotReply.name,
+      subject: 'Please use this link to login to ownerific',
+      template: 'InvitationEmail',
+      tos: [req.args.email],
+      ccs: null,
+      bccs: null,
+      args: {
+        emailConfirmLink,
+        password,
+        firstName: req.args.firstName,
+        lastName: req.args.lastName
+      }
+    }).catch(err => {
+      newUser.destroy(); // destroy if error
+      return Promise.reject(err);
+    });
 
     // grab user without sensitive data
     const returnUser = await models.user
