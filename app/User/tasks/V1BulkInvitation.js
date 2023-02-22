@@ -2,6 +2,8 @@
 
 const { WEB_HOSTNAME } = process.env;
 const models = require('../../../models');
+
+const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
 const _ = require('lodash');
 const joi = require('@hapi/joi');
 const { joiErrorsMessage } = require('../../../services/error');
@@ -30,9 +32,10 @@ async function V1BulkInvitation(job) {
     const userData = await models.user.findOne({
       where: {
         email: user.email,
-        status: 'PENDING'
+        status: { [Op.in]: ['PENDING', 'NEW'] }
       }
     });
+
     if (userData) {
       const passwordToSend = randomString({ len: 10 });
       const password = bcrypt.hashSync(passwordToSend, userData.salt);
@@ -41,7 +44,8 @@ async function V1BulkInvitation(job) {
 
       await userData.update({
         emailConfirmedToken: emailConfirmationToken,
-        password: password
+        password: password,
+        status: 'PENDING'
       });
 
       await emailService.send({

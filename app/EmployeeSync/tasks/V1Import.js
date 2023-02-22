@@ -82,7 +82,7 @@ async function V1Import(job) {
       let employments = await getEmployments(body, organization.hrisAccessToken);
       let accountInfo = await getAccountInformation(organization.hrisAccessToken);
 
-      let requiredEmploymentDetails = employments.responses.map(({body, individual_id}) => {
+      let requiredEmploymentDetails = employments.responses.map(({ body, individual_id }) => {
         return {
           finchID: individual_id,
           title: body?.title,
@@ -104,7 +104,6 @@ async function V1Import(job) {
             firstName: individual.body?.first_name,
             lastName: individual.body?.last_name,
             sex: individual.body?.gender?.toUpperCase(),
-            status: 'PENDING',
             email: individual.body?.emails[0]?.data,
             roleType: 'EMPLOYEE',
             password: 'PLACEHOLDER',
