@@ -22,6 +22,7 @@ module.exports = (passport, router) => {
   router.all('/v1/users/update-password', controller.V1UpdatePassword);
   router.all('/v1/users/update', controller.V1Update);
   router.all('/v1/users/sendBulkInvitation', controller.V1BulkInvitation);
+  router.all('/v1/users/update-bulk-users', controller.V1UpdateBulkUsers);
   // return router
   return router;
 };

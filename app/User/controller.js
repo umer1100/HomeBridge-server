@@ -24,7 +24,8 @@ module.exports = {
   V1Update,
   V1UpdatePassword,
   V1PlaidCreateLinkToken,
-  V1BulkInvitation
+  V1BulkInvitation,
+  V1UpdateBulkUsers
 };
 
 const { REDIS_URL } = process.env;
@@ -192,6 +193,16 @@ async function V1UpdatePassword(req, res, next) {
 async function V1PlaidCreateLinkToken(req, res, next) {
   let method = null;
   if (req.user) method = 'V1PlaidCreateLinkToken';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+async function V1UpdateBulkUsers(req, res, next) {
+  let method = null;
+  if (req.user && isEmployer(req.user)) method = 'V1UpdateBulkUsers';
+
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   const result = await actions[method](req).catch(err => next(err));

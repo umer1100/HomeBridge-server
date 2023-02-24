@@ -70,7 +70,7 @@ describe('User.V1Create', async () => {
 
         expect(res.statusCode).to.equal(201);
         expect(res.body.user.id).to.equal(user.length + 1);
-        expect(res.body.user.status).to.equal('PENDING');
+        expect(res.body.user.status).to.equal('NEW');
         expect(res.body.user.name).to.equal(params.name);
         expect(res.body.user.email).to.equal(params.email);
         expect(res.body.user.loginCount).to.equal(0);
