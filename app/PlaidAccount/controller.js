@@ -16,7 +16,8 @@ module.exports = {
   V1CreateAccessToken,
   V1CreateLinkToken,
   V1GetAccountsDetails,
-  V1UnlinkAccounts
+  V1UnlinkAccounts,
+  V1GetDwollaDetails
 };
 
 /**
@@ -31,7 +32,7 @@ async function V1CreateAccessToken(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.user) method = `V1CreateAccessToken`;
+  if (req.user) method = 'V1CreateAccessToken';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -95,6 +96,25 @@ async function V1UnlinkAccounts(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1UnlinkAccounts';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+/**
+ * V1GetDwollaDetails Method
+ *
+ * /v1/plaidAccounts/getDwollaDetails
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
+
+async function V1GetDwollaDetails(req, res, next) {
+  let method = null;
+
+  if (req.user) method = 'V1GetDwollaDetails';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   const result = await actions[method](req).catch(err => next(err));

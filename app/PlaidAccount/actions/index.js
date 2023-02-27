@@ -11,5 +11,6 @@ module.exports = {
   ...require('./V1CreateLinkToken'),
   ...require('./V1CreateAccessToken'),
   ...require('./V1GetAccountsDetails'),
-  ...require('./V1UnlinkAccounts')
+  ...require('./V1UnlinkAccounts'),
+  ...require('./V1GetDwollaDetails'),
 };
