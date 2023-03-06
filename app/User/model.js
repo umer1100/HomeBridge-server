@@ -96,6 +96,12 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 'NEW'
       },
 
+      previousStatus: {
+        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE', 'ONBOARDING', 'NEW', 'PAUSE']),
+        allowNull: true,
+        defaultValue: null
+      },
+
       sex: {
         type: DataTypes.ENUM(['MALE', 'FEMALE', 'OTHER']),
         allowNull: true
@@ -364,6 +370,11 @@ module.exports = (sequelize, DataTypes) => {
 
         afterCreate(user, options) {
           sequelize.models.creditWallet.create({ userId: user.id });
+        },
+
+        beforeUpdate(user, options) {
+          if (user.previous('status') != user.status)
+            user.previousStatus = user.previous('status')
         }
       },
       indexes: []

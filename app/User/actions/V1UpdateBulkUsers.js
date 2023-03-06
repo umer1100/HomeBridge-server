@@ -43,7 +43,7 @@ async function V1UpdateBulkUsers(req) {
   const schema = joi.object({
     users: joi.array().required(),
     payload: joi.object().keys({
-      status: joi.string().required()
+      action: joi.string().valid('UNPAUSE', 'PAUSE').required()
     }).required().error(new Error('Invalid payload'))
   });
 
@@ -54,6 +54,26 @@ async function V1UpdateBulkUsers(req) {
 
   let { users, payload } = req.args;
 
+  // user cannot update an employer
+  const findEmployer = users.find((user) => user.roleType == 'EMPLOYER');
+  if (findEmployer) {
+    return Promise.resolve({ success: false, status: 400, message: 'Invalid request, cannot update EMPLOYER.' });
+  }
+
+  if (payload.action === 'UNPAUSE') {
+    // all users must be paused
+    const findUnpauseUser = users.find(user => user.status !== 'PAUSE');
+    if (findUnpauseUser) {
+      return Promise.resolve({ success: false, status: 400, message: 'Invalid action, users must be paused.' });
+    }
+  } else if (payload.action === 'PAUSE') {
+    // users should not be paused
+    const findPauseUser = users.find(user => user.status === 'PAUSE');
+    if (findPauseUser) {
+      return Promise.resolve({ success: false, status: 400, message: 'Invalid action, user already paused.' });
+    }
+  }
+
   try {
     await Promise.all(users.map(async (user) => {
       const userData = await models.user.findOne({
@@ -62,7 +82,10 @@ async function V1UpdateBulkUsers(req) {
         }
       });
 
-      if (userData) await userData.update(payload);
+      if (userData) {
+        const status = payload.action === 'PAUSE' ? 'PAUSE' : (userData.previousStatus || userData.status);
+        await userData.update({ status })
+      }
     }));
 
     return Promise.resolve({
