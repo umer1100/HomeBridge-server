@@ -17,6 +17,12 @@ const LOCAL_ERROR_CODES = {
   //   status: 401,
   //   messages: ['PLAIDACCOUNT[PlaidAccount is not active]']
   // }
+
+  PLAIDACCOUNT_BAD_REQUEST_PLAIDACCOUNT_DOES_NOT_EXIST: {
+    error: 'PLAIDACCOUNT.BAD_REQUEST_PLAIDACCOUNT_DOES_NOT_EXIST',
+    status: 404,
+    messages: ['PLAIDACCOUNT[PlaidAccount does not exist]']
+  }
 };
 
 module.exports = LOCAL_ERROR_CODES;

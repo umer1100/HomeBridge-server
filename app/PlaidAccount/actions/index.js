@@ -13,4 +13,5 @@ module.exports = {
   ...require('./V1GetAccountsDetails'),
   ...require('./V1UnlinkAccounts'),
   ...require('./V1GetDwollaDetails'),
+  ...require('./V1UpdatePrimaryAccount')
 };

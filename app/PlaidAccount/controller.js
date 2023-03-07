@@ -17,7 +17,8 @@ module.exports = {
   V1CreateLinkToken,
   V1GetAccountsDetails,
   V1UnlinkAccounts,
-  V1GetDwollaDetails
+  V1GetDwollaDetails,
+  V1UpdatePrimaryAccount
 };
 
 /**
@@ -115,6 +116,25 @@ async function V1GetDwollaDetails(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1GetDwollaDetails';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+/**
+ * V1UpdatePrimaryAccount Method
+ *
+ * /v1/plaidAccounts/updatePrimaryAccount
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
+
+async function V1UpdatePrimaryAccount(req, res, next) {
+  let method = null;
+
+  if (req.user) method = 'V1UpdatePrimaryAccount';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   const result = await actions[method](req).catch(err => next(err));

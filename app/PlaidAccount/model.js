@@ -86,6 +86,11 @@ module.exports = (sequelize, DataTypes) => {
       institutionName: {
         type: DataTypes.TEXT,
         defaultValue: null
+      },
+      primaryAccount: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
       }
     },
     {

@@ -18,6 +18,7 @@ module.exports = (passport, router) => {
   router.all('/v1/plaidAccounts/getAccountsDetails', controller.V1GetAccountsDetails);
   router.all('/v1/plaidAccounts/unlinkAccounts', controller.V1UnlinkAccounts);
   router.all('/v1/plaidAccounts/getDwollaDetails', controller.V1GetDwollaDetails);
+  router.all('/v1/plaidAccounts/updatePrimaryAccount', controller.V1UpdatePrimaryAccount);
   // return router
   return router;
 };

@@ -51,9 +51,10 @@ async function V1GetAccountsDetails(req) {
         });
 
         // we need respective ids (primary keys) from our database
+
         let accounts = itemData?.data?.accounts.map(account => {
-          let { id } = plaidAccounts.find(acc => acc.accountId === account.account_id);
-          return { id, ...account };
+          let { id, primaryAccount, createdAt } = plaidAccounts.find(acc => acc.accountId === account.account_id);
+          return { id, primaryAccount, createdAt, ...account };
         });
 
         return {

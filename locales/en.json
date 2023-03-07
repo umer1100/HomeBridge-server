@@ -54,5 +54,7 @@
 	"TRANSACTION_V1Example_Invalid_Argument[sourcedAccountId]": "TRANSACTION_V1Example_Invalid_Argument[sourcedAccountId]",
 	"ORGANIZATION[ORGANIZATION Does not integrated with finch]": "ORGANIZATION[ORGANIZATION Does not integrated with finch]",
 	"ORGANIZATION has not integrated with HRIS system": "ORGANIZATION has not integrated with HRIS system",
-	"USER[Invalid Password Reset Token]": "USER[Invalid Password Reset Token]"
+	"USER[Invalid Password Reset Token]": "USER[Invalid Password Reset Token]",
+	"PLAIDACCOUNT_V1UpdatePrimaryAccount_Invalid_Argument[publicToken]": "PLAIDACCOUNT_V1UpdatePrimaryAccount_Invalid_Argument[publicToken]",
+	"PLAIDACCOUNT[PlaidAccount does not exist]": "PLAIDACCOUNT[PlaidAccount does not exist"
 }

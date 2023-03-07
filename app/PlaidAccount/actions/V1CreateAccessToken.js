@@ -90,7 +90,7 @@ async function V1CreateAccessToken(req) {
     city: req.user.city,
     state: req.user.state,
     zipcode: req.user.zipcode,
-    dateOfBirth: moment(req.user.dateOfBirth).utc().format("YYYY-MM-DD") || ''
+    dateOfBirth: moment(req.user.dateOfBirth).utc().format('YYYY-MM-DD') || ''
   };
 
   // validate
@@ -114,6 +114,8 @@ async function V1CreateAccessToken(req) {
 
     let customerUrl = await createDwollaCustomer({ ssn: req.args.ssn, ...user_pii });
     let accounts = req.args.accounts;
+    let hasPrimary = await models.plaidAccount.findOne({ where: { userId: req.user.id, primaryAccount: true } });
+    let setPrimary = hasPrimary ? false : true;
 
     accounts = await Promise.all(
       accounts.map(async account => {
@@ -126,7 +128,7 @@ async function V1CreateAccessToken(req) {
         const processorToken = await processorTokenCreate(processorRequest);
         let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
 
-        return {
+        let toRet = {
           accountId: account.id,
           name: account.name,
           itemId: itemResponse?.data?.item?.item_id,
@@ -138,8 +140,13 @@ async function V1CreateAccessToken(req) {
           userId: req.user.id,
           accessToken,
           processorToken,
-          institutionName: req?.args?.institutionName
+          institutionName: req?.args?.institutionName,
+          primaryAccount: setPrimary
         };
+
+        setPrimary = false;
+
+        return toRet;
       })
     );
 
@@ -150,12 +157,6 @@ async function V1CreateAccessToken(req) {
       success: true
     });
   } catch (error) {
-    return Promise.resolve(
-      errorResponse(
-        req,
-        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
-        error
-      )
-    );
+    return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, error));
   }
 } // END V1CreateAccessToken
