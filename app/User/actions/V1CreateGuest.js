@@ -67,7 +67,7 @@ async function V1CreateGuest(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
-    status: joi.string(),
+    status: joi.string().default('PENDING'),
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
     roleType: joi.string().trim(),
