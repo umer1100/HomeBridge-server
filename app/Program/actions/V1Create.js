@@ -47,9 +47,9 @@ module.exports = {
  * req.params = {}
  * req.args = {
  *   @isProgramActive - (BOOLEAN - REQUIRED): Whether the program is active
- *   @signupBonusValue - (BOOLEAN - REQUIRED): Value of the signup bonus
+ *   @signupBonusValue - (NUMBER - REQUIRED): Value of the signup bonus
  *   @signupBonusActive - (BOOLEAN - REQUIRED): Whether the signup bonus is active
- *   @defaultContribution - (BOOLEAN - REQUIRED): Monthly default contribution
+ *   @defaultContribution - (NUMBER - REQUIRED): Monthly default contribution
  *
  * }
  *
@@ -62,9 +62,9 @@ module.exports = {
 async function V1Create(req) {
   const schema = joi.object({
     isProgramActive: joi.boolean().default(true).required(),
-    signupBonusValue: joi.number().min(1).required(),
+    signupBonusValue: joi.number().min(0).required(),
     signupBonusActive: joi.boolean().default(true).required(),
-    defaultContribution: joi.number().min(1).required()
+    defaultContribution: joi.number().min(0).required()
   });
 
   // validate

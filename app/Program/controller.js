@@ -14,7 +14,8 @@ const actions = require('./actions');
 
 module.exports = {
   V1Create,
-  V1Program
+  V1Read,
+  V1Update
 };
 
 /**
@@ -55,6 +56,31 @@ async function V1Read(req, res, next) {
 
   // Call the correct action method based on type of user of role
   if (req.user && req.user.roleType == 'EMPLOYER') method = `V1Read`;
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  try {
+    const result = await actions[method](req);
+
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
+ * Update Method
+ *
+ * /v1/programs/update
+ *
+ * Must be logged in
+ * Roles: ['user']
+ */
+async function V1Update(req, res, next) {
+  let method = null; // which action method to use
+
+  // Call the correct action method based on type of user of role
+  if (req.user && req.user.roleType == 'EMPLOYER') method = `V1Update`;
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

@@ -8,5 +8,7 @@
 'use strict';
 
 module.exports = {
-  ...require('./V1Create')
+  ...require('./V1Create'),
+  ...require('./V1Read'),
+  ...require('./V1Update')
 };
