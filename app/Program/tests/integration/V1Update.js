@@ -1,5 +1,5 @@
 /**
- * TEST PROGRAM V1Read METHOD
+ * TEST PROGRAM V1Update METHOD
  */
 
 'use strict';
@@ -34,7 +34,7 @@ describe('Program.V1Read', async () => {
   // url of the api method we are testing
   const routeVersion = '/v1';
   const routePrefix = '/programs';
-  const routeMethod = '/read';
+  const routeMethod = '/update';
   const routeUrl = `${routeVersion}${routePrefix}${routeMethod}`;
 
   // clear database
@@ -49,7 +49,7 @@ describe('Program.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[logged-out] should fail to read program', async () => {
+    it('[logged-out] should fail to update program', async () => {
       try {
         const res = await request(app).get(routeUrl);
         expect(res.statusCode).to.equal(401);
@@ -69,7 +69,7 @@ describe('Program.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[user] with roleType EMPLOYER should read an program successfully', async () => {
+    it('[user] with roleType EMPLOYER should update a program successfully', async () => {
       const user1 = userFix[0];
 
       try {
@@ -78,7 +78,8 @@ describe('Program.V1Read', async () => {
 
         // params
         const params = {
-          id: user1.organizationId // organizationId and programId should be the same. We'll assume this for testing purposes
+          id: user1.organizationId, // organizationId and programId should be the same. We'll assume this for testing purposes
+          isProgramActive: true
         };
 
         // read admin request
@@ -87,13 +88,13 @@ describe('Program.V1Read', async () => {
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
         expect(res.body).to.have.property('program');
-        expect(res.body.program).to.have.property('id', user1.organizationId);
+        expect(res.body.program).to.have.property('isProgramActive', true);
       } catch (error) {
         throw error;
       }
     }); // END [user] should read another admin successfully
 
-    it('[user] should fail to read program if program does not exist', async () => {
+    it('[user] roleType EMPLOYEE should fail to update program', async () => {
       const user1 = userFix[0];
 
       try {
@@ -111,6 +112,6 @@ describe('Program.V1Read', async () => {
       } catch (error) {
         throw error;
       }
-    }); // END [user] should fail to read program if program does not exist
+    }); // END [user] roleType EMPLOYEE should fail to update program
   }); // END Role: User
 }); // END Program.V1Read

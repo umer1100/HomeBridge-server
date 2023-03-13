@@ -44,10 +44,10 @@ module.exports = {
  */
 async function V1Update(req) {
   const schema = joi.object({
-    id: joi.boolean.min(1).required(),
-    isProgramActive: joi.boolean().default(true).optional(),
+    id: joi.number().min(1).required(),
+    isProgramActive: joi.boolean().optional(),
     signupBonusValue: joi.number().min(0).optional(),
-    signupBonusActive: joi.boolean().default(true).optional(),
+    signupBonusActive: joi.boolean().optional(),
     defaultContribution: joi.number().min(0).optional()
   });
 
@@ -60,7 +60,7 @@ async function V1Update(req) {
   const findProgram = await program.findByPk(req.args.id).catch(err => Promise.reject(error));
 
   // check if program exists
-  if (!findProgram) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST));
+  if (!findProgram) return Promise.resolve(errorResponse(req, ERROR_CODES.PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
   try {
     // update program
@@ -69,7 +69,7 @@ async function V1Update(req) {
     return Promise.resolve({
       status: 200,
       success: true,
-      data: findProgram.dataValues
+      program: findProgram.dataValues
     });
   } catch (error) {
     return Promise.reject(error);
