@@ -119,6 +119,7 @@ module.exports = (sequelize, DataTypes) => {
   // association
   Organization.associate = models => {
     Organization.hasMany(models.user);
+    Organization.hasOne(models.program);
   };
 
   return Organization;

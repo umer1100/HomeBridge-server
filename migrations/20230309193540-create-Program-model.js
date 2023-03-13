@@ -44,17 +44,33 @@ module.exports = {
         defaultValue: 0.0
       },
 
+      // When program was created
       createdAt: {
+        type: Sequelize.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: Sequelize.NOW,
+        validate: {
+          isDate: true
+        }
       },
+
+      // When program was updated
       updatedAt: {
+        type: Sequelize.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: Sequelize.NOW,
+        validate: {
+          isDate: true
+        }
       },
+
+      // When program was deleted
       deletedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: null,
+        validate: {
+          isDate: true
+        }
       }
     });
   },

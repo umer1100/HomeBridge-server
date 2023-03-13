@@ -17,6 +17,13 @@ const LOCAL_ERROR_CODES = {
   //   status: 401,
   //   messages: ['PROGRAM[Account is not active]']
   // }
+
+  // V1Read
+  PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST: {
+    error: 'PROGRAM.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
+    status: 404,
+    messages: ['PROGRAM[PROGRAM Account Does Not Exist]']
+  }
 };
 
 module.exports = LOCAL_ERROR_CODES;
