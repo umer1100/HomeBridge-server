@@ -42,15 +42,15 @@ new CronJob(
 );
 
 /************************/
-/***** CREDITWALLET *****/
+/***** PROGRAM **********/
 /************************/
-const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
+const ProgramQueue = new Queue('ProgramQueue', REDIS_URL);
 
 // Adds money to everyone's wallet at the beginning of every month
 new CronJob(
   '0 0 0 1 * *',
   () => {
-    CreditWalletQueue.add('V1AddMonthlyCredit');
+    ProgramQueue.add('V1DistributeDefaultContributions');
   },
   null,
   true,

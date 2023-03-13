@@ -107,7 +107,11 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       freezeTableName: true, // allows sequelize to pluralize the model name
       tableName: 'Organizations', // define table name, must be PascalCase!
-      hooks: {},
+      hooks: {
+        afterCreate(organization, options) {
+          sequelize.models.program.create({ organizationId: organization.id });
+        }
+      },
       indexes: []
     }
   );
