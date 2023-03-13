@@ -11,7 +11,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
-const { user } = require('../../../models');
+const { program } = require('../../../models');
 
 // methods
 module.exports = {
