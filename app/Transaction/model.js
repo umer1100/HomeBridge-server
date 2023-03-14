@@ -47,6 +47,12 @@ module.exports = (sequelize, DataTypes) => {
       transferUrl: {
         type: DataTypes.TEXT,
         allowNull: true
+      },
+
+      status: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
       }
     },
     {

@@ -56,5 +56,7 @@
 	"ORGANIZATION has not integrated with HRIS system": "ORGANIZATION has not integrated with HRIS system",
 	"USER[Invalid Password Reset Token]": "USER[Invalid Password Reset Token]",
 	"PLAIDACCOUNT_V1UpdatePrimaryAccount_Invalid_Argument[publicToken]": "PLAIDACCOUNT_V1UpdatePrimaryAccount_Invalid_Argument[publicToken]",
-	"PLAIDACCOUNT[PlaidAccount does not exist]": "PLAIDACCOUNT[PlaidAccount does not exist"
+	"PLAIDACCOUNT[PlaidAccount does not exist]": "PLAIDACCOUNT[PlaidAccount does not exist",
+	"ACCOUNT[Dwolla account does not exist]": "ACCOUNT[Dwolla account does not exist]",
+	"TRANSACTION[Transaction does not exist]": "TRANSACTION[Transaction does not exist]"
 }
