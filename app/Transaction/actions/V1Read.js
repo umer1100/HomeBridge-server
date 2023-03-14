@@ -10,6 +10,7 @@ const { NODE_ENV, REDIS_URL } = process.env;
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const Op = require('sequelize').Op; // for model operator aliases like $gte, $eq
+const moment = require('moment-timezone');
 
 // services
 const { transferFunds } = require('../../../services/dwolla');
@@ -74,7 +75,9 @@ async function V1Read(req) {
         sourceAccName: transaction['sourceAccount.name'],
         fundedAccInstitutionName: transaction['fundedAccount.institutionName'],
         sourceAccInstitutionName: transaction['sourceAccount.institutionName'],
-        amount: transaction['amount']
+        amount: transaction['amount'],
+        createdAt: moment(transaction['createdAt']).utc().format('MM/DD/YYYY, h:mm A'),
+        status: transaction['status']
       };
     });
 
