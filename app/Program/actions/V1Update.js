@@ -60,7 +60,7 @@ async function V1Update(req) {
   const findProgram = await program.findByPk(req.args.id).catch(err => Promise.reject(error));
 
   // check if program exists
-  if (!findProgram) return Promise.resolve(errorResponse(req, ERROR_CODES.PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+  if (!findProgram) return Promise.resolve(errorResponse(req, ERROR_CODES.PROGRAM_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST));
 
   try {
     // update program

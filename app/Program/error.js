@@ -19,10 +19,10 @@ const LOCAL_ERROR_CODES = {
   // }
 
   // V1Read
-  PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST: {
-    error: 'PROGRAM.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
+  PROGRAM_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST: {
+    error: 'PROGRAM.BAD_REQUEST_PROGRAM_DOES_NOT_EXIST',
     status: 404,
-    messages: ['PROGRAM[PROGRAM Account Does Not Exist]']
+    messages: ['PROGRAM[PROGRAM Does Not Exist]']
   }
 };
 

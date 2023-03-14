@@ -30,7 +30,7 @@ async function V1Create(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.user && req.user.roleType == 'EMPLOYER') method = `V1Create`;
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1Create';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -55,7 +55,7 @@ async function V1Read(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.user && req.user.roleType == 'EMPLOYER') method = `V1Read`;
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1Read';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
@@ -80,7 +80,7 @@ async function V1Update(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.user && req.user.roleType == 'EMPLOYER') method = `V1Update`;
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1Update';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

@@ -12,6 +12,7 @@ require('dotenv').config({ path: path.join(__dirname, '../../../../config/.env.t
 
 // third party
 const i18n = require('i18n'); // https://github.com/mashpie/i18n-node
+const assert = require('assert');
 
 // server & models
 const app = require('../../../../server');
@@ -71,7 +72,7 @@ describe('Program.V1Read', async () => {
 
     it('[user] with roleType EMPLOYER should read an program successfully', async () => {
       const user1 = userFix[0];
-
+      assert(user1.roleType == 'EMPLOYER');
       try {
         // login user
         const { token } = await userLogin(app, routeVersion, request, user1);
@@ -107,7 +108,28 @@ describe('Program.V1Read', async () => {
         // read program request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
         expect(res.statusCode).to.equal(404);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.PROGRAM_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST));
+      } catch (error) {
+        throw error;
+      }
+    }); // END [user] should fail to read program if program does not exist
+
+    it('[user] roleType NOT EMPLOYER should fail to read program', async () => {
+      const user1 = userFix[1];
+      assert(user1.roleType != 'EMPLOYER');
+
+      try {
+        // login user
+        const { token } = await userLogin(app, routeVersion, request, user1);
+
+        const params = {
+          id: 100000
+        };
+
+        // read program request
+        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+        expect(res.statusCode).to.equal(401);
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
       } catch (error) {
         throw error;
       }

@@ -59,7 +59,7 @@ async function V1DistributeDefaultContributions(job) {
       let employer = models.users.findOne({ where: { roleType: 'EMPLOYER', organizationId: organization.id } });
 
       users.forEach(async user => {
-        await dwolla.transferFunds(employer.fundingSourceUrl, user.fundingSourceUrlq, program.defaultContribution);
+        await dwolla.transferFunds(employer.fundingSourceUrl, user.fundingSourceUrl, program.defaultContribution);
       });
     });
 

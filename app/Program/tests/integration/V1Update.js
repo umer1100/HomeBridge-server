@@ -25,8 +25,9 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 
 // helpers
 const { userLogin, reset, populate } = require('../../../../helpers/tests');
+const { assert } = require('console');
 
-describe('Program.V1Read', async () => {
+describe('Program.V1Update', async () => {
   // grab fixtures here
   const userFix = require('../../../../test/fixtures/fix1/user');
   const programFix = require('../../../../test/fixtures/fix1/program');
@@ -71,7 +72,7 @@ describe('Program.V1Read', async () => {
 
     it('[user] with roleType EMPLOYER should update a program successfully', async () => {
       const user1 = userFix[0];
-
+      assert(user1.roleType == 'EMPLOYER');
       try {
         // login user
         const { token } = await userLogin(app, routeVersion, request, user1);
@@ -94,8 +95,9 @@ describe('Program.V1Read', async () => {
       }
     }); // END [user] should read another admin successfully
 
-    it('[user] roleType EMPLOYEE should fail to update program', async () => {
-      const user1 = userFix[0];
+    it('[user] roleType not EMPLOYER should fail to update program', async () => {
+      const user1 = userFix[1];
+      assert(user1.roleType != 'EMPLOYER');
 
       try {
         // login user
@@ -107,8 +109,8 @@ describe('Program.V1Read', async () => {
 
         // read program request
         const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
-        expect(res.statusCode).to.equal(404);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.PROGRAM_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+        expect(res.statusCode).to.equal(401);
+        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
       } catch (error) {
         throw error;
       }
