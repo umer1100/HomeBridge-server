@@ -4,6 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
+      await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_previousStatus";')
       await queryInterface.addColumn(
         'Users',
         'previousStatus',

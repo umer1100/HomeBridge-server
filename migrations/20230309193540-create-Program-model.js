@@ -1,4 +1,7 @@
 'use strict';
+const models = require('../models');
+
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Programs', {
@@ -73,6 +76,10 @@ module.exports = {
         }
       }
     });
+
+    // create a program for all existing organizations
+    const organizations = await models.organization.findAll({ attributes: ['id'], raw: true })
+    await models.program.bulkCreate(organizations.map(organization => { return { organizationId: organization.id }}));
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Programs');

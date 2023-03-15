@@ -28,9 +28,7 @@ module.exports = {
  * Roles: ['user']
  *
  * req.params = {}
- * req.args = {
- *   @id - (NUMBER - REQUIRED): The id of a program
- * }
+ * req.args = {}
  *
  * Success: Return a program.
  * Errors:
@@ -40,17 +38,13 @@ module.exports = {
  *   500: INTERNAL_SERVER_ERROR
  */
 async function V1Read(req) {
-  const schema = joi.object({
-    id: joi.number().min(1).required()
-  });
-
-  // validate
-  const { error, value } = schema.validate(req.args);
-  if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
-  req.args = value; // updated arguments with type conversion
 
   // find program
-  const findProgram = await models.program.findByPk(req.args.id).catch(err => Promise.reject(error));
+  const findProgram = await models.program.findOne({
+    where: {
+      organizationId: req.user.organizationId
+    }
+  }).catch(error => Promise.reject(error));
 
   // check if program exists
   if (!findProgram) return Promise.resolve(errorResponse(req, ERROR_CODES.PROGRAM_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST));
