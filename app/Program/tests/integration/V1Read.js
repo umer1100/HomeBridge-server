@@ -73,17 +73,13 @@ describe('Program.V1Read', async () => {
     it('[user] with roleType EMPLOYER should read an program successfully', async () => {
       const user1 = userFix[0];
       assert(user1.roleType == 'EMPLOYER');
+
       try {
         // login user
         const { token } = await userLogin(app, routeVersion, request, user1);
 
-        // params
-        const params = {
-          id: user1.organizationId // organizationId and programId should be the same. We'll assume this for testing purposes
-        };
-
         // read admin request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
+        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`);
 
         expect(res.statusCode).to.equal(200);
         expect(res.body).to.have.property('success', true);
@@ -93,26 +89,6 @@ describe('Program.V1Read', async () => {
         throw error;
       }
     }); // END [user] should read another admin successfully
-
-    it('[user] should fail to read program if program does not exist', async () => {
-      const user1 = userFix[0];
-
-      try {
-        // login user
-        const { token } = await userLogin(app, routeVersion, request, user1);
-
-        const params = {
-          id: 100000
-        };
-
-        // read program request
-        const res = await request(app).post(routeUrl).set('authorization', `${jwt} ${token}`).send(params);
-        expect(res.statusCode).to.equal(404);
-        expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.PROGRAM_BAD_REQUEST_PROGRAM_DOES_NOT_EXIST));
-      } catch (error) {
-        throw error;
-      }
-    }); // END [user] should fail to read program if program does not exist
 
     it('[user] roleType NOT EMPLOYER should fail to read program', async () => {
       const user1 = userFix[1];
