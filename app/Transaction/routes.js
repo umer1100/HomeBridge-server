@@ -15,6 +15,7 @@ module.exports = (passport, router) => {
   // routes - can also use router.get or router.post
   router.all('/v1/transactions/create', controller.V1Create);
   router.all('/v1/transactions/read', controller.V1Read);
+  router.all('/v1/transactions/sync', controller.V1Sync);
 
   // return router
   return router;

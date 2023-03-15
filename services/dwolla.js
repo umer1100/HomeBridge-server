@@ -9,7 +9,8 @@ module.exports = {
   createDwollaCustomer,
   createDwollaCustomerFundingSource,
   removeDwollaFundingSource,
-  transferFunds
+  transferFunds,
+  readTransactions
 };
 
 /**
@@ -105,6 +106,25 @@ async function removeDwollaFundingSource(fundingSourceUrl) {
 
 /**
  *
+ * Read Transactions of a customer
+ *
+ * @param customerUrl - Customer Url to fetch all transactions of that customer
+ * @returns record of Transactions
+ */
+async function readTransactions(customerUrl) {
+  try {
+    return await dwolla.get(`${customerUrl}/transfers`)
+  } catch (error) {
+    return Promise.reject(
+      error?.body?._embedded?.errors.map(error => error?.message) ||
+      JSON.parse(error?.message)?.message ||
+      error
+    );
+  }
+}
+
+/**
+ *
  * Transfers money between two accounts using dwolla
  *
  * @param sourcedLink - where the money is coming from (dwolla link)
@@ -131,6 +151,7 @@ async function transferFunds(sourcedLink, fundedLink, amount) {
   // For Dwolla API applications, an dwolla can be used for this endpoint. (https://developers.dwolla.com/api-reference/authorization/application-authorization)
   try {
     let resp = await dwolla.post('transfers', requestBody); // => 'https://api.dwolla.com/transfers/d76265cd-0951-e511-80da-0aa34a9b2388'
+
     return resp.headers.get('Location');
   } catch (error) {
     return Promise.reject(

@@ -11,12 +11,17 @@
  * Transaction Feature Local Error Codes
  */
 const LOCAL_ERROR_CODES = {
-  /* Place error codes below. Remember to prepend TRANSACTION to the key and error value  */
-  // TRANSACTION_BAD_REQUEST_ACCOUNT_INACTIVE: {
-  //   error: 'TRANSACTION.BAD_REQUEST_ACCOUNT_INACTIVE',
-  //   status: 401,
-  //   messages: ['TRANSACTION[Account is not active]']
-  // }
+  ACCOUNT_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST: {
+    error: 'ACCOUNT.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
+    status: 404,
+    messages: ['ACCOUNT[Dwolla account does not exist]']
+  },
+
+  TRANSACTIONS_BAD_REQUEST_TRANSACTIONS_DOES_NOT_EXIST: {
+    error: 'TRANSACTIONS.BAD_REQUEST_TRANSACTIONS_DOES_NOT_EXIST',
+    status: 404,
+    messages: ['TRANSACTION[Transaction does not exist]']
+  },
 };
 
 module.exports = LOCAL_ERROR_CODES;
