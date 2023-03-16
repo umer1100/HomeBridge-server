@@ -4,9 +4,6 @@
 
 'use strict';
 
-// ENV variables
-const { NODE_ENV, REDIS_URL } = process.env;
-
 // third-party
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
@@ -14,7 +11,7 @@ const Queue = require('bull'); // add background tasks to Queue: https://github.
 const moment = require('moment-timezone'); // manage timezone and dates: https://momentjs.com/timezone/docs/
 
 // services
-const { getDirectory, getIndividuals, getEmployments } = require('../../../services/finch');
+const { getDirectory, getIndividuals, getEmployments, getAccountInformation } = require('../../../services/finch');
 const { joiErrorsMessage } = require('../../../services/error');
 
 // models
@@ -83,8 +80,9 @@ async function V1Import(job) {
 
       let individuals = await getIndividuals(body, organization.hrisAccessToken);
       let employments = await getEmployments(body, organization.hrisAccessToken);
+      let accountInfo = await getAccountInformation(organization.hrisAccessToken);
 
-      let requiredEmploymentDetails = employments.responses.map(({body, individual_id}) => {
+      let requiredEmploymentDetails = employments.responses.map(({ body, individual_id }) => {
         return {
           finchID: individual_id,
           title: body?.title,
@@ -106,18 +104,18 @@ async function V1Import(job) {
             firstName: individual.body?.first_name,
             lastName: individual.body?.last_name,
             sex: individual.body?.gender?.toUpperCase(),
-            status: 'PENDING',
             email: individual.body?.emails[0]?.data,
             roleType: 'EMPLOYEE',
             password: 'PLACEHOLDER',
             organizationId: organizationId,
             addressLine1: individual.body?.residence?.line1,
-            addressLine2: individual.body?.residence?.line2,
+            addressLine2: individual.body?.residence?.line2 || '',
             city: individual.body.residence?.city,
             state: individual.body.residence?.state,
             country: individual.body.residence?.country,
             zipcode: individual.body.residence?.postal_code,
             dateOfBirth: individual.body?.dob,
+            source: accountInfo.payroll_provider_id,
             ...employmentAttributes
           }
 

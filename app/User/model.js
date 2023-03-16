@@ -67,6 +67,7 @@ const { reject } = require('lodash');
 const passport = require('passport');
 const constants = require('../../helpers/constants');
 const { randomString } = require('../../helpers/logic');
+const models = require('../../models');
 
 // sensitive data that should not be exposed
 const sensitiveData = ['salt', 'password', 'passwordResetToken'];
@@ -90,9 +91,15 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       status: {
-        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE', 'ONBOARDING']),
+        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE', 'ONBOARDING', 'NEW', 'PAUSE']),
         allowNull: false,
-        defaultValue: 'PENDING'
+        defaultValue: 'NEW'
+      },
+
+      previousStatus: {
+        type: DataTypes.ENUM(['PENDING', 'ACTIVE', 'INACTIVE', 'ONBOARDING', 'NEW', 'PAUSE']),
+        allowNull: true,
+        defaultValue: null
       },
 
       sex: {
@@ -157,7 +164,8 @@ module.exports = (sequelize, DataTypes) => {
 
       addressLine2: {
         type: DataTypes.TEXT,
-        allowNull: true
+        defaultValue: '',
+        allowNull: false
       },
 
       city: {
@@ -333,6 +341,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null
       },
+
+      source: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      }
     },
     {
       timestamps: true, // allows sequelize to create timestamps automatically
@@ -352,6 +366,15 @@ module.exports = (sequelize, DataTypes) => {
           // generate the salt
           user.salt = bcrypt.genSaltSync(constants.PASSWORD_LENGTH_MIN);
           user.password = bcrypt.hashSync(user.password, user.salt);
+        },
+
+        afterCreate(user, options) {
+          sequelize.models.creditWallet.create({ userId: user.id });
+        },
+
+        beforeUpdate(user, options) {
+          if (user.previous('status') != user.status)
+            user.previousStatus = user.previous('status')
         }
       },
       indexes: []
@@ -361,6 +384,8 @@ module.exports = (sequelize, DataTypes) => {
   // association
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
+    User.hasMany(models.plaidAccount);
+    User.hasOne(models.creditWallet);
   };
 
   // sensitive data method

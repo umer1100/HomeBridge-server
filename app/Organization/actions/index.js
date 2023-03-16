@@ -12,5 +12,6 @@ module.exports = {
   ...require('./V1ReadByAdmin'),
   ...require('./V1UpdateHrisAccessToken'),
   ...require('./V1GetUsers'),
-  ...require('./V1GetCompanyDetailsFromFinch')
+  ...require('./V1GetCompanyDetailsFromFinch'),
+  ...require('./V1GetUsersPlaidAccountDetails')
 };

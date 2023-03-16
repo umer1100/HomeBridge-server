@@ -9,5 +9,10 @@ module.exports = [
   'admin',
   'organization',
   'user',
-  'employeeSync'
+  'employeeSync',
+  'plaidAccount',
+  'creditWallet',
+  'transaction',
+  'creditWalletLog',
+  'program'
 ];

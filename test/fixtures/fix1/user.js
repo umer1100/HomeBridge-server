@@ -101,14 +101,45 @@ module.exports = [
     id: 7,
     timezone: 'UTC',
     locale: 'en',
-    status: 'ACTIVE',
+    status: 'PENDING',
     firstName: 'John',
     lastName: 'Leo',
-    roleType: 'GUEST',
+    roleType: 'EMPLOYEE',
     email: 'user-7@example.com',
     phone: '+13018148502',
     salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
     password: 'password5F%',
-    emailConfirmed: true
+    emailConfirmed: false,
+    emailConfirmedToken: randomString()
   },
+  {
+    id: 8,
+    timezone: 'UTC',
+    locale: 'en',
+    status: 'ACTIVE',
+    firstName: 'John',
+    lastName: 'Zeo',
+    roleType: 'EMPLOYEE',
+    email: 'user-8@example.com',
+    phone: '+14018148502',
+    salt: '2-TYIUJHGIUYGDJHGAIHGKDYHJAGKSHJDGFKGHHGEKFH',
+    password: 'password^F%',
+    emailConfirmed: true,
+    emailConfirmedToken: randomString()
+  },
+  {
+    id: 9,
+    timezone: 'UTC',
+    locale: 'en',
+    status: 'PAUSE',
+    firstName: 'Olivia',
+    lastName: 'Pall',
+    roleType: 'EMPLOYEE',
+    email: 'user-9@example.com',
+    phone: '+14018148002',
+    salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKLHHGEKFH',
+    password: 'password8F%',
+    emailConfirmed: true,
+    emailConfirmedToken: randomString()
+  }
 ];

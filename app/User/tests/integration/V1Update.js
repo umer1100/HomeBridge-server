@@ -71,7 +71,6 @@ const user = require('../../../../test/fixtures/fix1/user');
      });
 
      it('[user] should update self primary goal and goal time line', async () => {
-
        const user1 = userFix[0];
 
        try {
@@ -90,8 +89,7 @@ const user = require('../../../../test/fixtures/fix1/user');
 
          expect(res.statusCode).to.equal(200);
          expect(res.body).to.have.property('success', true);
-         expect(res.body).to.have.property('user');
-         expect(res.body.user).to.have.property('id', user1.id);
+         expect(res.body).to.have.property('data');
 
          // find user to see if he's updated
          const foundUser = await models.user.findByPk(user1.id);

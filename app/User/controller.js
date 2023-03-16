@@ -22,34 +22,15 @@ module.exports = {
   V1SendResetPasswordToken,
   V1ResetPassword,
   V1Update,
-  V1UpdatePassword
+  V1UpdatePassword,
+  V1PlaidCreateLinkToken,
+  V1BulkInvitation,
+  V1UpdateBulkUsers
 };
 
-/**
- * Example Method
- *
- * /v1/users/example
- *
- * Must be logged out | Must be logged in | Can be both logged in or logged out
- * Roles: ['admin', 'member']
- */
-async function V1Example(req, res, next) {
-  let method = null; // which action method to use
-
-  // Call the correct action method based on type of user of role
-  if (req.admin) method = `V1ExampleByAdmin`;
-  else if (req.member) method = `V1ExampleByMember`;
-  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
-
-  // call correct method
-  try {
-    const result = await actions[method](req);
-
-    return res.status(result.status).json(result);
-  } catch (error) {
-    return next(error);
-  }
-}
+const { REDIS_URL } = process.env;
+const Queue = require('bull');
+const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
 
 /**
  * Create Method
@@ -61,8 +42,8 @@ async function V1Example(req, res, next) {
 async function V1Create(req, res, next) {
   let method = ''; // which action method to use
 
-  if (req.admin) method = `V1CreateByAdmin`;
-  else if (req.user && req.user.roleType !== ROLES.GUEST) method = `V1CreateByOrganizationalUser`;
+  if (req.admin) method = 'V1CreateByAdmin';
+  else if (req.user && req.user.roleType !== ROLES.GUEST) method = 'V1CreateByOrganizationalUser';
   else if (req.user && req.user.roleType === ROLES.GUEST) return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
   else method = 'V1CreateGuest';
 
@@ -178,7 +159,7 @@ async function V1ResetPassword(req, res, next) {
  *
  * Must be logged in
  */
- async function V1Update(req, res, next) {
+async function V1Update(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call
@@ -198,7 +179,7 @@ async function V1ResetPassword(req, res, next) {
  * Must be logged in
  * Role: [User]
  */
- async function V1UpdatePassword(req, res, next) {
+async function V1UpdatePassword(req, res, next) {
   let method = null;
 
   if (req.user) method = 'V1UpdatePassword';
@@ -207,4 +188,34 @@ async function V1ResetPassword(req, res, next) {
   // call correct method
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result.status).json(result);
+}
+
+async function V1PlaidCreateLinkToken(req, res, next) {
+  let method = null;
+  if (req.user) method = 'V1PlaidCreateLinkToken';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+async function V1UpdateBulkUsers(req, res, next) {
+  let method = null;
+  if (req.user && isEmployer(req.user)) method = 'V1UpdateBulkUsers';
+
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result.status).json(result);
+}
+
+async function V1BulkInvitation(req, res, next) {
+  if (req.user) {
+    await BulkInvitationQueue.add('V1BulkInvitation', {
+      users: req.args.users
+    });
+  }
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  return res.status(200).json({ success: true, message: 'Started Sending Emails' });
 }

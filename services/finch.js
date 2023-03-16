@@ -3,12 +3,14 @@ const finchDirectoryUrl = 'https://api.tryfinch.com/employer/directory';
 const finchIndividualUrl = 'https://api.tryfinch.com/employer/individual';
 const finchCompanyUrl = 'https://api.tryfinch.com/employer/company';
 const finchEmploymentUrl = 'https://api.tryfinch.com/employer/employment';
+const finchIntrospectUrl = 'https://api.tryfinch.com/introspect';
 
 module.exports = {
   getDirectory,
   getIndividuals,
   getCompany,
-  getEmployments
+  getEmployments,
+  getAccountInformation
 };
 
 /**
@@ -97,6 +99,27 @@ async function getEmployments(body, hrisAccessToken) {
   let resp = await axios.post(finchEmploymentUrl, body, {
     headers: {
       Authorization: `Bearer ${hrisAccessToken}`,
+      'Finch-API-Version': '2020-09-17'
+    }
+  });
+
+  return resp.data;
+}
+
+/**
+ * Finch HRIS Account API
+ *
+ * Read basic account data
+ * @hrisAccessToken (Finch access_token)
+ *
+ * Docs: https://developer.tryfinch.com/docs/reference/eee6e798b0f93-introspect
+ */
+
+ async function getAccountInformation(hrisAccessToken) {
+  let resp = await axios.get(finchIntrospectUrl, {
+    headers: {
+      Authorization: `Bearer ${hrisAccessToken}`,
+      'Content-Type': 'application/json',
       'Finch-API-Version': '2020-09-17'
     }
   });

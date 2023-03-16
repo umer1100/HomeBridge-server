@@ -40,3 +40,19 @@ new CronJob(
   true,
   'UTC'
 );
+
+/************************/
+/***** PROGRAM **********/
+/************************/
+const ProgramQueue = new Queue('ProgramQueue', REDIS_URL);
+
+// Adds money to everyone's wallet at the beginning of every month
+new CronJob(
+  '0 0 0 1 * *',
+  () => {
+    ProgramQueue.add('V1DistributeDefaultContributions');
+  },
+  null,
+  true,
+  'UTC'
+);

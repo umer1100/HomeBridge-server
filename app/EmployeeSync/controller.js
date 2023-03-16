@@ -54,7 +54,7 @@ async function V1Import(req, res, next) {
  * Must be logged in
  * Roles: ['user']
  */
- async function V1LastSync(req, res, next) {
+async function V1LastSync(req, res, next) {
   let method = null; // which action method to use
 
   // which method to call

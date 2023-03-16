@@ -77,6 +77,6 @@ async function V1ReadByUser(req) {
   return Promise.resolve({
     status: 200,
     success: true,
-    user: findUser.dataValues
+    data: findUser.dataValues
   });
 } // END V1Read

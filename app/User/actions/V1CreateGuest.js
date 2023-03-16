@@ -67,7 +67,7 @@ async function V1CreateGuest(req) {
   const schema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
-    status: joi.string(),
+    status: joi.string().default('PENDING'),
     email: joi.string().trim().lowercase().min(3).email().required(),
     phone: joi.string().trim(),
     roleType: joi.string().trim(),
@@ -149,7 +149,8 @@ async function V1CreateGuest(req) {
       primaryGoal,
       goalTimeline,
       organizationId,
-      roleType: role
+      roleType: role,
+      source: 'Manual'
     });
     // preparing for email confirmation
     const emailConfirmationToken = randomString();
@@ -167,7 +168,6 @@ async function V1CreateGuest(req) {
       }
     );
 
-
     const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}`; // create URL using front end url
 
     const result = await emailService.send({
@@ -181,6 +181,9 @@ async function V1CreateGuest(req) {
       args: {
         emailConfirmLink
       }
+    }).catch(err => {
+      newUser.destroy(); // destroy if error
+      return Promise.reject(err);
     });
 
     // grab user without sensitive data
