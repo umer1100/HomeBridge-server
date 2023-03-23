@@ -292,6 +292,13 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: null
       },
 
+      // The amount required to achieve his goals
+      goalAmount: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
       // Finch's internal id for the user
       finchID: {
         type: DataTypes.STRING,
@@ -318,12 +325,14 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: null
       },
 
+      // Date on which user left Organization (provided by finch)
       endDate: {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null
       },
 
+      // Date on which user join Organization (provided by finch)
       startDate: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -344,6 +353,13 @@ module.exports = (sequelize, DataTypes) => {
 
       source: {
         type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+      },
+
+      // Date on which user STATUS changed from ONBOARDING to ACTIVE
+      joiningDate: {
+        type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null
       }
