@@ -53,6 +53,7 @@
     phone: joi.string().trim().min(1).optional(),
     dreamHomeDescription: joi.string().trim().min(1).optional(),
     dateOfBirth: joi.string().trim().min(1).optional(),
+    acceptedTerms: joi.bool().optional(),
    });
 
    // validate
