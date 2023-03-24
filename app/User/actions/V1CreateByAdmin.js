@@ -94,7 +94,8 @@ async function V1CreateByAdmin(req) {
     state: joi.string().trim().min(1),
     country: joi.string().trim().min(1),
     zipcode: joi.string().trim().min(1),
-    dateOfBirth: joi.date()
+    dateOfBirth: joi.date(),
+    emailConfirmed: joi.bool().optional().default(false)
   });
   // validate
   const { error, value } = schema.validate(req.args);
@@ -139,6 +140,7 @@ async function V1CreateByAdmin(req) {
       country: req.args.country,
       zipcode: req.args.zipcode,
       dateOfBirth: req.args.dateOfBirth,
+      emailedConfirmed: req.args.emailedConfirmed,
       source: 'Manual'
     });
 
