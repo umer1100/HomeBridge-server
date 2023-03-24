@@ -38,7 +38,7 @@ const jwt = 'jwt-admin';
     firstName: 'Dev',
     lastName: 'Test',
     status: 'ONBOARDING',
-    email: 'dev@ownerific.com',
+    email: 'dev+1@ownerific.com',
     roleType: 'EMPLOYER',
     organizationId: 1,
     timezone: 'America/Los_Angeles',
@@ -46,7 +46,8 @@ const jwt = 'jwt-admin';
     password1: 'thisisapassword1F%',
     password2: 'thisisapassword1F%',
     acceptedTerms: true,
-    emailConfirmed: true
+    emailConfirmed: true,
+    emailConfirmedToken: "RANDOMSCRIPTTOKEN"
   };
 
   await axios.post(routeUrl, params, { headers: { authorization: `${jwt} ${token}` } }).then(function (response) {
