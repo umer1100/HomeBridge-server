@@ -94,10 +94,13 @@ async function V1CreateByAdmin(req) {
     state: joi.string().trim().min(1),
     country: joi.string().trim().min(1),
     zipcode: joi.string().trim().min(1),
-    dateOfBirth: joi.date()
+    dateOfBirth: joi.date(),
+    emailConfirmed: joi.bool().optional().default(false),
+    emailConfirmedToken: joi.string().trim().min(1).optional()
   });
   // validate
   const { error, value } = schema.validate(req.args);
+  console.log(error);
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
@@ -139,6 +142,7 @@ async function V1CreateByAdmin(req) {
       country: req.args.country,
       zipcode: req.args.zipcode,
       dateOfBirth: req.args.dateOfBirth,
+      emailedConfirmed: req.args.emailedConfirmed,
       source: 'Manual'
     });
 
