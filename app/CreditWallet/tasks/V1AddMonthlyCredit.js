@@ -22,6 +22,7 @@ const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../servi
 const models = require('../../../models');
 
 // helpers
+const constants = require('../../../helpers/constants')
 
 // queues
 const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
@@ -55,10 +56,9 @@ async function V1AddMonthlyCredit(job) {
       }
     });
 
-    var today = moment(Date.now());
-    // For each user, add 30 ownerific dollars, or a prorated amount based on when they signed up
+    // For each user, add credit ownerific dollars (currently set to $30)
     activeUsers.forEach(async user => {
-      let credit = Math.min(30, today.diff(moment(user.createdAt), 'days'));
+      let credit = constants.CREDIT;
       await models.creditWallet.increment('ownerificDollars', { by: credit, where: { userId: user.id } });
     });
 
