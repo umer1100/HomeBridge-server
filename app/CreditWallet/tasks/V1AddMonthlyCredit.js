@@ -56,8 +56,7 @@ async function V1AddMonthlyCredit(job) {
       }
     });
 
-    var today = moment(Date.now());
-    // For each user, add 30 ownerific dollars, or a prorated amount based on when they signed up
+    // For each user, add credit ownerific dollars (currently set to $30)
     activeUsers.forEach(async user => {
       let credit = constants.CREDIT;
       await models.creditWallet.increment('ownerificDollars', { by: credit, where: { userId: user.id } });
