@@ -15,6 +15,7 @@ let dwolla = require('../../../services/dwolla');
 
 // models
 const models = require('../../../models');
+const model = require('../model');
 
 // helpers
 
@@ -27,7 +28,7 @@ module.exports = {
 };
 
 /**
- * Task run monthly to grab all programs and distribute cash from Employer to all Employees
+ * Task run monthly to grab all programs and distribute credit from Employer to all Employees
  *
  * @job = {
  *   @id - (INTEGER - REQUIRED): ID of the background job
@@ -51,15 +52,13 @@ async function V1DistributeDefaultContributions(job) {
           roleType: 'EMPLOYEE',
           organizationId: organization.id,
           where: {
-            status: 'active'
+            status: 'ACTIVE'
           }
         }
       });
 
-      let employer = models.users.findOne({ where: { roleType: 'EMPLOYER', organizationId: organization.id } });
-
       users.forEach(async user => {
-        await dwolla.transferFunds(employer.fundingSourceUrl, user.fundingSourceUrl, program.defaultContribution);
+        await model.creditWallet.increment("dollars", {by: program.defaultContribution, where: {userId: user.id, walletType: 'EMPLOYER'}})
       });
     });
 
