@@ -385,7 +385,8 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         afterCreate(user, options) {
-          sequelize.models.creditWallet.create({ userId: user.id });
+          sequelize.models.creditWallet.create({ userId: user.id, walletType: 'EMPLOYER' });
+          sequelize.models.creditWallet.create({ userId: user.id, walletType: 'PLATFORM' });
         },
 
         beforeUpdate(user, options) {
@@ -401,7 +402,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
     User.hasMany(models.plaidAccount);
-    User.hasOne(models.creditWallet);
+    User.hasMany(models.creditWallet);
   };
 
   // sensitive data method
