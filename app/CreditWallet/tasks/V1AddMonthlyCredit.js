@@ -59,7 +59,7 @@ async function V1AddMonthlyCredit(job) {
     // For each user, add credit ownerific dollars (currently set to $30)
     activeUsers.forEach(async user => {
       let credit = constants.CREDIT;
-      await models.creditWallet.increment('ownerificDollars', { by: credit, where: { userId: user.id } });
+      await models.creditWallet.increment('ownerificDollars', { by: credit, where: { userId: user.id, walletType: 'PLATFORM' } });
     });
 
     // return
