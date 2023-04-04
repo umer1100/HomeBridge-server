@@ -31,15 +31,15 @@ const AdminQueue = new Queue('AdminQueue', REDIS_URL);
 const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // Syncs all Organization HRIS systems. Run every day at midnight.
-new CronJob(
-  '0 0 0 * * *',
-  () => {
-    EmployeeSyncQueue.add('V1SyncAllOrganizations');
-  },
-  null,
-  true,
-  'UTC'
-);
+// new CronJob(
+//   '0 0 0 * * *',
+//   () => {
+//     EmployeeSyncQueue.add('V1SyncAllOrganizations');
+//   },
+//   null,
+//   true,
+//   'UTC'
+// );
 
 /************************/
 /***** PROGRAM **********/
@@ -51,6 +51,23 @@ new CronJob(
   '0 0 0 1 * *',
   () => {
     ProgramQueue.add('V1DistributeDefaultContributions');
+  },
+  null,
+  true,
+  'UTC'
+);
+
+
+/************************/
+/*** CREDITWALLET *******/
+/************************/
+const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
+
+// Adds money to everyone's wallet at the beginning of every month
+new CronJob(
+  '0 0 0 1 * *',
+  () => {
+    CreditWalletQueue.add('V1AddMonthlyCredit.js');
   },
   null,
   true,
