@@ -47,14 +47,14 @@ async function V1Update(req) {
     city: joi.string().trim().min(1).optional(),
     zipcode: joi.string().trim().min(1).optional(),
     status: joi.string().optional(),
-    primaryGoal: joi.string().trim().min(1).optional(),
-    goalTimeline: joi.string().trim().min(1).optional(),
+    primaryGoal: joi.string().allow(null).optional(),
+    goalTimeline: joi.string().allow(null).optional(),
     state: joi.string().trim().min(1).optional(),
     phone: joi.string().trim().min(1).optional(),
     dreamHomeDescription: joi.string().trim().min(1).optional(),
     dateOfBirth: joi.string().trim().min(1).optional(),
     joiningDate: joi.string().trim().min(1).optional(),
-    goalAmount: joi.string().trim().min(1).optional(),
+    goalAmount: joi.string().allow(null).optional(),
     acceptedTerms: joi.bool().optional(),
    });
 
