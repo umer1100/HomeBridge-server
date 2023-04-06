@@ -53,7 +53,7 @@ async function V1Read(req) {
   const findCreditWallets = await models.creditWallet.findAll({ where: { userId: req.args.id }, raw: true }).catch(err => Promise.reject(err));
 
   // check if credit wallet exists
-  if (!findCreditWallet) return Promise.resolve(errorResponse(req, ERROR_CODES.CREDITWALLET_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
+  if (!findCreditWallets) return Promise.resolve(errorResponse(req, ERROR_CODES.CREDITWALLET_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST));
 
   return Promise.resolve({
     status: 200,
