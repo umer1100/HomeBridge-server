@@ -100,7 +100,7 @@ async function V1CreateByAdmin(req) {
   });
   // validate
   const { error, value } = schema.validate(req.args);
-  console.log(error);
+
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
@@ -142,7 +142,7 @@ async function V1CreateByAdmin(req) {
       country: req.args.country,
       zipcode: req.args.zipcode,
       dateOfBirth: req.args.dateOfBirth,
-      emailedConfirmed: req.args.emailedConfirmed,
+      emailConfirmed: req.args.emailConfirmed,
       source: 'Manual'
     });
 
