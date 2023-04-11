@@ -1,9 +1,12 @@
 'use strict';
+const models = require('../models');
 
 module.exports = {
   async up (queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_CreditWallets_walletType";')
     try {
+
       await queryInterface.renameColumn(
         'CreditWallets',
         'ownerificDollars',
@@ -22,6 +25,16 @@ module.exports = {
         { transaction }
       );
       await transaction.commit();
+
+      let users = await models.user.findAll({where: {roleType: 'EMPLOYEE'}, attributes: ['id'], raw: true });
+      const employerWallets = users.map(({ id }) => ({
+          userId: id,
+          dollars: 0,
+          walletType: 'EMPLOYER',
+      }));
+
+      await models.creditWallet.bulkCreate(employerWallets);
+
     } catch (err) {
       await transaction.rollback();
       throw err;
