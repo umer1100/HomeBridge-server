@@ -56,7 +56,7 @@ describe('CreditWallet.V1Read', async () => {
       } catch (error) {
         throw error;
       }
-    }); // END [logged-out] should fail to credit wallet
+    }); // END [logged-out] should fail to read credit wallet
   }); // END Role: Logged Out
 
   // User can read their own credit wallet
@@ -67,22 +67,7 @@ describe('CreditWallet.V1Read', async () => {
       await populate('fix1');
     });
 
-    it('[Employer] should read their ownerific dollars', async () => {
-      const employer = userFix[0];
-
-      try {
-        const { token, response } = await userLogin(app, routeVersion, request, employer);
-
-        // read user request
-        const res = await request(app).get(`${routeUrl}`).set('authorization', `${jwt} ${token}`);
-        expect(res.statusCode).to.equal(200);
-        expect(res.body.data.ownerificDollars).to.equal('0.00');
-      } catch (error) {
-        throw error;
-      }
-    }); // [Employer] read their ownerific dollars
-
-    it('[Employee] should read their ownerific dollars', async () => {
+    it('[Employee] should read their credit wallets', async () => {
       const employee = userFix[3];
 
       try {
@@ -92,10 +77,16 @@ describe('CreditWallet.V1Read', async () => {
         // read user request
         const res = await request(app).get(`${routeUrl}`).set('authorization', `${jwt} ${token}`);
         expect(res.statusCode).to.equal(200);
-        expect(res.body.data.ownerificDollars).to.equal('0.00');
+
+        let [employerWallet, platformWallet] = res.body.data
+
+        expect(employerWallet.walletType).to.equal('EMPLOYER');
+        expect(platformWallet.walletType).to.equal('PLATFORM');
+        expect(employerWallet.dollars).to.equal('0.00');
+        expect(platformWallet.dollars).to.equal('0.00');
       } catch (error) {
         throw error;
       }
-    }); // [Employee] should read their ownerific dollars
+    }); // [Employee] should read their credit wallets
   }); // END Role: all roles
 }); // END CreditWallet.V1Read

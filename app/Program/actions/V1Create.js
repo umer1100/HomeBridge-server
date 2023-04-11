@@ -49,8 +49,8 @@ module.exports = {
 async function V1Create(req) {
   const schema = joi.object({
     isProgramActive: joi.boolean().default(true).required(),
-    signupBonusValue: joi.number().min(0).required(),
-    signupBonusActive: joi.boolean().default(true).required(),
+    // signupBonusValue: joi.number().min(0).required(),
+    // signupBonusActive: joi.boolean().default(true).required(),
     defaultContribution: joi.number().min(0).required()
   });
 
@@ -63,8 +63,8 @@ async function V1Create(req) {
     await models.programs.create({
       organizationId: req.user.organizationId,
       isProgramActive: req.args.isProgramActive,
-      signupBonusActive: req.args.signupBonusActive,
-      signupBonusValue: req.args.signupBonusValue,
+      // signupBonusActive: req.args.signupBonusActive,
+      // signupBonusValue: req.args.signupBonusValue,
       defaultContribution: req.args.defaultContribution
     });
 
