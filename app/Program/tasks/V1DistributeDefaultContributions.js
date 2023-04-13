@@ -11,7 +11,6 @@ const { REDIS_URL } = process.env;
 const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
 
 // services
-let dwolla = require('../../../services/dwolla');
 
 // models
 const models = require('../../../models');
@@ -27,7 +26,7 @@ module.exports = {
 };
 
 /**
- * Task run monthly to grab all programs and distribute cash from Employer to all Employees
+ * Task run monthly to grab all programs and distribute credit from Employer to all Employees
  *
  * @job = {
  *   @id - (INTEGER - REQUIRED): ID of the background job
@@ -41,25 +40,23 @@ module.exports = {
  */
 async function V1DistributeDefaultContributions(job) {
   try {
-    let programs = await models.program.findAll();
+    let programs = await models.program.findAll({
+      where: {
+       isProgramActive: true
+      }
+    });
 
     programs.forEach(async program => {
-      let organization = program.organization;
-
-      let users = models.user.findAll({
+      let organizationId = program.organizationId;
+      let users = await models.user.findAll({
         where: {
           roleType: 'EMPLOYEE',
-          organizationId: organization.id,
-          where: {
-            status: 'active'
-          }
+          organizationId: organizationId,
+          status: 'ACTIVE'
         }
       });
-
-      let employer = models.users.findOne({ where: { roleType: 'EMPLOYER', organizationId: organization.id } });
-
       users.forEach(async user => {
-        await dwolla.transferFunds(employer.fundingSourceUrl, user.fundingSourceUrl, program.defaultContribution);
+        await models.creditWallet.increment("dollars", {by: program.defaultContribution, where: {userId: user.id, walletType: 'EMPLOYER'}})
       });
     });
 

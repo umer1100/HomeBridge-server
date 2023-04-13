@@ -51,5 +51,8 @@ module.exports = {
 
   // Roles - this must be in descending order of privledge.
   ROLE: { EMPLOYER: 'EMPLOYER', ADMIN: 'ADMIN', MANAGER: 'MANAGER', EMPLOYEE: 'EMPLOYEE', GUEST: 'GUEST' },
-  ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST']
+  ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST'],
+
+  // Credits
+  CREDIT: 30
 };

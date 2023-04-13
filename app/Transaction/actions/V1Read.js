@@ -56,12 +56,14 @@ async function V1Read(req) {
         {
           model: models.plaidAccount,
           as: 'fundedAccount',
-          required: true
+          required: false,
+          paranoid: false
         },
         {
           model: models.plaidAccount,
           as: 'sourceAccount',
-          required: true
+          required: false,
+          paranoid: false
         }
       ],
       raw: true
