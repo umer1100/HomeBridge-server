@@ -116,6 +116,7 @@ async function V1Import(job) {
             zipcode: individual.body.residence?.postal_code,
             dateOfBirth: individual.body?.dob,
             source: accountInfo.payroll_provider_id,
+            phone: individual.body.phone_numbers[0]?.data,
             ...employmentAttributes
           }
 

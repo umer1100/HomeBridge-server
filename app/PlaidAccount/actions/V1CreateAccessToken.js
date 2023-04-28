@@ -63,7 +63,7 @@ async function V1CreateAccessToken(req) {
       .min(1)
       .required()
       .error(new Error(req.__('PLAIDACCOUNT_V1CreateAccessToken_Invalid_Argument[institutionName]'))),
-    ssn: joi.string().trim().min(1).required()
+    // ssn: joi.string().trim().min(1).required()
   });
 
   // validate
@@ -71,38 +71,38 @@ async function V1CreateAccessToken(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
   req.args = value; // updated arguments with type conversion
 
-  const user_schema = joi.object({
-    firstName: joi.string().trim().min(1).required(),
-    lastName: joi.string().trim().min(1).required(),
-    email: joi.string().trim().min(1).required(),
-    addressLine1: joi.string().trim().min(1).required(),
-    city: joi.string().trim().min(1).required(),
-    state: joi.string().trim().min(1).required(),
-    zipcode: joi.string().trim().min(1).required(),
-    dateOfBirth: joi.string().required()
-  });
+  // const user_schema = joi.object({
+  //   firstName: joi.string().trim().min(1).required(),
+  //   lastName: joi.string().trim().min(1).required(),
+  //   email: joi.string().trim().min(1).required(),
+  //   addressLine1: joi.string().trim().min(1).required(),
+  //   city: joi.string().trim().min(1).required(),
+  //   state: joi.string().trim().min(1).required(),
+  //   zipcode: joi.string().trim().min(1).required(),
+  //   dateOfBirth: joi.string().required()
+  // });
 
-  let user_pii = {
-    firstName: req.user.firstName,
-    lastName: req.user.lastName,
-    email: req.user.email,
-    addressLine1: req.user.addressLine1,
-    city: req.user.city,
-    state: req.user.state,
-    zipcode: req.user.zipcode,
-    dateOfBirth: moment(req.user.dateOfBirth).utc().format('YYYY-MM-DD') || ''
-  };
+  // let user_pii = {
+  //   firstName: req.user.firstName,
+  //   lastName: req.user.lastName,
+  //   email: req.user.email,
+  //   addressLine1: req.user.addressLine1,
+  //   city: req.user.city,
+  //   state: req.user.state,
+  //   zipcode: req.user.zipcode,
+  //   dateOfBirth: moment(req.user.dateOfBirth).utc().format('YYYY-MM-DD') || ''
+  // };
 
   // validate
-  const user_schema_error = user_schema.validate(user_pii, { abortEarly: false }).error;
-  if (user_schema_error)
-    return Promise.resolve(
-      errorResponse(
-        req,
-        ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
-        user_schema_error.details.map(e => e.message)
-      )
-    );
+  // const user_schema_error = user_schema.validate(user_pii, { abortEarly: false }).error;
+  // if (user_schema_error)
+  //   return Promise.resolve(
+  //     errorResponse(
+  //       req,
+  //       ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS,
+  //       user_schema_error.details.map(e => e.message)
+  //     )
+  //   );
 
   try {
     const tokenExchange = await itemPublicTokenExchange({ public_token: req.args.publicToken });
@@ -112,21 +112,21 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
-    let customerUrl = await createDwollaCustomer({ ssn: req.args.ssn, ...user_pii });
+    // let customerUrl = await createDwollaCustomer({ ssn: req.args.ssn, ...user_pii });
     let accounts = req.args.accounts;
     let hasPrimary = await models.plaidAccount.findOne({ where: { userId: req.user.id, primaryAccount: true } });
     let setPrimary = hasPrimary ? false : true;
 
     accounts = await Promise.all(
       accounts.map(async account => {
-        const processorRequest = {
-          access_token: accessToken,
-          account_id: account.id,
-          processor: 'dwolla'
-        };
+        // const processorRequest = {
+        //   access_token: accessToken,
+        //   account_id: account.id,
+        //   processor: 'dwolla'
+        // };
 
-        const processorToken = await processorTokenCreate(processorRequest);
-        let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
+        // const processorToken = await processorTokenCreate(processorRequest);
+        // let fundingSourceUrl = await createDwollaCustomerFundingSource(account, customerUrl, processorToken);
 
         let toRet = {
           accountId: account.id,
@@ -135,11 +135,11 @@ async function V1CreateAccessToken(req) {
           mask: account.mask,
           type: account.type,
           subtype: account.subtype,
-          custUrl: customerUrl,
-          fundingSourceUrl: fundingSourceUrl,
+          // custUrl: customerUrl,
+          // fundingSourceUrl: fundingSourceUrl,
           userId: req.user.id,
           accessToken,
-          processorToken,
+          // processorToken,
           institutionName: req?.args?.institutionName,
           primaryAccount: setPrimary
         };
