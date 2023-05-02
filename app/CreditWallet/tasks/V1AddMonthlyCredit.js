@@ -52,7 +52,7 @@ async function V1AddMonthlyCredit(job) {
     // Find all active users
     let activeUsers = await models.user.findAll({
       where: {
-        status: 'active'
+        status: 'ACTIVE'
       }
     });
 
