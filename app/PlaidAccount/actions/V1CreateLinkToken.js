@@ -32,7 +32,7 @@ async function V1CreateLinkToken() {
       client_user_id: PLAID_CLIENT_ID
     },
     client_name: 'Ownerific',
-    products: ['auth', 'transactions', 'identity'],
+    products: ['auth', 'identity'],
     country_codes: ['US'],
     language: 'en'
   };
