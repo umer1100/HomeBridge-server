@@ -71,7 +71,7 @@ module.exports = {
  *   500: INTERNAL_SERVER_ERROR
  */
 async function V1CreateByOrganizationalUser(req) {
-  const schema = joi.object({
+  const userSchema = joi.object({
     firstName: joi.string().trim().min(1).required(),
     lastName: joi.string().trim().min(1).required(),
     status: joi.string().default('PENDING'),
@@ -103,6 +103,9 @@ async function V1CreateByOrganizationalUser(req) {
     dateOfBirth: joi.date()
   });
 
+  const schema = joi.object({
+    users: joi.array().items(userSchema).min(1).required()
+  });
   // validate
   const { error, value } = schema.validate(req.args);
 
@@ -111,99 +114,80 @@ async function V1CreateByOrganizationalUser(req) {
 
   try {
     // check if user email already exists
-    const duplicateUser = await models.user.findOne({
-      where: {
-        email: req.args.email
-      }
-    });
+    let duplicateUser = false;
+
+    await Promise.all(req.args.users.map(async (user) => {
+      const existingUser = await models.user.findOne({
+        where: {
+          email: user.email
+        }
+      });
+      existingUser ? duplicateUser = true : null
+
+      // validate roleType
+      if (!isValidRoleAction(req.user.roleType, user.roleType)) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+    }));
 
     // check of duplicate user user
     if (duplicateUser) return Promise.resolve(errorResponse(req, ERROR_CODES.USER_BAD_REQUEST_USER_ALREADY_EXISTS));
 
-    // Generating Random Password
-    const password = randomString({ len: 10 });
-    // validate roleType
-    if (!isValidRoleAction(req.user.roleType, req.args.roleType)) return Promise.resolve(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
-
     // create user
-    const newUser = await models.user.create({
-      timezone: req.args.timezone,
-      locale: req.args.locale,
-      firstName: req.args.firstName,
-      lastName: req.args.lastName,
-      status: req.args.status,
-      email: req.args.email,
-      phone: req.args.phone,
-      roleType: req.args.roleType,
-      organizationId: req.args.organizationId,
-      password: password,
-      acceptedTerms: req.args.acceptedTerms,
-      addressline1: req.args.addressline1,
-      addressline2: req.args.addressline2,
-      city: req.args.city,
-      state: req.args.state,
-      country: req.args.country,
-      zipcode: req.args.zipcode,
-      dateOfBirth: req.args.dateOfBirth,
-      source: 'Manual'
-    });
+    await Promise.all(req.args.users.map(async (user) => {
+      // Generating Random Password
+      const password = randomString({ len: 10 })
+      // preparing for email confirmation token
+      const emailConfirmationToken = randomString()
 
-    // preparing for email confirmation token
-    const emailConfirmationToken = randomString();
-
-    // Updated EmailCOnfirmation token for User
-    await models.user.update(
-      {
+      const newUser = await models.user.create({
+        timezone: user.timezone,
+        locale: user.locale,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        status: user.status,
+        email: user.email,
+        phone: user.phone,
+        roleType: user.roleType,
+        organizationId: req.user.organizationId,
+        password: password,
+        acceptedTerms: user.acceptedTerms,
+        addressline1: user.addressline1,
+        addressline2: user.addressline2,
+        city: user.city,
+        state: user.state,
+        country: user.country,
+        zipcode: user.zipcode,
+        dateOfBirth: user.dateOfBirth,
+        source: 'Manual',
         emailConfirmedToken: emailConfirmationToken,
-      },
-      {
-        fields: ['emailConfirmedToken'], // only these fields
-        where: {
-          email: req.args.email
+      });
+
+      // create URL using front end url
+      const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${true}`;
+
+      // sending email with invitation token and password
+      await emailService.send({
+        from: emailService.emails.doNotReply.address,
+        name: emailService.emails.doNotReply.name,
+        subject: 'Please use this link to login to ownerific',
+        template: 'InvitationEmail',
+        tos: [user.email],
+        ccs: null,
+        bccs: null,
+        args: {
+          emailConfirmLink,
+          password,
+          firstName: user.firstName,
+          lastName: user.lastName
         }
-      }
-    );
-
-    // create URL using front end url
-    const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${true}`;
-
-    //sending email with invitation token and password
-    await emailService.send({
-      from: emailService.emails.doNotReply.address,
-      name: emailService.emails.doNotReply.name,
-      subject: 'Please use this link to login to ownerific',
-      template: 'InvitationEmail',
-      tos: [req.args.email],
-      ccs: null,
-      bccs: null,
-      args: {
-        emailConfirmLink,
-        password,
-        firstName: req.args.firstName,
-        lastName: req.args.lastName
-      }
-    }).catch(err => {
-      newUser.destroy(); // destroy if error
-      return Promise.reject(err);
-    });
-
-    // grab user without sensitive data
-    const returnUser = await models.user
-      .findByPk(newUser.id, {
-        attributes: {
-          exclude: models.user.getSensitiveData() // remove sensitive data
-        }
-      })
-      .catch(err => {
+      }).catch(err => {
         newUser.destroy(); // destroy if error
         return Promise.reject(err);
-      }); // END grab partner without sensitive data
-
+      });
+    }))
     // return
     return Promise.resolve({
       status: 201,
       success: true,
-      user: returnUser
     });
   } catch (error) {
     return Promise.reject(error);
