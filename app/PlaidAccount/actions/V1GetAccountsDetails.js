@@ -2,7 +2,8 @@
 
 const models = require('../../../models');
 const _ = require('lodash'); // general helper methods: https://lodash.com/docs
-const { identityGet } = require('../../../services/plaid');
+const { identityGet, sandboxItemResetLoginRequest, linkTokenCreate } = require('../../../services/plaid');
+const { PLAID_CLIENT_ID } = process.env;
 
 module.exports = {
   V1GetAccountsDetails
@@ -45,13 +46,12 @@ async function V1GetAccountsDetails(req) {
       uniqueAccessTokens.map(async accessToken => {
         let account = plaidAccounts.find(acc => acc.accessToken === accessToken);
 
-        //make a call to plaid identity api to fetch latest account balances
+        // make a call to plaid identity api to fetch latest account balances
         let itemData = await identityGet({
           access_token: accessToken
         });
 
         // we need respective ids (primary keys) from our database
-
         let accounts = itemData?.data?.accounts.map(account => {
           let { id, primaryAccount, createdAt } = plaidAccounts.find(acc => acc.accountId === account.account_id);
           return { id, primaryAccount, createdAt, ...account };
@@ -71,6 +71,26 @@ async function V1GetAccountsDetails(req) {
       data: accountsData
     });
   } catch (error) {
+    if (error.response.data.error_code === 'ITEM_LOGIN_REQUIRED') {
+      const config = {
+        user: {
+          client_user_id: PLAID_CLIENT_ID
+        },
+        client_name: 'Ownerific',
+        country_codes: ['US'],
+        language: 'en',
+        access_token: JSON.parse(error.response.config.data).access_token
+      };
+      let response = await linkTokenCreate(config);
+
+      return Promise.resolve({
+        status: 401,
+        success: false,
+        data: response.data,
+        message: '[ITEM_LOGIN_REQUIRED] Need to update authentication or authorization for plaid item',
+      });
+    }
+
     return Promise.reject(error);
   }
 }
