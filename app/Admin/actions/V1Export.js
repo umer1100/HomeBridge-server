@@ -15,7 +15,7 @@ const Queue = require('bull'); // add background tasks to Queue: https://github.
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // queues
-const AdminQueue = new Queue('AdminQueue', REDIS_URL);
+const AdminQueue = new Queue('AdminQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // methods
 module.exports = {

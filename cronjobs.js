@@ -23,12 +23,12 @@ console.log(`CLOCK process.env.NODE_ENV: ${NODE_ENV}`);
 /*****************/
 /***** ADMIN *****/
 /*****************/
-const AdminQueue = new Queue('AdminQueue', REDIS_URL);
+// const AdminQueue = new Queue('AdminQueue', REDIS_URL);
 
 /************************/
 /***** EMPLOYEESYNC *****/
 /************************/
-const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+// const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 // Syncs all Organization HRIS systems. Run every day at midnight.
 // new CronJob(
@@ -44,7 +44,7 @@ const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 /************************/
 /***** PROGRAM **********/
 /************************/
-const ProgramQueue = new Queue('ProgramQueue', REDIS_URL);
+const ProgramQueue = new Queue('ProgramQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // Adds money to everyone's wallet at the beginning of every month
 new CronJob(
@@ -61,7 +61,7 @@ new CronJob(
 /************************/
 /*** CREDITWALLET *******/
 /************************/
-const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
+const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // Adds money to everyone's wallet at the beginning of every month
 new CronJob(

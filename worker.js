@@ -49,7 +49,7 @@ async function startWorker(processId) {
   console.log(`WORKER process.env.NODE_ENV: ${NODE_ENV}`);
 
   // GlobalQueue
-  const GlobalQueue = new Queue('GlobalQueue', REDIS_URL);
+  const GlobalQueue = new Queue('GlobalQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
   let QueuesArray = [GlobalQueue]; // store queues so we can gracefully shut it down
 
   // run all feature workers and add feature specific queues to QueuesArray

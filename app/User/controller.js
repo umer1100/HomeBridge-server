@@ -30,7 +30,7 @@ module.exports = {
 
 const { REDIS_URL } = process.env;
 const Queue = require('bull');
-const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
+const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 /**
  * Create Method

@@ -24,7 +24,7 @@ const models = require('../../../models');
 const { createSync } = require('../helper');
 
 // queues
-const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+// const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL, { redis: { tls: true, enableTLSForSentinelMode: false } });
 
 // methods
 module.exports = {
@@ -56,7 +56,7 @@ async function V1SyncAllOrganizations(job) {
   organizations.forEach(organization => {
     (async () => {
       const currentRunId = await createSync(organization.id);
-      await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id, currentRunId: currentRunId });
+      // await EmployeeSyncQueue.add('V1Import', { organizationId: organization.id, currentRunId: currentRunId });
     })();
   });
 

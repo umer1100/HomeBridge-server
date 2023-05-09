@@ -26,7 +26,7 @@ const { V1ExportTask } = require('../../../../app/Admin/tasks');
 const {reset, populate } = require('../../../../helpers/tests');
 
 // queues
-const AdminQueue = new Queue('AdminQueue', REDIS_URL);
+const AdminQueue = new Queue('AdminQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 describe('Admin.V1ExportTask', async () => {
   // grab fixtures here

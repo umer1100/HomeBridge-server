@@ -12,7 +12,7 @@ const { REDIS_URL } = process.env;
 
 // third party node modules
 const Queue = require('bull'); // process background tasks from Queue
-const TransactionQueue = new Queue('TransactionQueue', REDIS_URL);
+const TransactionQueue = new Queue('TransactionQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // services
 const { queueError } = require('../../services/error');

@@ -25,7 +25,6 @@ const models = require('../../../models');
 const constants = require('../../../helpers/constants')
 
 // queues
-const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL);
 
 // methods
 module.exports = {

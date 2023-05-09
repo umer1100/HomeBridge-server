@@ -31,7 +31,7 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
 
 // queues
-const AdminQueue = new Queue('AdminQueue', REDIS_URL);
+const AdminQueue = new Queue('AdminQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 describe('Admin.V1Export', async () => {
   // grab fixtures here

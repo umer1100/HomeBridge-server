@@ -46,7 +46,12 @@ function server() {
   // set up redis with socket
   const redis = require('socket.io-redis');
   const socket = require('./services/socket'); // require socket service to initiate socket.io
-  io.adapter(redis(REDIS_URL));
+
+  io.adapter(redis(REDIS_URL, {
+    tls: {
+      rejectUnauthorized: false,
+    }
+  }));
 
   // enable ssl redirect in production
   app.use(sslRedirect.default()); // !! dont know why we need a default here
@@ -55,16 +60,16 @@ function server() {
   if (NODE_ENV === 'production') app.set('trust proxy', 1); // get ip address using req.ip
 
   // set a rate limit for incoming requests
-  const limiter = RateLimit({
-    windowMs: RATE_LIMIT_WINDOW_MS, // 5 minutes
-    max: RATE_LIMIT_MAX_PER_WINDOW, // limit each IP to 300 requests per windowMs
-    store: new RedisStore({
-      redisURL: REDIS_URL
-    })
-  });
+  // const limiter = RateLimit({
+  //   windowMs: RATE_LIMIT_WINDOW_MS, // 5 minutes
+  //   max: RATE_LIMIT_MAX_PER_WINDOW, // limit each IP to 300 requests per windowMs
+  //   store: new RedisStore({
+  //     REDIS_URL,
+  //   })
+  // });
 
   // set rate limiter
-  app.use(limiter);
+  // app.use(limiter);
 
   // log requests using morgan, don't log in test env
   if (NODE_ENV !== 'test') app.use(morgan('dev')); // combined, common, dev, short, tiny
