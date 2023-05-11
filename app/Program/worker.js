@@ -12,13 +12,16 @@ const { REDIS_URL } = process.env;
 
 // third party node modules
 const Queue = require('bull'); // process background tasks from Queue
-const ProgramQueue = new Queue('ProgramQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // services
 const { queueError } = require('../../services/error');
+const { createQueue } = require('../../services/queue')
 
 // tasks
 const tasks = require('./tasks');
+
+const ProgramQueue = createQueue('ProgramQueue')
+
 
 // Function is called in /worker.js
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js

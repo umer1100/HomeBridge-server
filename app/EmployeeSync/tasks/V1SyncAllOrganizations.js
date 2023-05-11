@@ -15,6 +15,7 @@ const Queue = require('bull'); // add background tasks to Queue: https://github.
 
 // services
 const email = require('../../../services/email');
+const { createQueue } = require('../../../services/queue')
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
 
 // models
@@ -24,7 +25,7 @@ const models = require('../../../models');
 const { createSync } = require('../helper');
 
 // queues
-// const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL, { redis: { tls: true, enableTLSForSentinelMode: false } });
+const EmployeeSyncQueue = createQueue('EmployeeSyncQueue')
 
 // methods
 module.exports = {
@@ -66,4 +67,4 @@ async function V1SyncAllOrganizations(job) {
   } catch (error) {
     return Promise.reject(error);
   }
-} // END V1ExampleTask
+} // END V1SyncAllOrganizations

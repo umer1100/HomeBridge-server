@@ -7,6 +7,4 @@
 
 'use strict';
 
-module.exports = {
-  ...require('./V1ExampleTask')
-}
+module.exports = {}
