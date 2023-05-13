@@ -112,6 +112,12 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
+    let previousLink = await models.plaidAccount.findOne({where: {userId: req.user.id}, paranoid: false});
+
+    if (!previousLink) {
+      await models.creditWallet.increment('dollars', { by: 30, where: { userId: req.user.id, walletType: 'PLATFORM' } });
+    }
+
     // let customerUrl = await createDwollaCustomer({ ssn: req.args.ssn, ...user_pii });
     let accounts = req.args.accounts;
     let hasPrimary = await models.plaidAccount.findOne({ where: { userId: req.user.id, primaryAccount: true } });
@@ -154,7 +160,10 @@ async function V1CreateAccessToken(req) {
 
     return Promise.resolve({
       status: 200,
-      success: true
+      success: true,
+      data: {
+        linkAccountCredit: !previousLink
+      }
     });
   } catch (error) {
     return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, error));

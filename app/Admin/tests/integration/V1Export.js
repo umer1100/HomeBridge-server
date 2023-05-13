@@ -26,12 +26,13 @@ const request = require('supertest');
 
 // services
 const { errorResponse, ERROR_CODES } = require('../../../../services/error');
+const { createQueue } = require('../../../../services/queue');
 
 // helpers
 const { adminLogin, reset, populate } = require('../../../../helpers/tests');
 
 // queues
-const AdminQueue = new Queue('AdminQueue', REDIS_URL);
+const AdminQueue = createQueue('AdminQueue')
 
 describe('Admin.V1Export', async () => {
   // grab fixtures here

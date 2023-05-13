@@ -61,8 +61,14 @@ async function V1CreateLinkToken(req, res, next) {
   if (req.user) method = 'V1CreateLinkToken';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
-  const result = await actions[method](req).catch(err => next(err));
-  return res.status(result.status).json(result);
+  // call correct method
+  try {
+    const result = await actions[method](req);
+
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return next(error);
+  }
 }
 
 /**

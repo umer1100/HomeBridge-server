@@ -12,20 +12,21 @@ const { REDIS_URL } = process.env;
 
 // third party node modules
 const Queue = require('bull'); // process background tasks from Queue
-const CreditWalletLogQueue = new Queue('CreditWalletLogQueue', REDIS_URL);
 
 // services
 const { queueError } = require('../../services/error');
+const { createQueue } = require('../../services/queue')
 
 // tasks
 const tasks = require('./tasks');
+
+const CreditWalletLogQueue = createQueue('CreditWalletLogQueue')
 
 // Function is called in /worker.js
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js
 module.exports = () => {
 
   // Process CreditWalletLog Feature Background Tasks
-  CreditWalletLogQueue.process('V1ExampleTask', tasks.V1ExampleTask);
   CreditWalletLogQueue.on('failed', async (job, error) => queueError(error, CreditWalletLogQueue, job));
   CreditWalletLogQueue.on('stalled', async job => queueError(new Error('Queue Stalled.'), CreditWalletLogQueue, job));
   CreditWalletLogQueue.on('error', async error => queueError(error, CreditWalletLogQueue));

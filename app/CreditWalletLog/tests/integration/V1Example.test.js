@@ -34,7 +34,7 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 const { adminLogin, userLogin, reset, populate } = require('../../../../helpers/tests');
 
 // queues
-const CreditWalletLogQueue = new Queue('CreditWalletLogQueue', REDIS_URL);
+// const CreditWalletLogQueue = new Queue('CreditWalletLogQueue', REDIS_URL);
 
 describe.skip('CreditWalletLog.V1Example', async () => {
   // grab fixtures here
@@ -58,7 +58,7 @@ describe.skip('CreditWalletLog.V1Example', async () => {
     beforeEach(async () => {
       try {
         await populate('fix1');
-        await CreditWalletLogQueue.empty();
+        // await CreditWalletLogQueue.empty();
       } catch (error) {
         console.error(error);
         throw err;
@@ -68,12 +68,12 @@ describe.skip('CreditWalletLog.V1Example', async () => {
     it('[logged-out] should test something', async () => {
       try {
         // execute tests here
-        
+
         // example code below
         const res = await request(app).get(routeUrl);
         expect(res.statusCode).to.equal(401);
         expect(res.body).to.deep.equal(errorResponse(i18n, ERROR_CODES.UNAUTHORIZED));
-        
+
       } catch (error) {
         console.error(error);
         throw error;
@@ -89,7 +89,7 @@ describe.skip('CreditWalletLog.V1Example', async () => {
     beforeEach(async () => {
       try {
         await populate('fix1');
-        await CreditWalletLogQueue.empty();
+        // await CreditWalletLogQueue.empty();
       } catch (error) {
         console.error(error);
         throw err;
@@ -135,7 +135,7 @@ describe.skip('CreditWalletLog.V1Example', async () => {
     beforeEach(async () => {
       try {
         await populate('fix1');
-        await CreditWalletLogQueue.empty();
+        // await CreditWalletLogQueue.empty();
       } catch (error) {
         console.error(error);
         throw err;

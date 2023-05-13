@@ -37,7 +37,7 @@ const { errorResponse, ERROR_CODES } = require('../../../../services/error');
 const { adminLogin, userLogin, reset, populate } = require('../../../../helpers/tests');
 
 // queues
-const CreditWalletLogQueue = new Queue('CreditWalletLogQueue', REDIS_URL);
+// const CreditWalletLogQueue = new Queue('CreditWalletLogQueue', REDIS_URL);
 
 describe.skip('CreditWalletLog.V1ExampleTask', async () => {
   // grab fixtures here
@@ -49,7 +49,7 @@ describe.skip('CreditWalletLog.V1ExampleTask', async () => {
     try {
       await reset();
       await populate('fix1');
-      await CreditWalletLogQueue.empty();
+      // await CreditWalletLogQueue.empty();
     } catch (error) {
       console.error(error);
       throw err;

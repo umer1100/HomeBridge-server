@@ -14,6 +14,9 @@ const { errorResponse, ERROR_CODES } = require('../../services/error');
 const actions = require('./actions');
 const { isEmployer } = require('./helper');
 
+// services
+const { createQueue } = require('../../services/queue')
+
 module.exports = {
   V1Create,
   V1Login,
@@ -28,9 +31,7 @@ module.exports = {
   V1UpdateBulkUsers
 };
 
-const { REDIS_URL } = process.env;
-const Queue = require('bull');
-const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
+const BulkInvitationQueue = createQueue('BulkInvitationQueue');
 
 /**
  * Create Method

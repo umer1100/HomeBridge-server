@@ -8,19 +8,19 @@
 'use strict';
 
 // ENV variables
-const { REDIS_URL } = process.env;
 
 // third party node modules
-const Queue = require('bull'); // process background tasks from Queue
-const UserQueue = new Queue('UserQueue', REDIS_URL);
 
 // services
 const { queueError } = require('../../services/error');
+const { createQueue } = require('../../services/queue')
 
 // tasks
 const tasks = require('./tasks');
 
-const BulkInvitationQueue = new Queue('BulkInvitationQueue', REDIS_URL);
+// Queues
+const UserQueue = createQueue('UserQueue')
+const BulkInvitationQueue = createQueue('BulkInvitationQueue')
 
 // Function is called in /worker.js
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js

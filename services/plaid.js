@@ -10,7 +10,8 @@ module.exports = {
   itemGet,
   identityGet,
   itemRemove,
-  processorTokenCreate
+  processorTokenCreate,
+  sandboxItemResetLoginRequest,
 };
 
 const configuration = new plaid.Configuration({
@@ -101,4 +102,17 @@ async function itemRemove(payload) {
 async function processorTokenCreate(payload) {
   const processorTokenResponse = await plaidClient.processorTokenCreate(payload);
   return processorTokenResponse.data.processor_token;
+}
+
+/**
+ * [Sandbox Environment] Item Reset Login
+ *
+ * payload contains @access_token
+ *
+ * Docs: https://plaid.com/docs/api/sandbox/#force-a-sandbox-item-into-an-error-state
+ */
+
+async function sandboxItemResetLoginRequest(payload) {
+  const response = await plaidClient.sandboxItemResetLogin(payload)
+  return response
 }

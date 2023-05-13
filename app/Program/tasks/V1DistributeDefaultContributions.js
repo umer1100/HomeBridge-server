@@ -8,7 +8,7 @@
 const { REDIS_URL } = process.env;
 
 // third-party
-const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
+// const Queue = require('bull'); // add background tasks to Queue: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueclean
 
 // services
 
@@ -18,7 +18,6 @@ const models = require('../../../models');
 // helpers
 
 // queues
-const ProgramQueue = new Queue('ProgramQueue', REDIS_URL);
 
 // methods
 module.exports = {
