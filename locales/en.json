@@ -60,5 +60,6 @@
 	"PROGRAM[Program Does Not Exist]": "PROGRAM[Program Does Not Exist]",
 	"PROGRAM[PROGRAM Does Not Exist]": "PROGRAM[PROGRAM Does Not Exist]",
 	"ACCOUNT[Dwolla account does not exist]": "ACCOUNT[Dwolla account does not exist]",
-	"TRANSACTION[Transaction does not exist]": "TRANSACTION[Transaction does not exist]"
+	"TRANSACTION[Transaction does not exist]": "TRANSACTION[Transaction does not exist]",
+	"PLAIDACCOUNT[PlaidAccount already exists]": "PLAIDACCOUNT[PlaidAccount already exists]"
 }
