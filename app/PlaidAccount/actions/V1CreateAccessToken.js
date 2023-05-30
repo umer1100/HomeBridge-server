@@ -108,7 +108,14 @@ async function V1CreateAccessToken(req) {
     let accounts = req.args.accounts;
 
     let existingAccount = await accounts.reduce(async (existingAccount, account) => {
-      let hasAccount = await models.plaidAccount.findOne({where: {institutionName: req?.args?.institutionName, mask: account.mask, name: account.name}})
+      let hasAccount = await models.plaidAccount.findOne({
+        where: {
+          userId: req?.user?.id,
+          institutionName: req?.args?.institutionName,
+          mask: account.mask,
+          name: account.name
+        }
+      })
       return existingAccount || hasAccount;
     }, false)
 
@@ -121,7 +128,7 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
-    let previousLink = await models.plaidAccount.findOne({where: {userId: req.user.id}, paranoid: false});
+    let previousLink = await models.plaidAccount.findOne({ where: { userId: req.user.id }, paranoid: false });
 
     if (!previousLink) {
       await models.creditWallet.increment('dollars', { by: 30, where: { userId: req.user.id, walletType: 'PLATFORM' } });
