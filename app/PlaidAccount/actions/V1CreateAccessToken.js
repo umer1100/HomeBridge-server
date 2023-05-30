@@ -105,6 +105,22 @@ async function V1CreateAccessToken(req) {
   //   );
 
   try {
+    let accounts = req.args.accounts;
+
+    let existingAccount = await accounts.reduce(async (existingAccount, account) => {
+      let hasAccount = await models.plaidAccount.findOne({
+        where: {
+          userId: req?.user?.id,
+          institutionName: req?.args?.institutionName,
+          mask: account.mask,
+          name: account.name
+        }
+      })
+      return existingAccount || hasAccount;
+    }, false)
+
+    if (existingAccount) return Promise.resolve(errorResponse(req, ERROR_CODES.PLAIDACCOUNT_BAD_REQUEST_PLAIDACCOUNT_ALREADY_EXISTS));
+
     const tokenExchange = await itemPublicTokenExchange({ public_token: req.args.publicToken });
     const accessToken = tokenExchange.data.access_token;
 
@@ -112,14 +128,13 @@ async function V1CreateAccessToken(req) {
       access_token: accessToken
     });
 
-    let previousLink = await models.plaidAccount.findOne({where: {userId: req.user.id}, paranoid: false});
+    let previousLink = await models.plaidAccount.findOne({ where: { userId: req.user.id }, paranoid: false });
 
     if (!previousLink) {
       await models.creditWallet.increment('dollars', { by: 30, where: { userId: req.user.id, walletType: 'PLATFORM' } });
     }
 
     // let customerUrl = await createDwollaCustomer({ ssn: req.args.ssn, ...user_pii });
-    let accounts = req.args.accounts;
     let hasPrimary = await models.plaidAccount.findOne({ where: { userId: req.user.id, primaryAccount: true } });
     let setPrimary = hasPrimary ? false : true;
 

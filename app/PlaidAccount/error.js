@@ -22,6 +22,11 @@ const LOCAL_ERROR_CODES = {
     error: 'PLAIDACCOUNT.BAD_REQUEST_PLAIDACCOUNT_DOES_NOT_EXIST',
     status: 404,
     messages: ['PLAIDACCOUNT[PlaidAccount does not exist]']
+  },
+  PLAIDACCOUNT_BAD_REQUEST_PLAIDACCOUNT_ALREADY_EXISTS: {
+    error: 'PLAIDACCOUNT.BAD_REQUEST_PLAIDACCOUNT_ALREADY_EXISTS',
+    status: 409,
+    messages: ['PLAIDACCOUNT[PlaidAccount already exists]']
   }
 };
 
