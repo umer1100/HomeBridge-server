@@ -19,7 +19,7 @@ const { isEmployer } = require('../User/helper');
 
 // queues
 const Queue = require('bull'); // process background tasks from Queue
-// const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
 
 module.exports = {
   V1Import,
@@ -39,7 +39,7 @@ async function V1Import(req, res, next) {
   if (isEmployer(req.user)) {
     const { organizationId } = req.user
     const currentRunId = await createSync(organizationId)
-    // await EmployeeSyncQueue.add('V1Import', { organizationId, currentRunId });
+    await EmployeeSyncQueue.add('V1Import', { organizationId, currentRunId });
   }
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
