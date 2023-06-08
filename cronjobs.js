@@ -28,18 +28,18 @@ console.log(`CLOCK process.env.NODE_ENV: ${NODE_ENV}`);
 /************************/
 /***** EMPLOYEESYNC *****/
 /************************/
-// const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} } });
 
 // Syncs all Organization HRIS systems. Run every day at midnight.
-// new CronJob(
-//   '0 0 0 * * *',
-//   () => {
-//     EmployeeSyncQueue.add('V1SyncAllOrganizations');
-//   },
-//   null,
-//   true,
-//   'UTC'
-// );
+new CronJob(
+  '0 0 0 * * *',
+  () => {
+    EmployeeSyncQueue.add('V1SyncAllOrganizations');
+  },
+  null,
+  true,
+  'UTC'
+);
 
 /************************/
 /***** PROGRAM **********/

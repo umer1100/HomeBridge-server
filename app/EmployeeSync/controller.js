@@ -17,9 +17,11 @@ const { createSync } = require('../EmployeeSync/helper')
 const actions = require('./actions');
 const { isEmployer } = require('../User/helper');
 
+// services
+const { createQueue } = require('../../services/queue')
+
 // queues
-const Queue = require('bull'); // process background tasks from Queue
-const EmployeeSyncQueue = new Queue('EmployeeSyncQueue', REDIS_URL);
+const EmployeeSyncQueue = createQueue('EmployeeSyncQueue')
 
 module.exports = {
   V1Import,

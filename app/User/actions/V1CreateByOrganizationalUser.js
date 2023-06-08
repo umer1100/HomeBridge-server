@@ -39,6 +39,7 @@ module.exports = {
  * req.params = {}
  * req.args = {
  *   @firstName - (STRING - REQUIRED): The first name of the new user
+ *   @middleName - (STRING - OPTIONAL): The middle name of the new user
  *   @lastName - (STRING - REQUIRED): The last name of the new user
  *   @status - (STRING - DEFAULT('PENDING')): Status of the user
  *   @email - (STRING - REQUIRED): The email of the user,
@@ -73,6 +74,7 @@ module.exports = {
 async function V1CreateByOrganizationalUser(req) {
   const userSchema = joi.object({
     firstName: joi.string().trim().min(1).required(),
+    middleName: joi.string().trim().allow('').optional(),
     lastName: joi.string().trim().min(1).required(),
     status: joi.string().default('PENDING'),
     email: joi.string().trim().lowercase().min(3).email().required(),
@@ -142,6 +144,7 @@ async function V1CreateByOrganizationalUser(req) {
         timezone: user.timezone,
         locale: user.locale,
         firstName: user.firstName,
+        middleName: user.middleName,
         lastName: user.lastName,
         status: user.status,
         email: user.email,
