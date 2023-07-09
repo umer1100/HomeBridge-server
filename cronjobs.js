@@ -67,7 +67,7 @@ const CreditWalletQueue = new Queue('CreditWalletQueue', REDIS_URL, { redis: { t
 new CronJob(
   '0 0 0 1 * *',
   () => {
-    CreditWalletQueue.add('V1AddMonthlyCredit.js');
+    CreditWalletQueue.add('V1AddMonthlyCredit');
   },
   null,
   true,
