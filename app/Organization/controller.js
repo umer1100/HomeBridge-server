@@ -21,6 +21,8 @@ module.exports = {
   V1Export,
   V1UpdateHrisAccessToken,
   V1GetUsers,
+  V1GetAverageHomePrice,
+  V1GetTotalOwnerificCredit,
   V1GetCompanyDetailsFromFinch,
   V1GetUsersPlaidAccountDetails
 };
@@ -171,6 +173,47 @@ async function V1GetUsers(req, res, next) {
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result?.status).json(result);
 }
+
+
+/**
+ * Grabs the average home price for all employees in an organization
+ *
+ * /v1/organizations/get-average-home-price
+ *
+ * Employer must be logged in
+ */
+async function V1GetAverageHomePrice(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1GetAverageHomePrice';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+
+/**
+ * Grabs the total ownerific credit for all employees in an organization
+ *
+ * /v1/organizations/get-total-ownerific-credit
+ *
+ * Employer must be logged in
+ */
+ async function V1GetTotalOwnerificCredit(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user && req.user.roleType == 'EMPLOYER') method = 'V1GetTotalOwnerificCredit';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
 
 async function V1GetCompanyDetailsFromFinch(req, res, next) {
   let method = null; // which action method to use
