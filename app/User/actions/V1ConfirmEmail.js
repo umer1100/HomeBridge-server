@@ -69,7 +69,7 @@ async function V1ConfirmEmail(req) {
 
     // User [Role: Not Guest] should only receive invitation email
     if (findUser?.roleType != 'GUEST' &&
-       (invitationEmail?.toLowerCase() == 'false' || !invitationEmail)) {
+      (invitationEmail?.toLowerCase() == 'false' || !invitationEmail)) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
     }
 
@@ -77,7 +77,7 @@ async function V1ConfirmEmail(req) {
     await user.update(
       {
         emailConfirmed: true,
-        status: findUser.roleType != 'GUEST' && invitationEmail ? 'ONBOARDING': 'ACTIVE',
+        status: findUser.roleType == 'EMPLOYER' && invitationEmail ? 'ONBOARDING' : 'ACTIVE',
       },
       {
         fields: ['emailConfirmed', 'status'], // only these fields
