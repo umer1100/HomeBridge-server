@@ -171,7 +171,7 @@ async function V1CreateByOrganizationalUser(req) {
       await emailService.send({
         from: emailService.emails.doNotReply.address,
         name: emailService.emails.doNotReply.name,
-        subject: 'Please use this link to login to ownerific',
+        subject: 'Welcome to Ownerific',
         template: 'InvitationEmail',
         tos: [user.email],
         ccs: null,
