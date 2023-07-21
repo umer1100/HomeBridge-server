@@ -151,7 +151,7 @@ async function V1CreateByAdmin(req) {
     const result = await emailService.send({
       from: emailService.emails.doNotReply.address,
       name: emailService.emails.doNotReply.name,
-      subject: 'Register Account',
+      subject: 'Welcome to Ownerific',
       template: 'RegisterAccount',
       tos: [req.args.email],
       ccs: null,
