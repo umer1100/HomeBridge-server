@@ -141,5 +141,20 @@ module.exports = [
     password: 'password8F%',
     emailConfirmed: true,
     emailConfirmedToken: randomString()
-  }
+  },
+  {
+    id: 10,
+    timezone: 'UTC',
+    locale: 'en',
+    status: 'PENDING',
+    firstName: 'John',
+    lastName: 'Leo',
+    roleType: 'EMPLOYER',
+    email: 'user-10@example.com',
+    phone: '+13018148502',
+    salt: '2-TYIUJHGIUYGDJHGAIHGKDCHJAGKSHJDGFKGHHGEKFH',
+    password: 'password5F%',
+    emailConfirmed: false,
+    emailConfirmedToken: randomString()
+  },
 ];

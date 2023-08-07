@@ -8,16 +8,17 @@
 'use strict';
 
 module.exports = {
+  ...require('./V1ConfirmEmail'),
   ...require('./V1CreateByAdmin'),
   ...require('./V1CreateByOrganizationalUser'),
   ...require('./V1CreateGuest'),
   ...require('./V1Login'),
-  ...require('./V1ConfirmEmail'),
-  ...require('./V1ReadByUser'),
+  ...require('./V1Logout'),
   ...require('./V1ReadByAdmin'),
-  ...require('./V1SendResetPasswordToken'),
+  ...require('./V1ReadByUser'),
   ...require('./V1ResetPassword'),
+  ...require('./V1SendResetPasswordToken'),
   ...require('./V1Update'),
+  ...require('./V1UpdateBulkUsers'),
   ...require('./V1UpdatePassword'),
-  ...require('./V1UpdateBulkUsers')
-};
+}

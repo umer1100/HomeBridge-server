@@ -197,6 +197,29 @@ describe('User.V1Login', async () => {
       }
     }); // END [logged-out] should fail to login user (GUEST) if email is not confirmed
 
+    it('[logged-out] Should successfully login user and match JWT token in the session', async () => {
+      const user = userFix[3];
+
+      try {
+        const params = {
+          email: user.email,
+          password: user.password
+        };
+
+        // login user
+        const res = await request(app).post(routeUrl).send(params);
+        const session = await models.session.findOne({
+          where: {
+            jwt: res.body.token
+          }
+        })
+
+        expect(session.jwt).to.equal(res.body.token)
+      } catch (error) {
+        throw error;
+      }
+    }); // END [logged-out] Should successfully login user and match JWT token in the session
+
     it('[logged-out] should fail to login user (except GUEST) if email is not confirmed', async () => {
       const user = userFix[2];
 

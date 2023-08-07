@@ -68,14 +68,14 @@ function randomString({ len, pre, post, lowercase, uppercase, numbers, special }
  *
  * Docs: https://www.npmjs.com/package/passport-jwt
  */
-function createJwtToken(user, client, TOKEN_EXPIRATION_TIME) {
+function createJwtToken(user, client, jwtExpiration) {
   return jwt.encode(
     {
       sub: user.id,
       iss: HOSTNAME,
       aud: client,
       iat: new Date().getTime(),
-      exp: new Date().getTime() + parseInt(TOKEN_EXPIRATION_TIME) * 60 * 1000
+      exp: jwtExpiration
     },
     SESSION_SECRET
   );

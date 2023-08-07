@@ -96,12 +96,36 @@ describe('User.V1ConfirmEmail', async () => {
     }); // END [RoleType: Guest]
 
     describe('[RoleType: Other then guest]', async () => {
-      it('[logged-out] should confirm email invitation with valid emailConfirmationToken and change status to ONBOARDING',
+      it('[logged-out] should confirm email invitation for EMPLOYEE with valid emailConfirmationToken and change status to ACTIVE',
         async () => {
           const user = userFix[6];
           try {
             expect(user.status).to.equal('PENDING');
             expect(user.emailConfirmed).to.be.false;
+            expect(user.roleType).to.equal("EMPLOYEE")
+
+            const res = await request(app).get(`${routeUrl}?emailConfirmationToken=${user.emailConfirmedToken}&invitationEmail=${true}`);
+
+            expect(res.body).to.have.property('success', true);
+
+            // check if user is updated in database
+            const checkUser = await models.user.findByPk(user.id);
+
+            expect(checkUser.status).to.equal('ACTIVE');
+            expect(checkUser.emailConfirmed).to.be.true;
+          } catch (error) {
+            throw error;
+          }
+        }
+      ); // END [logged-out] should confirm email invitation for EMPLOYEE with valid emailConfirmationToken and change status to ACTIVE
+
+      it('[logged-out] should confirm email invitation for EMPLOYER with valid emailConfirmationToken and change status to ONBOARDING',
+        async () => {
+          const user = userFix[9];
+          try {
+            expect(user.status).to.equal('PENDING');
+            expect(user.emailConfirmed).to.be.false;
+            expect(user.roleType).to.equal("EMPLOYER")
 
             const res = await request(app).get(`${routeUrl}?emailConfirmationToken=${user.emailConfirmedToken}&invitationEmail=${true}`);
 
@@ -116,7 +140,7 @@ describe('User.V1ConfirmEmail', async () => {
             throw error;
           }
         }
-      ); // END [logged-out] should confirm email with valid emailConfirmationToken and change status to ONBOARDING
+      ); // END [logged-out] should confirm email invitation for EMPLOYER with valid emailConfirmationToken and change status to ONBOARDING
 
       it('[logged-out] should return invalid argument error if invitationEmail is not true',
         async () => {
