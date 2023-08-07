@@ -8,11 +8,13 @@
 'use strict';
 
 // ENV variables
-const { REDIS_URL } = process.env;
 
 // third party node modules
-const Queue = require('bull'); // process background tasks from Queue
-const SessionQueue = new Queue('SessionQueue', REDIS_URL, { redis: { tls: {rejectUnauthorized: false} }});
+
+// services
+const { createQueue } = require('../../services/queue')
+
+const SessionQueue = new createQueue('SessionQueue');
 
 
 // Returns an array of Queues used in this feature so we can gracefully close them in worker.js
