@@ -407,7 +407,8 @@ module.exports = (sequelize, DataTypes) => {
       scope: {
         sessionableType: 'user'
       }
-    }),
+    });
+    User.hasOne(models.questionaire)
     User.hasMany(models.plaidAccount);
     User.hasMany(models.creditWallet);
   };

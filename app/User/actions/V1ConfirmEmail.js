@@ -77,7 +77,7 @@ async function V1ConfirmEmail(req) {
     await user.update(
       {
         emailConfirmed: true,
-        status: findUser.roleType == 'EMPLOYER' && invitationEmail ? 'ONBOARDING' : 'ACTIVE',
+        status: 'ONBOARDING',
       },
       {
         fields: ['emailConfirmed', 'status'], // only these fields
