@@ -401,6 +401,14 @@ module.exports = (sequelize, DataTypes) => {
   // association
   User.associate = models => {
     User.belongsTo(models.organization, { foreignKey: 'organizationId' });
+    User.hasMany(models.session, {
+      foreignKey: 'sessionableId',
+      constraints: false,
+      scope: {
+        sessionableType: 'user'
+      }
+    });
+    User.hasOne(models.questionaire)
     User.hasMany(models.plaidAccount);
     User.hasMany(models.creditWallet);
   };

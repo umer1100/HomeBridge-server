@@ -21,6 +21,7 @@ module.exports = {
   V1Export,
   V1UpdateHrisAccessToken,
   V1GetUsers,
+  V1GetAverageOwnerificCredit,
   V1GetAverageHomePrice,
   V1GetTotalOwnerificCredit,
   V1GetCompanyDetailsFromFinch,
@@ -167,6 +168,26 @@ async function V1GetUsers(req, res, next) {
 
   // which method to call
   if (req.user) method = 'V1GetUsers';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+
+  // call correct method
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status).json(result);
+}
+
+
+/**
+ * Grabs the average ownerific credit for all employees in an organization
+ *
+ * /v1/organizations/get-average-ownerific-credit
+ *
+ * Must be logged in
+ */
+async function V1GetAverageOwnerificCredit(req, res, next) {
+  let method = null; // which action method to use
+
+  // which method to call
+  if (req.user) method = 'V1GetAverageOwnerificCredit';
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method

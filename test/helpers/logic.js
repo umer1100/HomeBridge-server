@@ -84,7 +84,8 @@ describe('helpers/logic.js', () => {
 
     it('should return false if JWT is not expired', done => {
       let TOKEN_EXPIRATION_TIME = 10;
-      let token = logic.createJwtToken({ id: 1 }, 'http://localhost:8000', TOKEN_EXPIRATION_TIME);
+      const jwtExpiration = new Date().getTime() + parseInt(TOKEN_EXPIRATION_TIME) * 60 * 1000
+      let token = logic.createJwtToken({ id: 1 }, 'http://localhost:8000', jwtExpiration);
       isExpired = logic.isJWTExpired(token);
       expect(isExpired).to.be.false;
       done();

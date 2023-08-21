@@ -21,6 +21,7 @@ module.exports = (passport, router) => {
   router.all('/v1/organizations/export', controller.V1Export);
   router.all('/v1/organizations/store-hris-access-token', controller.V1UpdateHrisAccessToken);
   router.all('/v1/organizations/users', controller.V1GetUsers);
+  router.all('/v1/organizations/get-average-ownerific-credit', controller.V1GetAverageOwnerificCredit);
   router.all('/v1/organizations/get-average-home-price', controller.V1GetAverageHomePrice);
   router.all('/v1/organizations/get-total-ownerific-credit', controller.V1GetTotalOwnerificCredit);
   router.all('/v1/organization/users-plaid-accounts', controller.V1GetUsersPlaidAccountDetails);
