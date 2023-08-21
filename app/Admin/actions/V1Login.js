@@ -84,11 +84,17 @@ async function V1Login(req, res) {
           }
         });
 
+        const jwtExpiration = new Date().getTime() + parseInt(TOKEN_EXPIRATION_TIME) * 60 * 1000
+        const token = createJwtToken(updatedAdmin, ADMIN_WEB_HOST, jwtExpiration)
+
+        // create admin session
+        await admin.createSession({ jwt: token, expirationAt: jwtExpiration });
+
         // return success
         return resolve({
           status: 201,
           success: true,
-          token: createJwtToken(updatedAdmin, ADMIN_WEB_HOST, TOKEN_EXPIRATION_TIME),
+          token: token,
           admin: updatedAdmin.dataValues
         });
       } catch (error) {

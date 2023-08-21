@@ -170,7 +170,15 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   // association
-  Admin.associate = models => {};
+  Admin.associate = models => {
+    Admin.hasMany(models.session, {
+      foreignKey: 'sessionableId',
+      constraints: false,
+      scope: {
+        sessionableType: 'admin'
+      }
+    })
+  };
 
   // sensitive data method
   Admin.getSensitiveData = () => {
