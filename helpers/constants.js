@@ -54,5 +54,5 @@ module.exports = {
   ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST'],
 
   // Credits
-  CREDIT: 75
+  CREDIT: 100
 };
