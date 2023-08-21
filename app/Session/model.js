@@ -65,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Session.associate = models => {
     Session.belongsTo(models.user, { foreignKey: 'sessionableId', constraints: false })
+    Session.belongsTo(models.admin, { foreignKey: 'sessionableId', constraints: false })
   }
 
   return Session;
