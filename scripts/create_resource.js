@@ -39,6 +39,7 @@
      description: 'Helps buyers save money in this area',
      infoURL: 'infoURL',
      imageURL: 'imageURL',
+     isNational: false,
      addresses: [{
       addressLine1: '82 5th Ave',
       addressLine2: '36A',

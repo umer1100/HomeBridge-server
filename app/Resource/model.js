@@ -57,6 +57,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
 
+    isNational: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      default: false
+    }
   }, {
     timestamps: true, // allows sequelize to create timestamps automatically
 

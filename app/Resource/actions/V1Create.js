@@ -59,6 +59,7 @@
      description: joi.string().trim().min(1).required(),
      imageURL: joi.string().trim().min(1),
      infoURL: joi.string().trim().min(1),
+     isNational: joi.boolean().default(false),
      addresses: joi.array().items(joiAddressSchema())
    });
    // validate
@@ -83,7 +84,8 @@
        name: req.args.name,
        description: req.args.description,
        imageURL: req.args.imageURL,
-       infoURL: req.args.infoURL
+       infoURL: req.args.infoURL,
+       isNational: req.args.isNational
      });
 
      if (req.args.addresses?.length > 0) {
