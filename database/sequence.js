@@ -16,5 +16,10 @@ module.exports = [
   'creditWalletLog',
   'program',
   'session',
-  'questionaire'
+  'questionaire',
+  'agent',
+  'address',
+  'lender',
+  'resource',
+  'closer'
 ];
