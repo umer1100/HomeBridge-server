@@ -53,7 +53,7 @@ const LOCAL_ERROR_CODES = {
   USER_BAD_REQUEST_USER_ALREADY_EXISTS: {
     error: 'USER.BAD_REQUEST_USER_ALREADY_EXISTS',
     status: 400,
-    messages: ['USER[User Already Exists]']
+    messages: ['User Already Exists']
   },
 
   USER_BAD_REQUEST_INVALID_EMAIL_CONFIRMATION_TOKEN: {
