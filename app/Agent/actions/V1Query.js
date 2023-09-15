@@ -6,6 +6,8 @@
 
 // third-party
 const joi = require('@hapi/joi'); // argument validations: https://github.com/hapijs/joi/blob/master/API.md
+const zipState = require('zip-state');
+
 
 // services
 const { ERROR_CODES, errorResponse, joiErrorsMessage } = require('../../../services/error');
@@ -71,6 +73,16 @@ async function V1Query(req) {
   delete req.args.page;
   delete req.args.limit;
 
+  const findQuestionaire = await models.questionaire
+    .findOne({
+      where: {
+        userId: req.user.id
+      }
+    })
+    .catch(err => Promise.reject(err));
+
+  const state = zipState(findQuestionaire.zipcode);
+
   // add to where statement
   const whereStmt = {};
   Object.keys(req.args).forEach(key => {
@@ -85,6 +97,9 @@ async function V1Query(req) {
     order: getOrdering(sort),
     include: {
       model: models.address,
+      where: {
+        state: state
+      }
     }
   }).catch(err => Promise.reject(err));
 

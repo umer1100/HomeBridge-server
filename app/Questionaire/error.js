@@ -17,6 +17,12 @@ const LOCAL_ERROR_CODES = {
   //   status: 401,
   //   messages: ['QUESTIONAIRE[Account is not active]']
   // }
+
+  QUESTIONNAIRE_BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST: {
+    error: 'QUESTIONNAIRE.BAD_REQUEST_ACCOUNT_DOES_NOT_EXIST',
+    status: 404,
+    messages: ['QUESTIONNAIRE[QUESTIONNAIRE Does Not Exist]']
+  }
 };
 
 module.exports = LOCAL_ERROR_CODES;
