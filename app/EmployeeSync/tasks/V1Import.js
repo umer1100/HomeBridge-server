@@ -106,7 +106,6 @@ async function V1Import(job) {
             sex: individual.body?.gender?.toUpperCase(),
             email: individual.body?.emails[0]?.data,
             roleType: 'EMPLOYEE',
-            password: 'PLACEHOLDER',
             organizationId: organizationId,
             addressLine1: individual.body?.residence?.line1,
             addressLine2: individual.body?.residence?.line2 || '',
@@ -128,6 +127,7 @@ async function V1Import(job) {
             })
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
+            userAttributes['password'] = 'PLACEHOLDER'
             await models.user.create({
               ...userAttributes
             });
