@@ -29,7 +29,7 @@ module.exports = {
  *
  * req.params = {}
  * req.args = {
- *   @zipcode - (STRING - OPTIONAL)
+ *   @nearestState - (STRING - OPTIONAL)
  *   @profile - (STRING - OPTIONAL)
  *   @isWorkingWithAgent - (BOOLEAN - OPTIONAL)
  *   @preApprovedLoan - (BOOLEAN - OPTIONAL)
@@ -48,7 +48,7 @@ module.exports = {
 async function V1Update(req) {
   const schema = joi.object({
     id: joi.number().min(1).default(req.user.id).optional(),
-    zipcode: joi.string().trim().min(1).optional(),
+    nearestState: joi.string().optional(),
     profile: joi.string().trim().min(1).optional(),
     isWorkingWithAgent: joi.boolean().optional(),
     preApprovedLoan: joi.boolean().optional(),

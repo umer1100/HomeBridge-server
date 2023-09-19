@@ -30,7 +30,7 @@ module.exports = {
  * req.params = {}
  * req.args = {
  *   @status - (STRING - REQUIRED): The user status
- *   @zipcode - (STRING - REQUIRED)
+ *   @nearestState - (STRING - REQUIRED)
  *   @profile - (STRING - REQUIRED)
  *   @homeBudger - (STRING - REQUIRED)
  *   @isWorkingWithAgent - (STRING - REQUIRED)
@@ -48,7 +48,7 @@ module.exports = {
 async function V1Create(req) {
   const schema = joi.object({
     status: joi.string().required(),
-    zipcode: joi.number().required(),
+    nearestState: joi.string().required(),
     profile: joi.string().required(),
     homeBudget: joi.string().required(),
     isWorkingWithAgent: joi.boolean().required(),
@@ -62,7 +62,7 @@ async function V1Create(req) {
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
 
   req.args = value; // updated arguments with type conversion
-  const { status, zipcode, profile, homeBudget, isWorkingWithAgent, preApprovedLoan, desiredBedrooms, timelineGoal } = req.args
+  const { status, nearestState, profile, homeBudget, isWorkingWithAgent, preApprovedLoan, desiredBedrooms, timelineGoal } = req.args
 
   // find user
   const findUser = await user.findByPk(req.user.id, {
@@ -80,7 +80,7 @@ async function V1Create(req) {
 
     // create new record in questioner
     await findUser.createQuestionaire({
-      zipcode,
+      nearestState,
       profile,
       homeBudget,
       isWorkingWithAgent,
