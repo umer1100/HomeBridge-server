@@ -30,6 +30,7 @@ module.exports = {
   V1BulkInvitation,
   V1UpdateBulkUsers,
   V1Logout,
+  V1EmployerSignUp
 };
 
 const BulkInvitationQueue = createQueue('BulkInvitationQueue');
@@ -229,4 +230,11 @@ async function V1Logout(req, res, next) {
 
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result.status).json(result);
+}
+
+async function V1EmployerSignUp(req, res, next) {
+  let method = 'V1EmployerSignUp'
+
+  const result = await actions[method](req).catch(err => next(err))
+  return res.status(result?.status || 400).json(result)
 }

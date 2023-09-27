@@ -385,8 +385,12 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         afterCreate(user, options) {
-          sequelize.models.creditWallet.create({ userId: user.id, walletType: 'EMPLOYER' });
-          sequelize.models.creditWallet.create({ userId: user.id, walletType: 'PLATFORM' });
+          if (options.transaction) {
+            options.transaction.afterCommit(() => {
+              sequelize.models.creditWallet.create({ userId: user.id, walletType: 'EMPLOYER' })
+              sequelize.models.creditWallet.create({ userId: user.id, walletType: 'PLATFORM' })
+            })
+          }
         },
 
         beforeUpdate(user, options) {
