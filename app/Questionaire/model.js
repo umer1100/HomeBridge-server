@@ -19,10 +19,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
 
-    zipcode: {
-      type: DataTypes.BIGINT,
+    nearestState: {
+      type: DataTypes.TEXT,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: ''
     },
 
     homeBudget: {

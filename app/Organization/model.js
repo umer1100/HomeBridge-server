@@ -109,7 +109,11 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'Organizations', // define table name, must be PascalCase!
       hooks: {
         afterCreate(organization, options) {
-          sequelize.models.program.create({ organizationId: organization.id });
+          if (options.transaction) {
+            options.transaction.afterCommit(() => {
+              sequelize.models.program.create({ organizationId: organization.id })
+            })
+          }
         }
       },
       indexes: []

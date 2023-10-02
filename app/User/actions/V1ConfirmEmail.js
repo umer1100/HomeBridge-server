@@ -12,6 +12,7 @@ const joi = require('@hapi/joi'); // argument validations: https://github.com/ha
 
 // models
 const { user } = require('../../../models');
+const { ROLE } = require('../../../helpers/constants.js')
 
 // methods
 module.exports = {
@@ -67,8 +68,8 @@ async function V1ConfirmEmail(req) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
     }
 
-    // User [Role: Not Guest] should only receive invitation email
-    if (findUser?.roleType != 'GUEST' &&
+    // User [Role: Not Guest AND Employer] should only receive invitation email
+    if (findUser?.roleType != ROLE.GUEST && findUser?.roleType != ROLE.EMPLOYER &&
       (invitationEmail?.toLowerCase() == 'false' || !invitationEmail)) {
       return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
     }
