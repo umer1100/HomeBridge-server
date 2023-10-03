@@ -16,6 +16,7 @@ const { joiErrorsMessage } = require('../../../services/error');
 
 // models
 const models = require('../../../models');
+const conn = require('../../../database/index.js')
 const { date } = require('@hapi/joi');
 
 // helpers
@@ -96,6 +97,7 @@ async function V1Import(job) {
 
       individuals.responses.forEach(individual => {
         (async () => {
+          const transaction = await conn.transaction()
           const employmentAttributes = requiredEmploymentDetails.find((emp) => {
             return emp.finchID === individual.body.id
           })
@@ -124,14 +126,16 @@ async function V1Import(job) {
               ...userAttributes
             }, {
               where: { finchID: individual.body.id }
-            })
+            }, { transaction }
+            )
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
             userAttributes['password'] = 'PLACEHOLDER'
             await models.user.create({
               ...userAttributes
-            });
+            }, { transaction });
           }
+          await transaction.commit();
         })();
       });
 
