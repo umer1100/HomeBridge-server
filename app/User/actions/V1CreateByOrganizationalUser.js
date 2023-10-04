@@ -21,6 +21,7 @@ const models = require('../../../models');
 const { isValidRoleAction } = require('../../../helpers/validate');
 const { PASSWORD_LENGTH_MIN, PASSWORD_REGEX } = require('../../../helpers/constants');
 const { randomString } = require('../../../helpers/logic');
+const conn = require('../../../database/index.js');
 
 // methods
 module.exports = {
@@ -135,6 +136,7 @@ async function V1CreateByOrganizationalUser(req) {
 
     // create user
     await Promise.all(req.args.users.map(async (user) => {
+      const transaction = await conn.transaction()
       // Generating Random Password
       const password = randomString({ len: 10 })
       // preparing for email confirmation token
@@ -162,7 +164,7 @@ async function V1CreateByOrganizationalUser(req) {
         dateOfBirth: user.dateOfBirth,
         source: 'Manual',
         emailConfirmedToken: emailConfirmationToken,
-      });
+      }, { transaction });
 
       // create URL using front end url
       const emailConfirmLink = `${WEB_HOSTNAME}/ConfirmEmail?emailConfirmationToken=${emailConfirmationToken}&invitationEmail=${true}`;
@@ -186,6 +188,7 @@ async function V1CreateByOrganizationalUser(req) {
         newUser.destroy(); // destroy if error
         return Promise.reject(err);
       });
+      await transaction.commit();
     }))
     // return
     return Promise.resolve({
