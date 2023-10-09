@@ -108,11 +108,16 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true, // allows sequelize to pluralize the model name
       tableName: 'Organizations', // define table name, must be PascalCase!
       hooks: {
-        afterCreate(organization, options) {
+        async afterCreate(organization, options) {
+          const createProgram = async () => {
+            await sequelize.models.program.create({ organizationId: organization.id });
+          };
           if (options.transaction) {
-            options.transaction.afterCommit(() => {
-              sequelize.models.program.create({ organizationId: organization.id })
-            })
+            options.transaction.afterCommit(async () => {
+              await createProgram();
+            });
+          } else {
+            await createProgram();
           }
         }
       },

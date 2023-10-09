@@ -384,12 +384,18 @@ module.exports = (sequelize, DataTypes) => {
           user.password = bcrypt.hashSync(user.password, user.salt);
         },
 
-        afterCreate(user, options) {
+        async afterCreate(user, options) {
+          const createCreditWallets = async () => {
+            await sequelize.models.creditWallet.create({ userId: user.id, walletType: 'EMPLOYER' });
+            await sequelize.models.creditWallet.create({ userId: user.id, walletType: 'PLATFORM' });
+          };
+
           if (options.transaction) {
-            options.transaction.afterCommit(() => {
-              sequelize.models.creditWallet.create({ userId: user.id, walletType: 'EMPLOYER' })
-              sequelize.models.creditWallet.create({ userId: user.id, walletType: 'PLATFORM' })
-            })
+            options.transaction.afterCommit(async () => {
+              await createCreditWallets();
+            });
+          } else {
+            await createCreditWallets();
           }
         },
 

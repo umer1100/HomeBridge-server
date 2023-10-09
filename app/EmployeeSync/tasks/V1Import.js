@@ -95,9 +95,8 @@ async function V1Import(job) {
         }
       })
 
-      individuals.responses.forEach(individual => {
+      for (const individual of individuals?.responses) {
         (async () => {
-          const transaction = await conn.transaction()
           const employmentAttributes = requiredEmploymentDetails.find((emp) => {
             return emp.finchID === individual.body.id
           })
@@ -126,23 +125,22 @@ async function V1Import(job) {
               ...userAttributes
             }, {
               where: { finchID: individual.body.id }
-            }, { transaction }
+            }
             )
             preexistingFinchIDs.splice(preexistingFinchIDs.indexOf(individual.body.id), 1);
           } else {
             userAttributes['password'] = 'PLACEHOLDER'
             await models.user.create({
               ...userAttributes
-            }, { transaction });
+            });
           }
-          await transaction.commit();
         })();
-      });
-
+      }
       let removedUsers = preexistingFinchIDs ? preexistingFinchIDs : [];
 
       // Set all users that are no longer in Finch to inactive and remove their organization ID
-      removedUsers.forEach(finchID => {
+
+      for (const finchID in removedUsers) {
         (async () => {
           await models.user.update(
             {
@@ -150,11 +148,11 @@ async function V1Import(job) {
               organizationId: null
             },
             {
-              where: { finchID: finchID }
+              where: { finchID }
             }
           );
-        })();
-      });
+        })
+      }
     }
 
     await updateSync(currentRunId, {
