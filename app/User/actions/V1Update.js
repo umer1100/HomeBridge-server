@@ -56,6 +56,7 @@ async function V1Update(req) {
     joiningDate: joi.string().trim().min(1).optional(),
     goalAmount: joi.string().allow(null).optional(),
     acceptedTerms: joi.bool().optional(),
+    isIntroViewed: joi.bool().optional()
    });
 
   // validate
