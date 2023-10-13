@@ -25,6 +25,8 @@ module.exports = (passport, router) => {
   router.all('/v1/users/update-bulk-users', controller.V1UpdateBulkUsers);
   router.all('/v1/users/logout', controller.V1Logout)
   router.post('/v1/users/employer/signUp', controller.V1EmployerSignUp)
+  router.post('/v1/users/employer/signUp/oauth', controller.V1EmployerSignUpOAuth)
+  router.post('/v1/users/signIn/oauth', controller.V1SignInOAuth)
   // return router
   return router;
 };

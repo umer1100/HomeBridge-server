@@ -21,5 +21,7 @@ module.exports = {
   ...require('./V1Update'),
   ...require('./V1UpdateBulkUsers'),
   ...require('./V1UpdatePassword'),
-  ...require('./V1EmployerSignUp')
+  ...require('./V1EmployerSignUp'),
+  ...require('./V1EmployerSignUpOAuth'),
+  ...require('./V1SignInOAuth')
 }

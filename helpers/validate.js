@@ -14,7 +14,8 @@ const { ROLE, ROLES } = require('./constants');
 
 module.exports = {
   isValidTimezone,
-  isValidRoleAction
+  isValidRoleAction,
+  isEmployer
 };
 
 /**
@@ -42,4 +43,16 @@ function isValidRoleAction(activeRole, passiveRole) {
   if (ROLES.indexOf(activeRole) < ROLES.indexOf(passiveRole)) return true;
 
   return false;
+}
+
+/**
+ * Takes in a user object and check  its role type is EMPLOYER
+ *
+ * @user - (OBJECT - REQUIRED): Object with user info
+ *
+ * return true or false
+ */
+function isEmployer(user) {
+  const { roleType } = user;
+  return roleType === ROLE.EMPLOYER;
 }

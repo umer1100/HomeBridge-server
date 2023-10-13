@@ -53,6 +53,16 @@ module.exports = {
   ROLE: { EMPLOYER: 'EMPLOYER', ADMIN: 'ADMIN', MANAGER: 'MANAGER', EMPLOYEE: 'EMPLOYEE', GUEST: 'GUEST' },
   ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST'],
 
+  // STATUS
+  STATUS: { ACTIVE: 'ACTIVE', ONBOARDING: 'ONBOARDING', PENDING: 'PENDING', INACTIVE: 'INACTIVE', NEW: 'NEW', PAUSE: 'PAUSE'},
+
+  // MESSAGES
+  MESSAGE: {
+    LOGIN_SUCCESSFULLY: 'Login successfully.',
+    ACCOUNT_CREATED: 'Account successfully created, Check invitation email to setup your password or signin using google.',
+    ACCOUNT_CREATION_FAILED: 'Failed to create new account.'
+  },
+
   // Credits
   CREDIT: 75
 };

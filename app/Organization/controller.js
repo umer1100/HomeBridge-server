@@ -6,6 +6,7 @@
 
 'use strict';
 
+const { isEmployer } = require('../../helpers/validate');
 // helpers
 const { errorResponse, ERROR_CODES } = require('../../services/error');
 
@@ -57,8 +58,11 @@ async function V1Read(req, res, next) {
  * Roles: ['admin']
  */
 async function V1Create(req, res, next) {
-  let method = 'V1Create';
+  let method = null;
 
+  if (req.user && isEmployer(req.user)) method = 'V1CreateByEmployer'
+  else method = 'V1Create'
+  
   // call correct method
   const result = await actions[method](req).catch(err => next(err));
   return res.status(result.status).json(result);

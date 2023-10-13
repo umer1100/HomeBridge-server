@@ -30,7 +30,9 @@ module.exports = {
   V1BulkInvitation,
   V1UpdateBulkUsers,
   V1Logout,
-  V1EmployerSignUp
+  V1EmployerSignUp,
+  V1EmployerSignUpOAuth,
+  V1SignInOAuth
 };
 
 const BulkInvitationQueue = createQueue('BulkInvitationQueue');
@@ -234,6 +236,20 @@ async function V1Logout(req, res, next) {
 
 async function V1EmployerSignUp(req, res, next) {
   let method = 'V1EmployerSignUp'
+
+  const result = await actions[method](req).catch(err => next(err))
+  return res.status(result?.status || 400).json(result)
+}
+
+async function V1EmployerSignUpOAuth(req, res, next) {
+  let method = 'V1EmployerSignUpOAuth'
+
+  const result = await actions[method](req).catch(err => next(err))
+  return res.status(result?.status || 400).json(result)
+}
+
+async function V1SignInOAuth(req, res, next) {
+  let method = 'V1SignInOAuth'
 
   const result = await actions[method](req).catch(err => next(err))
   return res.status(result?.status || 400).json(result)

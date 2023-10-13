@@ -16,5 +16,6 @@ module.exports = {
   ...require('./V1GetAverageHomePrice'),
   ...require('./V1GetTotalOwnerificCredit'),
   ...require('./V1GetCompanyDetailsFromFinch'),
-  ...require('./V1GetUsersPlaidAccountDetails')
+  ...require('./V1GetUsersPlaidAccountDetails'),
+  ...require('./V1CreateByEmployer')
 };

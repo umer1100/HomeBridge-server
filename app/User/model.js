@@ -406,8 +406,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         beforeUpdate(user, options) {
-          if (user.previous('status') != user.status)
-            user.previousStatus = user.previous('status')
+          if (user.previous('status') != user.status) user.previousStatus = user.previous('status')
         }
       },
       indexes: []
