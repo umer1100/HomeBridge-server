@@ -4,8 +4,11 @@
 
 'use strict';
 
+const { ROLE } = require("../../helpers/constants");
+
 module.exports = {
-  isEmployer
+  isEmployer,
+  isEmployee
 };
 
 /**
@@ -16,5 +19,10 @@ module.exports = {
  */
 function isEmployer(user) {
   const { roleType } = user;
-  return roleType == 'EMPLOYER';
+  return roleType == ROLE.EMPLOYER;
+}
+
+function isEmployee(user) {
+  const { roleType } = user;
+  return roleType === ROLE.EMPLOYEE;
 }

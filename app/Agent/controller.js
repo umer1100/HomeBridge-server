@@ -8,6 +8,7 @@
 
 // helpers
 const { errorResponse, ERROR_CODES } = require('../../services/error');
+const { isEmployee } = require('../User/helper');
 
 // actions
 const actions = require('./actions');
@@ -16,7 +17,7 @@ module.exports = {
   V1Read,
   V1Query,
   V1Create
-}
+};
 
 /**
  * Read Method
@@ -30,10 +31,8 @@ async function V1Read(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.admin || req.user)
-    method = `V1Read`;
-  else
-    return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  if (req.admin || req.user) method = 'V1Read';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   try {
@@ -44,7 +43,6 @@ async function V1Read(req, res, next) {
     return next(error);
   }
 }
-
 
 /**
  * Query Method
@@ -54,14 +52,12 @@ async function V1Read(req, res, next) {
  * Must be logged in
  * Roles: ['admin', 'user']
  */
- async function V1Query(req, res, next) {
+async function V1Query(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.admin || req.user)
-    method = `V1Query`;
-  else
-    return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  if (req.admin || (req.user && isEmployee(req.user))) method = 'V1Query';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   try {
@@ -73,7 +69,6 @@ async function V1Read(req, res, next) {
   }
 }
 
-
 /**
  * Create Method
  *
@@ -82,14 +77,12 @@ async function V1Read(req, res, next) {
  * Must be logged in
  * Roles: ['admin']
  */
- async function V1Create(req, res, next) {
+async function V1Create(req, res, next) {
   let method = null; // which action method to use
 
   // Call the correct action method based on type of user of role
-  if (req.admin)
-    method = `V1Create`;
-  else
-    return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  if (req.admin) method = 'V1Create';
+  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   // call correct method
   try {

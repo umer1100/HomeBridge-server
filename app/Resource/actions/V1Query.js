@@ -77,6 +77,14 @@
      whereStmt[key] = req.args[key];
    });
 
+   const userQuestionaire = await models.questionaire
+   .findOne({
+     where: {
+       userId: req.user.id
+     }
+   })
+   .catch(err => Promise.reject(err));
+
    // get resources
    const result = await models.resource.findAndCountAll({
      where: whereStmt,
@@ -85,6 +93,9 @@
      order: getOrdering(sort),
      include: {
        model: models.address,
+       where: {
+        state: userQuestionaire.nearestState
+      }
      }
    }).catch(err => Promise.reject(err));
 
