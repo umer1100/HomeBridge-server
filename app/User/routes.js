@@ -23,10 +23,11 @@ module.exports = (passport, router) => {
   router.all('/v1/users/update', controller.V1Update);
   router.all('/v1/users/sendBulkInvitation', controller.V1BulkInvitation);
   router.all('/v1/users/update-bulk-users', controller.V1UpdateBulkUsers);
-  router.all('/v1/users/logout', controller.V1Logout)
-  router.post('/v1/users/employer/signUp', controller.V1EmployerSignUp)
-  router.post('/v1/users/employer/signUp/oauth', controller.V1EmployerSignUpOAuth)
-  router.post('/v1/users/signIn/oauth', controller.V1SignInOAuth)
+  router.all('/v1/users/logout', controller.V1Logout);
+  router.post('/v1/users/employer/signUp', controller.V1EmployerSignUp);
+  router.post('/v1/users/employer/signUp/oauth', controller.V1EmployerSignUpOAuth);
+  router.post('/v1/users/signIn/oauth', controller.V1SignInOAuth);
+  router.post('/v1/users/email', controller.V1SendEmail);
   // return router
   return router;
 };

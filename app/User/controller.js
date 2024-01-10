@@ -15,7 +15,7 @@ const actions = require('./actions');
 const { isEmployer } = require('./helper');
 
 // services
-const { createQueue } = require('../../services/queue')
+const { createQueue } = require('../../services/queue');
 
 module.exports = {
   V1Create,
@@ -32,7 +32,8 @@ module.exports = {
   V1Logout,
   V1EmployerSignUp,
   V1EmployerSignUpOAuth,
-  V1SignInOAuth
+  V1SignInOAuth,
+  V1SendEmail
 };
 
 const BulkInvitationQueue = createQueue('BulkInvitationQueue');
@@ -207,7 +208,6 @@ async function V1PlaidCreateLinkToken(req, res, next) {
 async function V1UpdateBulkUsers(req, res, next) {
   let method = null;
   if (req.user && isEmployer(req.user)) method = 'V1UpdateBulkUsers';
-
   else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   const result = await actions[method](req).catch(err => next(err));
@@ -219,8 +219,7 @@ async function V1BulkInvitation(req, res, next) {
     await BulkInvitationQueue.add('V1BulkInvitation', {
       users: req.args.users
     });
-  }
-  else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
+  } else return res.status(401).json(errorResponse(req, ERROR_CODES.UNAUTHORIZED));
 
   return res.status(200).json({ success: true, message: 'Started Sending Emails' });
 }
@@ -235,22 +234,29 @@ async function V1Logout(req, res, next) {
 }
 
 async function V1EmployerSignUp(req, res, next) {
-  let method = 'V1EmployerSignUp'
+  let method = 'V1EmployerSignUp';
 
-  const result = await actions[method](req).catch(err => next(err))
-  return res.status(result?.status || 400).json(result)
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status || 400).json(result);
 }
 
 async function V1EmployerSignUpOAuth(req, res, next) {
-  let method = 'V1EmployerSignUpOAuth'
+  let method = 'V1EmployerSignUpOAuth';
 
-  const result = await actions[method](req).catch(err => next(err))
-  return res.status(result?.status || 400).json(result)
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status || 400).json(result);
 }
 
 async function V1SignInOAuth(req, res, next) {
-  let method = 'V1SignInOAuth'
+  let method = 'V1SignInOAuth';
 
-  const result = await actions[method](req).catch(err => next(err))
-  return res.status(result?.status || 400).json(result)
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status || 400).json(result);
+}
+
+async function V1SendEmail(req, res, next) {
+  let method = 'V1SendEmail';
+
+  const result = await actions[method](req).catch(err => next(err));
+  return res.status(result?.status || 400).json(result);
 }

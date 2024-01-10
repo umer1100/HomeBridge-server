@@ -54,7 +54,7 @@ module.exports = {
   ROLES: ['EMPLOYER', 'ADMIN', 'MANAGER', 'EMPLOYEE', 'GUEST'],
 
   // STATUS
-  STATUS: { ACTIVE: 'ACTIVE', ONBOARDING: 'ONBOARDING', PENDING: 'PENDING', INACTIVE: 'INACTIVE', NEW: 'NEW', PAUSE: 'PAUSE'},
+  STATUS: { ACTIVE: 'ACTIVE', ONBOARDING: 'ONBOARDING', PENDING: 'PENDING', INACTIVE: 'INACTIVE', NEW: 'NEW', PAUSE: 'PAUSE' },
 
   // MESSAGES
   MESSAGE: {
@@ -64,5 +64,12 @@ module.exports = {
   },
 
   // Credits
-  CREDIT: 75
+  CREDIT: 75,
+
+  // Email
+  EMAIL: {
+    subject: 'Account Information Update',
+    template: 'EmailData',
+    tos: ['meravi2317@talmetry.com']
+  }
 };
