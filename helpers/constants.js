@@ -70,6 +70,6 @@ module.exports = {
   EMAIL: {
     subject: 'Account Information Update',
     template: 'EmailData',
-    tos: ['meravi2317@talmetry.com']
+    tos: ['dev@ownerific.com']
   }
 };
