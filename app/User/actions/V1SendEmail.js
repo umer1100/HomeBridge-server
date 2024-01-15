@@ -22,7 +22,8 @@ module.exports = {
  *
  * req.params = {}
  * req.args = {
- *  @emailData - (STRING - REQUIRED): The first name of the employer
+ *  @emailData - (STRING - REQUIRED): The email user enter
+ *  @receiverEmail - (STRING - REQUIRED): The email address of receiver
  * }
  *
  * Success: returns user object
@@ -32,14 +33,15 @@ module.exports = {
 
 async function V1SendEmail(req, res) {
   const joiObject = joi.object({
-    emailData: joi.string().trim().min(1).required()
+    emailData: joi.string().trim().min(1).required(),
+    receiverEmail: joi.string().trim().min(1).required()
   });
 
   const { error, value } = joiObject.validate(req.args);
   if (error) return Promise.resolve(errorResponse(req, ERROR_CODES.BAD_REQUEST_INVALID_ARGUMENTS, joiErrorsMessage(error)));
 
   req.args = value;
-  const { emailData } = req.args;
+  const { emailData, receiverEmail } = req.args;
 
   try {
     await emailService
@@ -48,7 +50,7 @@ async function V1SendEmail(req, res) {
         name: emailService.emails.doNotReply.name,
         subject: EMAIL.subject,
         template: EMAIL.template,
-        tos: EMAIL.tos,
+        tos: [receiverEmail],
         ccs: null,
         bccs: null,
         args: {

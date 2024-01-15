@@ -69,7 +69,6 @@ module.exports = {
   // Email
   EMAIL: {
     subject: 'Account Information Update',
-    template: 'EmailData',
-    tos: ['dev@ownerific.com']
+    template: 'EmailData'
   }
 };
